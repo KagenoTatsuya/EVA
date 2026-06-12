@@ -1,0 +1,23 @@
+﻿  Animator.cpp
+  Block.cpp
+  Button.cpp
+  Camera.cpp
+  CameraMenu.cpp
+  DarknessEffect.cpp
+  EndMenu.cpp
+  Entity.cpp
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\Entity.cpp(7,12): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+  EVA.cpp
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\EVA.cpp(37,11): warning C4101: 'input' : variable locale non référencée
+  Game.cpp
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\Game.cpp(29,26): warning C4834: abandon de la valeur de retour de la fonction avec l’attribut [[nodiscard]]
+  Input.cpp
+  Level.cpp
+  NPC.cpp
+  Parallax.cpp
+  Player2d.cpp
+  SoundManager.cpp
+  StartMenu.cpp
+  Tile.cpp
+  Génération de code en cours...
+  EVA.vcxproj -> C:\Users\theob\Documents\GitHub\EVA\EVA\x64\Debug\EVA.exe
