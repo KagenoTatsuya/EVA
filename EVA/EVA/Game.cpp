@@ -23,12 +23,16 @@ Game::Game(sf::Vector2u windowSize)
     m_gameMode(GameMode::TPS),  // démarre en TPS
     m_player2d(nullptr)
 {
+    if (!m_font.openFromFile("assets/fonts/arial.ttf")) {}
+
+    m_hintText = new sf::Text(m_font, "", 18);
+    m_hintText->setFillColor(sf::Color::White);
+    m_hintText->setPosition(sf::Vector2f(20.f, 20.f)); // position à l'écran
+
     texture = new sf::Texture("assets/pictures/EVA_maps.png");
     bg = new sf::Sprite(*texture);
     bg->setScale(sf::Vector2f(1.5f, 1.f));
     m_sceneTexture.resize(windowSize);
-
-    if (!m_font.openFromFile("assets/fonts/arial.ttf")) {}
 
     // Caméra platformer
     m_platformerCamera = sf::View(sf::FloatRect(
@@ -38,10 +42,19 @@ Game::Game(sf::Vector2u windowSize)
 
     // NPC
     m_npcs.push_back(new NPC(
-        1902.15f, 931.267f,
+        1056.f, 768.f,
         { "Qui êtes vous ?", "Un humain...", "J'ai une requête pour toi.", "Si tu veux bien l'accepté.", "Peut tu trouver mon amie ketchup", "Le dernier endroit où je l'ai vu,", "C'était devant une porte qui menée sur un mur", "Mais aucun passage derrière", "S'il te palît, retrouve le"},
         m_font
     ));
+
+    //PNJ
+    PNJ* pnj = new PNJ(632.f, 358.f);
+    pnj->SetWaypoints({
+    sf::Vector2f(632.f, 358.f),
+    sf::Vector2f(866.f, 358.f),
+    sf::Vector2f(866.f, 250.f)
+        });
+    m_pnjs.push_back(pnj);
 
     // Tiles platformer (inactives jusqu'au switch)
     m_tiles.emplace_back(0.f, 550.f, 100.f, 32.f);
@@ -67,8 +80,11 @@ Game::~Game() {
     delete m_player2d; m_player2d = nullptr;
     delete texture;    texture = nullptr;
     delete bg;         bg = nullptr;
+    delete m_hintText; m_hintText = nullptr;
     for (auto* npc : m_npcs) delete npc;
     m_npcs.clear();
+    for (auto* pnj : m_pnjs) delete pnj;
+    m_pnjs.clear();
 }
 
 void Game::SwitchToPlatformer() {
@@ -105,7 +121,8 @@ void Game::Render(std::vector<Level*>& levels,
             player->Render(&m_sceneTexture);
             for (auto* npc : m_npcs)
                 npc->Render(&m_sceneTexture);
-
+            for (auto* pnj : m_pnjs)
+                pnj->Render(&m_sceneTexture);
         }
         else {
             // MODE PLATFORMER
@@ -124,10 +141,17 @@ void Game::Render(std::vector<Level*>& levels,
         sf::Sprite sceneSprite(m_sceneTexture.getTexture());
         window.draw(sceneSprite);
 
-        // Bulles NPC seulement en TPS
         if (m_gameMode == GameMode::TPS) {
             for (auto* npc : m_npcs)
                 npc->RenderBubble(&m_sceneTexture, window, camera->GetView());
+
+            // Hint "Appuie sur E"
+            window.setView(window.getDefaultView());
+            window.draw(*m_hintText);
+m_hintText->setString("");
+
+            // Reset le hint chaque frame (Update le remet si un NPC est proche)
+            m_hintText->setString("");
         }
         break;
     }
@@ -159,11 +183,34 @@ void Game::Update(bool& isRunning, bool& isEnd,float dt, float now,
             bool ePressed = m_input.checkInteractionPressed();
             sf::Vector2f playerCenter = player->rect.getPosition()
                 + sf::Vector2f(player->width / 2.f, player->height / 2.f);
+
+            bool anyNPCNear = false;
+            bool anyDialogueOpen = false;
+
             for (auto* npc : m_npcs) {
-                if (ePressed) {
-                    if (npc->IsDialogueOpen()) npc->NextDialogue();
-                    else if (npc->IsPlayerNear(playerCenter, 100.f)) npc->OpenDialogue();
+                npc->Update(dt, window.getSize(), levels[currentLvl]->GetBlocks());
+
+                if (npc->IsPlayerNear(playerCenter, 100.f)) {
+                    anyNPCNear = true;
+                    if (npc->IsDialogueOpen()) anyDialogueOpen = true;
+                    if (ePressed) {
+                        if (npc->IsDialogueOpen()) npc->NextDialogue();
+                        else npc->OpenDialogue();
+                    }
                 }
+                else if (npc->IsDialogueOpen()) {
+                    npc->CloseDialogue();
+                }
+            }
+
+            for (auto* pnj : m_pnjs)
+                pnj->Update(dt, window.getSize(), levels[currentLvl]->GetBlocks());
+
+            if (anyNPCNear && !anyDialogueOpen) {
+                m_hintText->setString("Press E to interact");
+                sf::Vector2f worldPos = playerCenter + sf::Vector2f(-30.f, -30.f);
+                sf::Vector2i screenPos = window.mapCoordsToPixel(worldPos, camera->GetView());
+                m_hintText->setPosition(sf::Vector2f(screenPos));
             }
 
             // Détection porte ? switch platformer

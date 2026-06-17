@@ -17,12 +17,12 @@ NPC::NPC(float x, float y, std::vector<std::string> dialogues, sf::Font& font)
     //m_visual.setFillColor(sf::Color(100, 180, 255));
     //m_visual.setPosition(sf::Vector2f(x, y));
 
-    if (m_npcTexture.loadFromFile("ketchup.png")) {
+    /*if (m_npcTexture.loadFromFile("ketchup.png")) {
         m_npcSprite = new sf::Sprite(m_npcTexture);
         m_npcSprite->setPosition(sf::Vector2f(x, y));
         // Ajuste la scale si le sprite est trop grand/petit
         m_npcSprite->setScale(sf::Vector2f(0.5f, 0.5f));
-    }
+    }*/
 
     // Bulle de dialogue
     m_bubble.setFillColor(sf::Color(240, 240, 240, 230));
@@ -151,9 +151,10 @@ void NPC::Render(sf::RenderTarget* target) {
     if (m_npcSprite)
         target->draw(*m_npcSprite);
 
-    if (m_dialogueOpen) {
+    /*if (m_dialogueOpen) {
         target->draw(m_bubble);
         target->draw(m_tail);
         target->draw(m_text);
-    }
+    }*/
 }
+

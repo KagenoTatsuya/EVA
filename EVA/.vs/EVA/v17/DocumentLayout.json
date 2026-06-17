@@ -3,28 +3,60 @@
   "WorkspaceRootPath": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EVA.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\EVA.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Block.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Block.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Entity.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Entity.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\NPC.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\NPC.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\NPC.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\NPC.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Input.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Input.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Block.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Block.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\DarknessEffect.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\DarknessEffect.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EVA.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\EVA.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EndMenu.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\EndMenu.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Level.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Level.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Level.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Level.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Block.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Block.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,23 +66,141 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 12,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Entity.h",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.h",
+              "RelativeDocumentMoniker": "EVA\\Entity.h",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.h",
+              "RelativeToolTip": "EVA\\Entity.h",
+              "ViewState": "AgIAACgAAAAAAAAAAAAiwDsAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-06-17T17:17:55.554Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Entity.cpp",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.cpp",
+              "RelativeDocumentMoniker": "EVA\\Entity.cpp",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.cpp",
+              "RelativeToolTip": "EVA\\Entity.cpp",
+              "ViewState": "AgIAALEBAAAAAAAAAAAAAPEAAACTAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-05-28T16:47:04.892Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Input.cpp",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Input.cpp",
+              "RelativeDocumentMoniker": "EVA\\Input.cpp",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Input.cpp",
+              "RelativeToolTip": "EVA\\Input.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-06-17T15:44:51.541Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "NPC.cpp",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\NPC.cpp",
+              "RelativeDocumentMoniker": "EVA\\NPC.cpp",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\NPC.cpp",
+              "RelativeToolTip": "EVA\\NPC.cpp",
+              "ViewState": "AgIAAIgAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-06-17T14:19:06.107Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "NPC.h",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\NPC.h",
+              "RelativeDocumentMoniker": "EVA\\NPC.h",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\NPC.h",
+              "RelativeToolTip": "EVA\\NPC.h",
+              "ViewState": "AgIAACQAAAAAAAAAAAAiwC4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-06-17T14:14:01.087Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "EndMenu.cpp",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EndMenu.cpp",
+              "RelativeDocumentMoniker": "EVA\\EndMenu.cpp",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EndMenu.cpp",
+              "RelativeToolTip": "EVA\\EndMenu.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-06-17T14:07:03.728Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Level.cpp",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Level.cpp",
+              "RelativeDocumentMoniker": "EVA\\Level.cpp",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Level.cpp",
+              "RelativeToolTip": "EVA\\Level.cpp",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-06-17T14:02:51.176Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Level.h",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Level.h",
+              "RelativeDocumentMoniker": "EVA\\Level.h",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Level.h",
+              "RelativeToolTip": "EVA\\Level.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-06-17T14:02:46.056Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Block.h",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Block.h",
+              "RelativeDocumentMoniker": "EVA\\Block.h",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Block.h",
+              "RelativeToolTip": "EVA\\Block.h",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-06-17T14:01:41.971Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "Block.cpp",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Block.cpp",
               "RelativeDocumentMoniker": "EVA\\Block.cpp",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Block.cpp",
               "RelativeToolTip": "EVA\\Block.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAEAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-05-28T17:03:43.82Z"
+              "WhenOpened": "2026-05-28T17:03:43.82Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
               "Title": "DarknessEffect.cpp",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\DarknessEffect.cpp",
               "RelativeDocumentMoniker": "EVA\\DarknessEffect.cpp",
@@ -58,53 +208,44 @@
               "RelativeToolTip": "EVA\\DarknessEffect.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-05-28T16:54:41.787Z"
+              "WhenOpened": "2026-05-28T16:54:41.787Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Entity.cpp",
-              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.cpp",
-              "RelativeDocumentMoniker": "EVA\\Entity.cpp",
-              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.cpp",
-              "RelativeToolTip": "EVA\\Entity.cpp",
-              "ViewState": "AgIAAJMAAAAAAAAAAAAAAKkAAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-05-28T16:47:04.892Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "Game.h",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.h",
               "RelativeDocumentMoniker": "EVA\\Game.h",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.h",
               "RelativeToolTip": "EVA\\Game.h",
-              "ViewState": "AgIAACAAAAAAAAAAAAAmwB0AAAAfAAAAAAAAAA==",
+              "ViewState": "AgIAAA0AAAAAAAAAAAASwBgAAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-05-28T16:44:51.297Z"
+              "WhenOpened": "2026-06-17T15:58:24.212Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "Game.cpp",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.cpp",
               "RelativeDocumentMoniker": "EVA\\Game.cpp",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.cpp",
               "RelativeToolTip": "EVA\\Game.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAmAAAAAAAAAA==",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAAADQAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-05-28T16:28:12.301Z"
+              "WhenOpened": "2026-05-28T16:28:12.301Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 9,
               "Title": "EVA.cpp",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EVA.cpp",
               "RelativeDocumentMoniker": "EVA\\EVA.cpp",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EVA.cpp",
               "RelativeToolTip": "EVA\\EVA.cpp",
-              "ViewState": "AgIAAB8AAAAAAAAAAAAUwDIAAAAqAAAAAAAAAA==",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAABwAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-05-28T15:55:18.201Z",
               "EditorCaption": ""

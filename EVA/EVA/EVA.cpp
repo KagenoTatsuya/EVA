@@ -60,7 +60,7 @@ int main() {
     parallax->Load("assets/pictures/EVA_maps.png");
 
     // Création du joueur au centre de l'écran
-    Joueur* player = new Joueur(683.f, 1178.f);
+    Joueur* player = new Joueur(690.f, 1178.f);
 
     bool isRunning = false;
     bool isSettings = false;

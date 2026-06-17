@@ -121,7 +121,6 @@ void Joueur::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& bloc
 
     vy = (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) - sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z)) * 200.f;
 
-    
 
     // Choix de l’animation selon direction
     if (vy > 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
@@ -238,4 +237,207 @@ void Joueur::ResolveCollisions(std::vector<Block*>& blocks) {
             vy = 0;
         }
     }
+}
+
+//=================================================================================================================================================
+
+// ===== PNJ =====
+PNJ::PNJ(float x, float y)
+    : Entity(sf::RectangleShape(sf::Vector2f(32.f, 48.f)), 0.f, 0.f) {
+
+    rect.setPosition(sf::Vector2(x, y));
+    rect.setFillColor(sf::Color::Blue);
+
+    if (!animator.LoadTexture("character-spritesheet2.png")) {
+        std::cout << "Erreur chargement spritesheet\n";
+    }
+
+    // Chaque frame fait 32x32
+    const int W = 64;
+    const int H = 64;
+
+    // Animation BAS
+    std::vector<sf::IntRect> upFrames = {
+        sf::IntRect({0 * W, 8 * H}, {W, H}),
+        sf::IntRect({1 * W, 8 * H}, {W, H}),
+        sf::IntRect({2 * W, 8 * H}, {W, H}),
+        sf::IntRect({3 * W, 8 * H}, {W, H})
+    };
+
+    animator.AddAnimation("up", upFrames, 0.12f);
+
+    // Animation GAUCHE
+    std::vector<sf::IntRect> leftFrames = {
+        sf::IntRect({0 * W, 9 * H}, {W, H}),
+        sf::IntRect({1 * W, 9 * H}, {W, H}),
+        sf::IntRect({2 * W, 9 * H}, {W, H}),
+        sf::IntRect({3 * W, 9 * H}, {W, H})
+    };
+
+    animator.AddAnimation("left", leftFrames, 0.12f);
+
+    // Animation HAUT
+    std::vector<sf::IntRect> downFrames = {
+        sf::IntRect({0 * W, 10 * H}, {W, H}),
+        sf::IntRect({1 * W, 10 * H}, {W, H}),
+        sf::IntRect({2 * W, 10 * H}, {W, H}),
+        sf::IntRect({3 * W, 10 * H}, {W, H})
+    };
+
+    animator.AddAnimation("down", downFrames, 0.12f);
+
+    // Animation DROITE
+    std::vector<sf::IntRect> rightFrames = {
+        sf::IntRect({0 * W, 11 * H}, {W, H}),
+        sf::IntRect({1 * W, 11 * H}, {W, H}),
+        sf::IntRect({2 * W, 11 * H}, {W, H}),
+        sf::IntRect({3 * W, 11 * H}, {W, H})
+    };
+
+    animator.AddAnimation("right", rightFrames, 0.12f);
+
+    // ======================= Animation Idle ==============================
+
+    // BAS
+    std::vector<sf::IntRect> upIdle = {
+        sf::IntRect({0 * W, 22 * H}, {W, H}),
+        sf::IntRect({1 * W, 22 * H}, {W, H})
+    };
+
+    animator.AddAnimation("upIdle", upIdle, 0.12f);
+
+    // GAUCHE
+    std::vector<sf::IntRect> leftIdle = {
+        sf::IntRect({0 * W, 23 * H}, {W, H}),
+        sf::IntRect({1 * W, 23 * H}, {W, H})
+    };
+
+    animator.AddAnimation("leftIdle", leftIdle, 0.12f);
+
+    // HAUT
+    std::vector<sf::IntRect> downIdle = {
+        sf::IntRect({0 * W, 24 * H}, {W, H}),
+        sf::IntRect({1 * W, 24 * H}, {W, H})
+    };
+
+    animator.AddAnimation("downIdle", downIdle, 0.12f);
+
+    // DROITE
+    std::vector<sf::IntRect> rightIdle = {
+        sf::IntRect({0 * W, 25 * H}, {W, H}),
+        sf::IntRect({1 * W, 25 * H}, {W, H})
+    };
+
+    animator.AddAnimation("rightIdle", rightIdle, 0.12f);
+
+    animator.Play("downIdle"); // animation par défaut
+}
+
+
+void PNJ::ResolveCollisions(std::vector<Block*>& blocks) {
+    for (auto* bl : blocks) {
+        if (bl->GetBlockType() != "MBlock") continue;
+
+        float bL = bl->GetPosX();
+        float bR = bl->GetRightX();
+        float bT = bl->GetPosY();
+        float bB = bl->GetBottomY();
+
+        float pL = posx;
+        float pR = posx + width;
+        float pT = posy;
+        float pB = posy + height;
+
+        bool overlapX = pR > bL && pL < bR;
+        bool overlapY = pB > bT && pT < bB;
+
+        if (!overlapX || !overlapY) continue;
+
+        float penLeft = pR - bL;
+        float penRight = bR - pL;
+        float penTop = pB - bT;
+        float penBot = bB - pT;
+
+        float minPenX = std::min(penLeft, penRight);
+        float minPenY = std::min(penTop, penBot);
+
+        if (minPenX < minPenY) {
+            if (penLeft < penRight) posx = bL - width;
+            else                    posx = bR;
+            vx = 0;
+        }
+        else {
+            if (penTop < penBot) posy = bT - height;
+            else                 posy = bB;
+            vy = 0;
+        }
+    }
+}
+
+void PNJ::Render(sf::RenderTarget* target) {
+    if (animator.sprite)
+        target->draw(*animator.sprite);
+}
+
+void PNJ::SetWaypoints(std::vector<sf::Vector2f> waypoints) {
+    m_waypoints = waypoints;
+    if (!m_waypoints.empty())
+        rect.setPosition(m_waypoints[0]);
+}
+
+void PNJ::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks) {
+    if (m_waypoints.size() < 2) return;
+
+    sf::Vector2f target = m_waypoints[m_currentWaypoint];
+    sf::Vector2f pos = rect.getPosition();
+    sf::Vector2f dir = target - pos;
+    float dist = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+
+    if (dist < 2.f) {
+        // Waypoint atteint ? inverser direction si au bout
+        if (m_movingForward) {
+            if (m_currentWaypoint + 1 >= (int)m_waypoints.size()) {
+                m_movingForward = false;
+                m_currentWaypoint--;
+            }
+            else {
+                m_currentWaypoint++;
+            }
+        }
+        else {
+            if (m_currentWaypoint - 1 < 0) {
+                m_movingForward = true;
+                m_currentWaypoint++;
+            }
+            else {
+                m_currentWaypoint--;
+            }
+        }
+    }
+    else {
+        // Normaliser et déplacer
+        sf::Vector2f move = (dir / dist) * m_speed * dt;
+        vx = move.x / dt;
+        vy = move.y / dt;
+        rect.move(move);
+
+        // Animation selon direction
+        if (std::abs(dir.x) > std::abs(dir.y)) {
+            if (dir.x < 0) animator.Play("left");
+            else           animator.Play("right");
+        }
+        else {
+            if (dir.y < 0) animator.Play("up");
+            else           animator.Play("down");
+        }
+    }
+
+    posx = rect.getPosition().x + 15.f;
+    posy = rect.getPosition().y + 13.f;
+    ResolveCollisions(blocks);
+    rect.setPosition(sf::Vector2f(posx - 15.f, posy - 13.f));
+
+    animator.Update(dt);
+    if (animator.sprite)
+        animator.sprite->setPosition(rect.getPosition());
 }

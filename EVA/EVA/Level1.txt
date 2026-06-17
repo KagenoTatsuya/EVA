@@ -13,7 +13,7 @@ XXXX....................XX
 XXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXX........XXXXXXXX
 XXXXXXXXXX........XXXXXXXX
-XXXXXXXXX..........XXXXXXX
+XXXXXXXXX.........XXXXXXXX
 XXXXXX....XXXXXXX.XX.....X
 XXXXXX.............XXXXXXX
 XXXX.....................X
@@ -28,7 +28,7 @@ XXXX..XXX..............XXX
 XXXX...................XXX
 XXXX.....................X
 XXXXXX.................XXX
-XXXXXX.................XXX
+XXXXXX........F........XXX
 XXXXXX.....XXXXXXX.....XXX
 XXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXX

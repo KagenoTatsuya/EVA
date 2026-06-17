@@ -47,3 +47,33 @@ public:
     void Render(sf::RenderTarget* target) override;
     void ResolveCollisions(std::vector<Block*>& blocks);
 };
+
+class PNJ : public Entity {
+   
+
+private:
+    std::vector<sf::Vector2f> m_waypoints;
+    int m_currentWaypoint = 0;
+    bool m_movingForward = true;
+    float m_speed = 100.f;
+
+public:
+    // Waypoints
+    void SetWaypoints(std::vector<sf::Vector2f> waypoints);
+
+    enum class Direction {
+        DOWN,
+        LEFT,
+        RIGHT,
+        UP
+    } state;
+
+    Direction lastDirection = Direction::LEFT; // par defaut
+
+    Animator animator;
+    PNJ(float x, float y);
+    sf::FloatRect GetGlobalBounds() const;
+    void Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks) override; // player movement
+    void Render(sf::RenderTarget* target) override;
+    void ResolveCollisions(std::vector<Block*>& blocks);
+};

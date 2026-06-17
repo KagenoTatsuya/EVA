@@ -43,4 +43,6 @@ private:
 
     // Sprite/visuel du PNJ
     sf::RectangleShape          m_visual;
+
+
 };

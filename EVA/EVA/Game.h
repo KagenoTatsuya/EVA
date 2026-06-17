@@ -26,7 +26,9 @@ class Game {
     int currentLvl;
     float gameTime;
     sf::RenderTexture   m_sceneTexture;
+    sf::Text*   m_hintText = nullptr;
     //DarknessEffect      m_darkness;
+    std::vector<PNJ*> m_pnjs;
     std::vector<NPC*>   m_npcs;
     sf::Font            m_font;
     Input               m_input;
