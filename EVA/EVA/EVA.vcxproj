@@ -133,6 +133,7 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraMenu.cpp" />
+    <ClCompile Include="ChooseGame.cpp" />
     <ClCompile Include="DarknessEffect.cpp" />
     <ClCompile Include="EndMenu.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraMenu.h" />
+    <ClInclude Include="ChooseGame.h" />
     <ClInclude Include="DarknessEffect.h" />
     <ClInclude Include="EndMenu.h" />
     <ClInclude Include="Entity.h" />

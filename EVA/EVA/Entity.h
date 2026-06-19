@@ -55,7 +55,9 @@ private:
     std::vector<sf::Vector2f> m_waypoints;
     int m_currentWaypoint = 0;
     bool m_movingForward = true;
-    float m_speed = 100.f;
+    float m_speed = 75.f;
+    float m_pauseTimer = 0.f;
+    bool  m_isPaused = false;
 
 public:
     // Waypoints
@@ -71,7 +73,7 @@ public:
     Direction lastDirection = Direction::LEFT; // par defaut
 
     Animator animator;
-    PNJ(float x, float y);
+    PNJ(float x, float y, std::string spriteSheet);
     sf::FloatRect GetGlobalBounds() const;
     void Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks) override; // player movement
     void Render(sf::RenderTarget* target) override;

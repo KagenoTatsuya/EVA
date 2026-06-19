@@ -20,7 +20,7 @@ public:
 	Level(std::string path1);
 	~Level();
 	void Render(sf::RenderTarget& target);
-	void Update(int currentLvl, int& newLvl, float dt, float now);
+	void Update(int currentLvl, int& newLvl, float dt, float now, float playerX, float playerY, float playerW, bool& onHZone);
 
 	inline std::vector<Block*>& GetBlocks() { return blocks; }
 	inline std::string GetPrevLevel() { return prevLevel; }

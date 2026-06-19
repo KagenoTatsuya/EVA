@@ -49,3 +49,9 @@ public:
 	Item(float posx, float posy);
 	~Item() override {};
 };
+
+class HBlock : public Block {
+public:
+	HBlock(float posx, float posy);
+	~HBlock() override {};
+};

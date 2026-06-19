@@ -22,13 +22,18 @@ private:
     deadzoneX = 150.f;    // grande zone morte, camera peu reactive
     */
 
+   
+
 public:
+
+    bool m_ceilingMode = false;
 
     Camera();
     Camera(float screenW, float screenH, float levelW, float levelH);
 
     void Update(float playerX, float playerY, float dt);
-
+    void SetCeilingMode(bool active);  
+    
     sf::View GetView() const { return view; }
 
     ~Camera() {};

@@ -38,3 +38,10 @@ Item::Item(float posx, float posy) {
     rect.setPosition(sf::Vector2f(posx, posy));
     blockType = "Item";
 }
+
+HBlock::HBlock(float posx, float posy) {
+    rect.setFillColor(sf::Color::Transparent);
+    rect.setPosition(sf::Vector2f(posx, posy));
+    //rect.setSize(sf::Vector2f(48.f, 48.f));
+    blockType = "HBlock";
+}

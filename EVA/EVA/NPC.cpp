@@ -1,44 +1,45 @@
 #include "NPC.h"
 #include <algorithm>
 
-NPC::NPC(float x, float y, std::vector<std::string> dialogues, sf::Font& font)
+NPC::NPC(float x, float y, std::vector<std::string> dialogues, std::vector<std::string> faces, sf::Font& font)
     : Entity(sf::RectangleShape(sf::Vector2f(32.f, 48.f)), 0.f, 0.f)
     , m_dialogues(dialogues)
+    , m_faces(faces)
     , m_currentLine(0)
     , m_dialogueOpen(false)
     , m_font(font)
-    , m_text(font, "", 16)
+    , m_text(font, "", 60)
 {
     rect.setPosition(sf::Vector2f(x, y));
     rect.setFillColor(sf::Color::Transparent);
+    m_text.setFillColor(sf::Color::White);
 
-    // Visuel PNJ (rectangle coloré, remplace par un sprite si tu en as un)
-    //m_visual.setSize(sf::Vector2f(32.f, 48.f));
-    //m_visual.setFillColor(sf::Color(100, 180, 255));
-    //m_visual.setPosition(sf::Vector2f(x, y));
+    m_faceRect.setSize({ 250.f, 255.f });
 
-    /*if (m_npcTexture.loadFromFile("ketchup.png")) {
-        m_npcSprite = new sf::Sprite(m_npcTexture);
-        m_npcSprite->setPosition(sf::Vector2f(x, y));
-        // Ajuste la scale si le sprite est trop grand/petit
-        m_npcSprite->setScale(sf::Vector2f(0.5f, 0.5f));
-    }*/
+    m_hasSound = m_dial.openFromFile("assets/sounds/talking.mp3");
+    if (m_hasSound) {
+        m_dial.setLooping(false);
+        m_dial.setVolume(50.f);
+    }
 
-    // Bulle de dialogue
-    m_bubble.setFillColor(sf::Color(240, 240, 240, 230));
-    m_bubble.setOutlineColor(sf::Color(60, 60, 60));
-    m_bubble.setOutlineThickness(2.f);
+    m_hasDialogBoxTexture = m_dialogBoxTexture.loadFromFile("assets/pictures/dialogbox.png");
+    if (!m_hasDialogBoxTexture) {
+        m_dialogBox.setFillColor(sf::Color(20, 20, 20, 220));
+    }
+}
 
-    // Queue de la bulle
-    m_tail.setSize(sf::Vector2f(12.f, 12.f));
-    m_tail.setFillColor(sf::Color(240, 240, 240, 230));
-    m_tail.setOutlineColor(sf::Color(60, 60, 60));
-    m_tail.setOutlineThickness(2.f);
-    m_tail.setRotation(sf::degrees(45.f));
+void NPC::SetupDialogBox(unsigned int winW, unsigned int winH) {
+    if (m_boxInitialized) return;
 
-    // Texte
-    m_text.setFillColor(sf::Color(30, 30, 30));
-    m_text.setCharacterSize(16);
+    m_dialogBox.setPosition({ 0.f, static_cast<float>(winH) - 180.f });
+    m_dialogBox.setSize({ static_cast<float>(winW), 180.f });
+    if (m_hasDialogBoxTexture)
+        m_dialogBox.setTexture(&m_dialogBoxTexture);
+
+    m_faceRect.setPosition({ 50.f, static_cast<float>(winH) - 250.f });
+    m_text.setPosition({ 300.f, static_cast<float>(winH) - 155.f });
+
+    m_boxInitialized = true;
 }
 
 bool NPC::IsPlayerNear(sf::Vector2f playerPos, float range) {
@@ -48,19 +49,23 @@ bool NPC::IsPlayerNear(sf::Vector2f playerPos, float range) {
     return (dx * dx + dy * dy) <= (range * range);
 }
 
+void NPC::StartLine() {
+    m_fullText = m_dialogues[m_currentLine];
+    m_visibleChars = 0;
+    m_charTimer = 0.f;
+    m_isTyping = true;
+
+    if (m_currentLine < (int)m_faces.size())
+        m_faceTexture.loadFromFile(m_faces[m_currentLine]);
+    m_faceRect.setTexture(&m_faceTexture);
+
+    if (m_hasSound) m_dial.play();
+}
+
 void NPC::OpenDialogue() {
     m_currentLine = 0;
     m_dialogueOpen = true;
-    BuildBubble();
-}
-
-void NPC::CloseDialogue() {
-    m_dialogueOpen = false;
-    m_currentLine = 0;
-}
-
-bool NPC::IsDialogueOpen() const {
-    return m_dialogueOpen;
+    StartLine();
 }
 
 bool NPC::NextDialogue() {
@@ -69,92 +74,55 @@ bool NPC::NextDialogue() {
         CloseDialogue();
         return false;
     }
-    BuildBubble(); // rebuild avec la nouvelle ligne
+    StartLine();
     return true;
+}
+
+void NPC::CloseDialogue() {
+    m_dialogueOpen = false;
+    m_currentLine = 0;
+    if (m_hasSound) m_dial.stop();
+}
+
+bool NPC::IsDialogueOpen() const {
+    return m_dialogueOpen;
+}
+
+void NPC::UpdateTyping(float dt) {
+    if (!m_dialogueOpen || !m_isTyping) return;
+
+    m_charTimer += dt;
+    if (m_charTimer >= m_charDelay) {
+        m_charTimer = 0.f;
+        m_visibleChars++;
+        if (m_visibleChars >= (int)m_fullText.size()) {
+            m_visibleChars = (int)m_fullText.size();
+            m_isTyping = false;
+            if (m_hasSound) m_dial.stop();
+        }
+    }
+}
+
+void NPC::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks) {
+    UpdateTyping(dt);
 }
 
 void NPC::RenderBubble(sf::RenderTarget* target, sf::RenderWindow& window, sf::View cameraView) {
     if (!m_dialogueOpen) return;
 
-    sf::Vector2f npcPos = rect.getPosition() + sf::Vector2f(16.f, 0.f);
-    sf::Vector2i screenPos = window.mapCoordsToPixel(npcPos, cameraView);
+    SetupDialogBox(window.getSize().x, window.getSize().y);
 
-    m_text.setString(m_dialogues[m_currentLine]);
-    float textWidth = m_text.getLocalBounds().size.x;
-    float textHeight = m_text.getLocalBounds().size.y;
-    float padding = 16.f;
-    float bubbleW = std::max(textWidth + padding * 2.f, 80.f);
-    float bubbleH = textHeight + padding * 2.f + 10.f;
-
-    float bubbleX = static_cast<float>(screenPos.x) - bubbleW / 2.f;
-    float bubbleY = static_cast<float>(screenPos.y) - bubbleH - 20.f;
-
-    m_bubble.setSize(sf::Vector2f(bubbleW, bubbleH));
-    m_bubble.setPosition(sf::Vector2f(bubbleX, bubbleY));
-
-    m_text.setPosition(sf::Vector2f(bubbleX + padding, bubbleY + padding / 2.f));
-
-    m_tail.setPosition(sf::Vector2f(
-        bubbleX + bubbleW / 2.f - 6.f,
-        bubbleY + bubbleH - 8.f
-    ));
+    m_text.setString(m_fullText.substr(0, m_visibleChars));
 
     sf::View previousView = window.getView();
     window.setView(window.getDefaultView());
-    window.draw(m_bubble);
-    window.draw(m_tail);
+    window.draw(m_dialogBox);
+    window.draw(m_faceRect);
     window.draw(m_text);
     window.setView(previousView);
-}
-
-void NPC::BuildBubble() {
-    if (m_dialogues.empty()) return;
-
-    std::string line = m_dialogues[m_currentLine];
-
-    // Calcul largeur dynamique selon le texte
-    m_text.setString(line);
-    float textWidth = m_text.getLocalBounds().size.x;
-    float textHeight = m_text.getLocalBounds().size.y;
-
-    float padding = 16.f;
-    float bubbleW = std::max(textWidth + padding * 2.f, 80.f);
-    float bubbleH = textHeight + padding * 2.f + 10.f;
-
-    sf::Vector2f npcPos = rect.getPosition();
-
-    // Bulle au-dessus du PNJ, centrée
-    float bubbleX = npcPos.x + 16.f - bubbleW / 2.f;
-    float bubbleY = npcPos.y - bubbleH - 20.f;
-
-    m_bubble.setSize(sf::Vector2f(bubbleW, bubbleH));
-    m_bubble.setPosition(sf::Vector2f(bubbleX, bubbleY));
-
-    // Texte centré dans la bulle
-    m_text.setPosition(sf::Vector2f(
-        bubbleX + padding,
-        bubbleY + padding / 2.f
-    ));
-
-    // Queue centrée sous la bulle
-    m_tail.setPosition(sf::Vector2f(
-        bubbleX + bubbleW / 2.f - 6.f,
-        bubbleY + bubbleH - 8.f
-    ));
-}
-
-void NPC::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks) {
-    // Le PNJ ne bouge pas, rien à mettre à jour
 }
 
 void NPC::Render(sf::RenderTarget* target) {
     if (m_npcSprite)
         target->draw(*m_npcSprite);
-
-    /*if (m_dialogueOpen) {
-        target->draw(m_bubble);
-        target->draw(m_tail);
-        target->draw(m_text);
-    }*/
 }
-

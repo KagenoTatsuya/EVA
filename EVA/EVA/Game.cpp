@@ -23,7 +23,7 @@ Game::Game(sf::Vector2u windowSize)
     m_gameMode(GameMode::TPS),  // démarre en TPS
     m_player2d(nullptr)
 {
-    if (!m_font.openFromFile("assets/fonts/arial.ttf")) {}
+    if (!m_font.openFromFile("assets/fonts/Pixellettersfull-BnJ5.ttf")) {}
 
     m_hintText = new sf::Text(m_font, "", 18);
     m_hintText->setFillColor(sf::Color::White);
@@ -42,19 +42,52 @@ Game::Game(sf::Vector2u windowSize)
 
     // NPC
     m_npcs.push_back(new NPC(
-        1056.f, 768.f,
-        { "Qui êtes vous ?", "Un humain...", "J'ai une requête pour toi.", "Si tu veux bien l'accepté.", "Peut tu trouver mon amie ketchup", "Le dernier endroit où je l'ai vu,", "C'était devant une porte qui menée sur un mur", "Mais aucun passage derrière", "S'il te palît, retrouve le"},
+        1056.f, 768.f, 
+        { "Bonjour", "Comment puis-je vous aidez ?", "Quel mode de jeu ?" },
+        { "assets/pictures/BoysFace1.png"},
         m_font
     ));
 
     //PNJ
-    PNJ* pnj = new PNJ(632.f, 358.f);
+    PNJ* pnj = new PNJ(632.f, 358.f, "character-spritesheet2.png");
     pnj->SetWaypoints({
     sf::Vector2f(632.f, 358.f),
     sf::Vector2f(866.f, 358.f),
     sf::Vector2f(866.f, 250.f)
         });
     m_pnjs.push_back(pnj);
+
+    PNJ* pnj1 = new PNJ(425.f, 194.f, "character-spritesheet3.png");
+    pnj1->SetWaypoints({
+    sf::Vector2f(425.f, 194.f),
+    sf::Vector2f(296.f, 298.f),
+    sf::Vector2f(526.f, 376.f)
+        });
+    m_pnjs.push_back(pnj1);
+
+    PNJ* pnj2 = new PNJ(1055.f, 321.f, "character-spritesheet2.png");
+    pnj2->SetWaypoints({
+    sf::Vector2f(1055.f, 321.f),
+    sf::Vector2f(820.f, 260.f),
+    sf::Vector2f(936.f, 387.f)
+        });
+    m_pnjs.push_back(pnj2);
+
+    PNJ* pnj3 = new PNJ(1055.f, 321.f, "character-spritesheet4.png");
+    pnj3->SetWaypoints({
+    sf::Vector2f(1055.f, 321.f),
+    sf::Vector2f(820.f, 260.f),
+    sf::Vector2f(936.f, 387.f)
+        });
+    m_pnjs.push_back(pnj3);
+
+    PNJ* pnj4 = new PNJ(571.f, 259.f, "character-spritesheet2.png");
+    pnj4->SetWaypoints({
+    sf::Vector2f(571.f, 259.f),
+    sf::Vector2f(396.f, 402.f),
+    sf::Vector2f(1016.f, 414.f)
+        });
+    m_pnjs.push_back(pnj4);
 
     // Tiles platformer (inactives jusqu'au switch)
     m_tiles.emplace_back(0.f, 550.f, 100.f, 32.f);
@@ -87,8 +120,13 @@ Game::~Game() {
     m_pnjs.clear();
 }
 
-void Game::SwitchToPlatformer() {
-    m_gameMode = GameMode::PLATFORMER;
+//void Game::SwitchToPlatformer() {
+//    m_gameMode = GameMode::SURVIVAL;
+//
+//}
+
+void Game::SwitchToSurvival() {
+    m_gameMode = GameMode::SURVIVAL;
     // Crée le player2d au début du niveau platformer
     if (m_player2d) delete m_player2d;
     m_player2d = new Player2d(50.f, 550.f);
@@ -125,12 +163,23 @@ void Game::Render(std::vector<Level*>& levels,
                 pnj->Render(&m_sceneTexture);
         }
         else {
-            // MODE PLATFORMER
-            m_sceneTexture.setView(m_platformerCamera);
-            for (auto& tile : m_tiles)
-                tile.Render(&m_sceneTexture);
-            if (m_player2d)
-                m_player2d->Render(&m_sceneTexture);
+            m_sceneTexture.setView(camera->GetView());
+            m_sceneTexture.draw(*bg);                   //==============================================================
+            levels[currentLvl]->Render(m_sceneTexture);
+            player->Render(&m_sceneTexture);
+            for (auto* npc : m_npcs)
+                npc->Render(&m_sceneTexture);
+            for (auto* pnj : m_pnjs)
+                pnj->Render(&m_sceneTexture);
+
+
+
+            //// MODE PLATFORMER
+            //m_sceneTexture.setView(m_platformerCamera);
+            //for (auto& tile : m_tiles)
+            //    tile.Render(&m_sceneTexture);
+            //if (m_player2d)
+            //    m_player2d->Render(&m_sceneTexture);
         }
 
         m_sceneTexture.display();
@@ -148,7 +197,7 @@ void Game::Render(std::vector<Level*>& levels,
             // Hint "Appuie sur E"
             window.setView(window.getDefaultView());
             window.draw(*m_hintText);
-m_hintText->setString("");
+            m_hintText->setString("");
 
             // Reset le hint chaque frame (Update le remet si un NPC est proche)
             m_hintText->setString("");
@@ -171,13 +220,22 @@ void Game::Update(bool& isRunning, bool& isEnd,float dt, float now,
     case RUNNING: {
         if (m_gameMode == GameMode::TPS) {
             // === MODE TPS ===
-            levels[currentLvl]->Update(currentLvl, newLvl, dt, now);
+            sf::Vector2f playerPos = player->rect.getPosition();
+            sf::Vector2f playerSize = player->rect.getSize();
+
+            bool onHZone = false;
+            levels[currentLvl]->Update(currentLvl, newLvl, dt, now,
+                playerPos.x, playerPos.y, playerSize.x, onHZone);
+            camera->SetCeilingMode(onHZone);
+                
             if (newLvl - currentLvl > 0 && newLvl < (int)levels.size() ||
                 newLvl - currentLvl < 0 && newLvl >= 0)
                 currentLvl = newLvl;
 
             player->Update(dt, window.getSize(), levels[currentLvl]->GetBlocks());
             //m_darkness.setPlayerPos(player->rect.getPosition() + sf::Vector2f(player->width / 2.f, player->height / 2.f));
+
+            playerPos = player->rect.getPosition();
 
             // NPC interaction
             bool ePressed = m_input.checkInteractionPressed();
@@ -213,24 +271,21 @@ void Game::Update(bool& isRunning, bool& isEnd,float dt, float now,
                 m_hintText->setPosition(sf::Vector2f(screenPos));
             }
 
-            // Détection porte ? switch platformer
+            // Détection porte -> switch platformer
             // Appelle SwitchToPlatformer() quand le joueur touche la porte
             for (auto& b : levels[currentLvl]->GetBlocks()) {
                 if (b->GetBlockType() == "EndBlock") {
                     sf::FloatRect playerBounds = player->rect.getGlobalBounds();
                     sf::FloatRect blockBounds = b->rect.getGlobalBounds();
                     if (playerBounds.findIntersection(blockBounds)) {
-                        SwitchToPlatformer();
+                        SwitchToSurvival();
                     }
                 }
             }
 
             sf::Vector2f camCenter = camera->GetView().getCenter();
             parallax->Update(camCenter.x, camCenter.y);
-            sf::Vector2f playerPos = player->rect.getPosition();
-            sf::Vector2f playerSize = player->rect.getSize();
-            camera->Update(playerPos.x + playerSize.x / 2.f,
-                playerPos.y + playerSize.y / 2.f, dt);
+            camera->Update(playerPos.x + playerSize.x / 2.f, playerPos.y + playerSize.y / 2.f, dt);
 
         }
         else {

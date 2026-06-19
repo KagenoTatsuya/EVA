@@ -15,37 +15,41 @@ Camera::Camera(float screenW, float screenH, float levelW, float levelH) : scree
 }
 
 void Camera::Update(float playerX, float playerY, float dt) {
-
     sf::Vector2f center = view.getCenter();
 
-    // ==== = Deadzone ==== =
-    // La camera ne bouge que si le joueur sort de la zone morte
+    if (m_ceilingMode) {
+        // X suit le joueur, Y descend vers le haut PROGRESSIVEMENT
+        float targetY = screenH / 2.f;
+        float newX = center.x + (playerX - center.x) * smoothSpeed * dt;
+        float newY = center.y + (targetY - center.y) * smoothSpeed * dt;
+
+        newX = std::clamp(newX, screenW / 2.f, levelW);
+        newY = std::clamp(newY, screenH / 2.f, levelH);
+        view.setCenter(sf::Vector2f(newX, newY));
+        return;
+    }
+
+    // ===== Comportement normal =====
     float targetX = center.x;
     float targetY = center.y;
 
-    if (playerX > center.x + deadzoneX) {
+    if (playerX > center.x + deadzoneX)
         targetX = playerX - deadzoneX;
-    }
-    else if (playerX < center.x - deadzoneX) {
+    else if (playerX < center.x - deadzoneX)
         targetX = playerX + deadzoneX;
-    }
 
-    if (playerY > center.y + deadzoneY) {
+    if (playerY > center.y + deadzoneY)
         targetY = playerY - deadzoneY;
-    }
-    else if (playerY < center.y - deadzoneY) {
+    else if (playerY < center.y - deadzoneY)
         targetY = playerY + deadzoneY;
-    }
-
-    // ===== Smooth follow =====
-    // Interpolation vers la cible (lerp)
 
     float newX = center.x + (targetX - center.x) * smoothSpeed * dt;
     float newY = center.y + (targetY - center.y) * smoothSpeed * dt;
 
-    // ===== Clamp aux bords du niveau =====
     newX = std::clamp(newX, screenW / 2.f, levelW);
     newY = std::clamp(newY, screenH / 2.f, levelH);
-
     view.setCenter(sf::Vector2f(newX, newY));
+}
+void Camera::SetCeilingMode(bool active) {
+    m_ceilingMode = active;
 }

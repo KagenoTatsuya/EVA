@@ -35,6 +35,9 @@ Level::Level(std::string path1) : nextLevel(""), prevLevel("") {
                 else if (character == "I") {
                     blocks.push_back(new Item(i * 48.f, lineNumber * 48.f));
                 }
+                else if (character == "H") {
+                    blocks.push_back(new HBlock(i * 48.f, lineNumber * 48.f));
+                }
                 // '_' et 'W' ignorés pour l'instant
             }
         }
@@ -56,7 +59,7 @@ void Level::Render(sf::RenderTarget& target) {
     }
 }
 
-void Level::Update(int currentLvl, int& newLvl, float dt, float now) {
+void Level::Update(int currentLvl, int& newLvl, float dt, float now, float playerX, float playerY, float playerW, bool& onHZone){
     for (int i = 0; i < blocks.size(); i++) {
         if (blocks[i]->GetBlockType() == "EndBlock") { //Next Level
             if (blocks[i]->isNextLevel) {
@@ -69,6 +72,20 @@ void Level::Update(int currentLvl, int& newLvl, float dt, float now) {
                 newLvl = currentLvl + 1;
                 blocks[i]->isPrevLevel = false;
             }
+        }
+        else if (blocks[i]->GetBlockType() == "HBlock") {
+
+            if (playerY < 550) {
+                float playerL = playerX;
+                float playerR = playerX + playerW;
+                float blockL = blocks[i]->GetPosX();
+                float blockR = blocks[i]->GetRightX();
+
+                if (playerR > blockL && playerL < blockR) {
+                    onHZone = true;
+                }
+            }
+
         }
     }
 }

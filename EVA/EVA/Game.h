@@ -40,7 +40,7 @@ class Game {
     // Mode de jeu
     enum class GameMode {
         TPS,        // vue du dessus avec Joueur
-        PLATFORMER  // vue platformer avec Player2d
+        SURVIVAL  // vue Survival avec Player2d
     } m_gameMode;
 
     // Caméra platformer
@@ -58,6 +58,7 @@ public:
 
     // Switch vers le mode platformer (appelé quand le joueur passe la porte)
     void SwitchToPlatformer();
+    void SwitchToSurvival();
     void SwitchToTPS();
 
     void Update(bool& isRunning, bool& isEnd, float dt, float now,

@@ -242,13 +242,13 @@ void Joueur::ResolveCollisions(std::vector<Block*>& blocks) {
 //=================================================================================================================================================
 
 // ===== PNJ =====
-PNJ::PNJ(float x, float y)
+PNJ::PNJ(float x, float y, std::string spriteSheet)
     : Entity(sf::RectangleShape(sf::Vector2f(32.f, 48.f)), 0.f, 0.f) {
 
     rect.setPosition(sf::Vector2(x, y));
     rect.setFillColor(sf::Color::Blue);
 
-    if (!animator.LoadTexture("character-spritesheet2.png")) {
+    if (!animator.LoadTexture(spriteSheet)) {
         std::cout << "Erreur chargement spritesheet\n";
     }
 
@@ -393,8 +393,35 @@ void PNJ::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks)
     sf::Vector2f dir = target - pos;
     float dist = std::sqrt(dir.x * dir.x + dir.y * dir.y);
 
+    // Pause active -> on attend
+    if (m_isPaused) {
+        m_pauseTimer -= dt;
+
+        // Animation idle selon dernière direction
+        if (std::abs(dir.x) > std::abs(dir.y)) {
+            if (dir.x < 0) animator.Play("leftIdle");
+            else           animator.Play("rightIdle");
+        }
+        else {
+            if (dir.y < 0) animator.Play("upIdle");
+            else           animator.Play("downIdle");
+        }
+
+        if (m_pauseTimer <= 0.f)
+            m_isPaused = false;
+
+        animator.Update(dt);
+        if (animator.sprite)
+            animator.sprite->setPosition(rect.getPosition());
+        return;
+    }
+
     if (dist < 2.f) {
-        // Waypoint atteint ? inverser direction si au bout
+        // Déclencher la pause
+        m_isPaused = true;
+        m_pauseTimer = 2.f;
+
+        // Avancer vers le prochain waypoint
         if (m_movingForward) {
             if (m_currentWaypoint + 1 >= (int)m_waypoints.size()) {
                 m_movingForward = false;
