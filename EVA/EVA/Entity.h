@@ -4,8 +4,9 @@
 #include <iostream>
 #include <algorithm>
 #include "Animator.h"
-#include "time.h"
+#include <ctime>
 #include "Block.h"
+#include "Shoot.h"
 
 // ===== Entity class =====
 class Entity {
@@ -22,7 +23,7 @@ public:
     Entity(sf::RectangleShape r, float vx, float vy);
 
     // Virtual methods
-    virtual void Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks);
+    virtual void Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks, std::vector<Shoot*>& shoot, bool canShoot = false);
     virtual void Render(sf::RenderTarget* target) = 0; // pure virtual method
     virtual ~Entity() = default; // virtual destructor to prevent leaks
 };
@@ -30,6 +31,11 @@ public:
 // ===== Player =====
 class Joueur : public Entity {
 public:
+
+    float shootCooldown = 0.f;
+    float specialTimer = 0.f;
+    float specialCooldown = 0.f;
+    bool  specialActive = false;
 
     enum class Direction {
         DOWN,
@@ -43,7 +49,7 @@ public:
     Animator animator;
     Joueur(float x, float y);
     sf::FloatRect GetGlobalBounds() const;
-    void Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks) override; // player movement
+    void Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks, std::vector<Shoot*>& shoot, bool canShoot = false) override; // player movement
     void Render(sf::RenderTarget* target) override;
     void ResolveCollisions(std::vector<Block*>& blocks);
 };
@@ -75,7 +81,7 @@ public:
     Animator animator;
     PNJ(float x, float y, std::string spriteSheet);
     sf::FloatRect GetGlobalBounds() const;
-    void Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks) override; // player movement
+    void Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks, std::vector<Shoot*>& shoot, bool canShoot = false) override; // player movement
     void Render(sf::RenderTarget* target) override;
     void ResolveCollisions(std::vector<Block*>& blocks);
 };

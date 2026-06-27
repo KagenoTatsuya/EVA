@@ -6,6 +6,11 @@ ChooseGame::ChooseGame() {
 	sprite = new sf::Sprite(*image);
 }
 
+ChooseGame::ChooseGame(float screenW, float screenH) : screenW(screenW), screenH(screenH) {
+	screenW = 1920.f;
+	screenH = 1080.f;
+}
+
 void ChooseGame::Render(sf::RenderWindow& window) {
 	window.draw(*sprite);
 }

@@ -2,10 +2,8 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
-
-
-float M_PI = 3.14159265358979323846;   // pi
-
+#include <cmath>
+#define _USE_MATHS_DEFINE
 
 // ===== Entity =====
 Entity::Entity(sf::RectangleShape r, float vx, float vy)
@@ -18,7 +16,7 @@ Entity::Entity(sf::RectangleShape r, float vx, float vy)
     alive = true;
 }
 
-void Entity::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks) {
+void Entity::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks, std::vector<Shoot*>& shoot, bool canShoot) {
     // Basic movement: position += velocity * deltaTime
     rect.move(sf::Vector2(vx * dt, vy * dt));
 }
@@ -115,7 +113,7 @@ Joueur::Joueur(float x, float y)
     animator.Play("downIdle"); // animation par défaut
 }
 
-void Joueur::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks) {
+void Joueur::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks, std::vector<Shoot*>& shoot, bool canShoot) {
     // Input
     vx = (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) - sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) * 200.f;
 
@@ -158,6 +156,27 @@ void Joueur::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& bloc
 
     // Déplacement
     rect.move(sf::Vector2(vx * dt, vy * dt));
+
+    if (canShoot) {
+        shootCooldown = std::max(0.f, shootCooldown - dt);
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && shootCooldown <= 0.f) {
+            sf::Vector2f pos = rect.getPosition();
+            sf::Vector2f size = rect.getSize();
+            float bvx = 0.f, bvy = 0.f;
+            float bx = pos.x, by = pos.y + size.y / 2.f;
+
+            switch (lastDirection) {
+            case Direction::RIGHT: bvx = 300.f; bx = pos.x + size.x; break;
+            case Direction::LEFT:  bvx = -300.f; bx = pos.x;          break;
+            case Direction::DOWN:  bvy = 300.f; bx = pos.x + size.x / 2.f; by = pos.y + size.y; break;
+            case Direction::UP:    bvy = -300.f; bx = pos.x + size.x / 2.f; by = pos.y;          break;
+            }
+
+            shoot.push_back(new Shoot(bx, by, bvx, bvy, ShootType::Player));
+            shootCooldown = 0.3f;
+        }
+    }
 
     // Récupérer position et taille
     posx = rect.getPosition().x + 15.f; // offset hitbox comme dans Render
@@ -385,7 +404,7 @@ void PNJ::SetWaypoints(std::vector<sf::Vector2f> waypoints) {
         rect.setPosition(m_waypoints[0]);
 }
 
-void PNJ::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks) {
+void PNJ::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks, std::vector<Shoot*>& shoot, bool canShoot) {
     if (m_waypoints.size() < 2) return;
 
     sf::Vector2f target = m_waypoints[m_currentWaypoint];

@@ -1,3 +1,2 @@
-﻿  NPC.cpp
-C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\NPC.cpp(59,35): warning C4834: abandon de la valeur de retour de la fonction avec l’attribut [[nodiscard]]
+﻿  Entity.cpp
   EVA.vcxproj -> C:\Users\theob\Documents\GitHub\EVA\EVA\x64\Debug\EVA.exe

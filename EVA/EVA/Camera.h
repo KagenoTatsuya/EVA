@@ -22,7 +22,6 @@ private:
     deadzoneX = 150.f;    // grande zone morte, camera peu reactive
     */
 
-   
 
 public:
 
@@ -31,8 +30,10 @@ public:
     Camera();
     Camera(float screenW, float screenH, float levelW, float levelH);
 
+    void ForceCenter(sf::Vector2f pos);
     void Update(float playerX, float playerY, float dt);
     void SetCeilingMode(bool active);  
+    void SetZoom(float zoom) { view.setSize(sf::Vector2(screenW * zoom, screenH * zoom)); }
     
     sf::View GetView() const { return view; }
 

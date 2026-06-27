@@ -50,6 +50,11 @@ void Camera::Update(float playerX, float playerY, float dt) {
     newY = std::clamp(newY, screenH / 2.f, levelH);
     view.setCenter(sf::Vector2f(newX, newY));
 }
+
 void Camera::SetCeilingMode(bool active) {
     m_ceilingMode = active;
+}
+
+void Camera::ForceCenter(sf::Vector2f pos) {
+    view.setCenter(pos);
 }

@@ -10,10 +10,12 @@
 #include "EndMenu.h"
 #include "Game.h"
 #include "SoundManager.h"
+#include "Shoot.h"
 #include "StartMenu.h"
 #include "Level.h"
+#include "ChooseGame.h"
 
-#define LEVEL_NUMBER 2
+#define LEVEL_NUMBER 3
 
 int main() {
 
@@ -31,26 +33,23 @@ int main() {
     std::cout << "Shaders OK" << std::endl;
 
     // Limite le framerate pour éviter une utilisation CPU/GPU excessive
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(120);
 
     Game game(window.getSize());
     Input input;
     std::vector<Level*> levels;
-    levels.push_back(new Level("Level1.txt"));
-    for (int i = 1; i < LEVEL_NUMBER; i++) {
-        levels.push_back(nullptr);
-    }
-    for (int i = 1; i < levels.size(); i++) {
-        if (levels[i] == nullptr) {
-            levels[i] = new Level(levels[i - 1]->GetNextLevel());
-        }
-    }
+    levels.push_back(new Level("Level1.txt"));   // index 0 — TPS
+    levels.push_back(new Level("Level2.txt"));   // index 1 — Survival
+    levels.push_back(new Level("Level3.txt"));   // index 2 — Battle
 
     StartMenu* startmenu = new StartMenu();
     EndMenu* endmenu = new EndMenu();
     Button* letscontinue = new Continue();
     Button* exit = new Exit();
     Button* start = new Start();
+    Button* zombie = new Start();
+    Button* battle = new Start();
+    ChooseGame* choose = new ChooseGame();
     SoundManager* soundManager = new SoundManager();
     Parallax* parallax = new Parallax(1920, 1080.f);
     Camera* camera = new Camera(1600.0f, 800.0f, 800.f, 1280.f);
@@ -71,6 +70,7 @@ int main() {
     float gameTime = 0.0f;
     float dt = 0.0f;
     std::vector<sf::Event> events;
+    std::vector<Shoot*> shoot;
 
     // Boucle principale
     while (window.isOpen()) {
@@ -91,6 +91,14 @@ int main() {
                 if (!isRunning) {
                     if (start->GetPosX() <= static_cast<float>(mousePos.x) && start->GetRightX() >= static_cast<float>(mousePos.x) &&
                         start->GetPosY() <= static_cast<float>(mousePos.y) && start->GetBottomY() >= static_cast<float>(mousePos.y)) {
+                        isRunning = true;
+                    }
+                    else if (zombie->GetPosX() <= static_cast<float>(mousePos.x) && zombie->GetRightX() >= static_cast<float>(mousePos.x) &&
+                        zombie->GetPosY() <= static_cast<float>(mousePos.y) && zombie->GetBottomY() >= static_cast<float>(mousePos.y)) {
+                        isRunning = true;
+                    }
+                    else if (battle->GetPosX() <= static_cast<float>(mousePos.x) && battle->GetRightX() >= static_cast<float>(mousePos.x) &&
+                        battle->GetPosY() <= static_cast<float>(mousePos.y) && battle->GetBottomY() >= static_cast<float>(mousePos.y)) {
                         isRunning = true;
                     }
                     else if (exit->GetPosX() <= static_cast<float>(mousePos.x) && exit->GetRightX() >= static_cast<float>(mousePos.x) &&
@@ -121,11 +129,11 @@ int main() {
 
         game.Update(isRunning, endSim, /*isPause,*/ dt, now,
             events, levels, window, parallax, camera, cameramenu, *soundManager,
-            start, exit, letscontinue, player);
+            start, exit, letscontinue, zombie, battle, player, choose, shoot);
 
         // Draw the sprite
         game.Render(levels, window, parallax, camera, cameramenu, startmenu, endmenu,/* pause,*/
-            start, exit, letscontinue, player);
+            start, exit, letscontinue, zombie, battle, player, choose, shoot);
 
         //player->Render(&window);
 
@@ -142,8 +150,17 @@ int main() {
     delete startmenu; startmenu = nullptr;
     delete start; start = nullptr;
     delete exit; exit = nullptr;
+    delete zombie; zombie = nullptr;
+    delete battle; battle = nullptr;
+    delete choose; choose = nullptr;
     delete letscontinue; letscontinue = nullptr;
     delete endmenu; endmenu = nullptr;
+    for (int i = 0; i < shoot.size(); ++i) {
+        if (shoot[i]) {
+            delete shoot[i]; shoot[i] = nullptr;
+        }
+    }
+    shoot.clear();
 
     return 0;
 }

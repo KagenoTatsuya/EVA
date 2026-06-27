@@ -89,3 +89,10 @@ void Level::Update(int currentLvl, int& newLvl, float dt, float now, float playe
         }
     }
 }
+
+void Level::SetOffset(float x, float y) {
+    for (auto* block : blocks) {
+        sf::Vector2f pos = block->rect.getPosition();
+        block->rect.setPosition(sf::Vector2f(pos.x + x, pos.y + y));
+    }
+}

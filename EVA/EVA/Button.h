@@ -27,6 +27,7 @@ public:
 	void UpdateHover(sf::RenderWindow& window, sf::View& uiView);
 	virtual void OnHover() = 0;
 	virtual void OnNormal() = 0;
+	bool IsHovered() const { return isHovered; }
 };
 
 class Exit : public Button {
@@ -71,6 +72,40 @@ class Continue : public Button {
 public:
 	Continue();
 	virtual ~Continue() {};
+	inline float GetPosX() override { return posx; };
+	inline float GetRightX() override { return posx + width; };
+	inline float GetPosY() override { return posy; };
+	inline float GetBottomY() override { return posy + height; };
+	void Render(sf::RenderWindow& window) override;
+	void OnHover() override;
+	void OnNormal() override;
+};
+
+class Zombie : public Button {
+	float posx;
+	float posy;
+	float width;
+	float height;
+public:
+	Zombie();
+	virtual ~Zombie() {};
+	inline float GetPosX() override { return posx; };
+	inline float GetRightX() override { return posx + width; };
+	inline float GetPosY() override { return posy; };
+	inline float GetBottomY() override { return posy + height; };
+	void Render(sf::RenderWindow& window) override;
+	void OnHover() override;
+	void OnNormal() override;
+};
+
+class Battle : public Button {
+	float posx;
+	float posy;
+	float width;
+	float height;
+public:
+	Battle();
+	virtual ~Battle() {};
 	inline float GetPosX() override { return posx; };
 	inline float GetRightX() override { return posx + width; };
 	inline float GetPosY() override { return posy; };

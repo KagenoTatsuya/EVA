@@ -19,6 +19,7 @@ public:
 	Level();
 	Level(std::string path1);
 	~Level();
+	void SetOffset(float x, float y);
 	void Render(sf::RenderTarget& target);
 	void Update(int currentLvl, int& newLvl, float dt, float now, float playerX, float playerY, float playerW, bool& onHZone);
 
