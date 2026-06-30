@@ -34,6 +34,9 @@ class Game {
     DarknessEffect      m_darkness;
     std::vector<PNJ*> m_pnjs;
     std::vector<NPC*>   m_npcs;
+    EnnemiSpawner m_spawner;
+    EnnemiSpawner m_spawner2;
+    std::vector<Ennemi*> m_ennemis;    
     sf::Font            m_font;
     Input               m_input;
     sf::Texture* texture;

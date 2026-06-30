@@ -218,7 +218,9 @@ void Game::Render(std::vector<Level*>& levels,
         levels[currentLvl]->Render(m_sceneTexture);
         player->Render(&m_sceneTexture);
 
-        // ? dans m_sceneTexture, pas window
+        for (auto* e : m_ennemis)
+            e->Render(&m_sceneTexture);
+
         for (auto* s : shoot)
             s->Render(m_sceneTexture);
 
@@ -451,6 +453,22 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
 
         playerPos = player->rect.getPosition();
 
+        // Position de spawn des ennemis
+        float spawnX = 1689.f;
+        float spawnY = 540.f;
+        float spawnXx = -65.f;
+        float spawnYy = 375.f;
+
+        m_spawner.Update(dt, m_ennemis, spawnX, spawnY);
+        m_spawner2.Update(dt, m_ennemis, spawnXx, spawnYy);
+
+        // Update + collisions + cible = joueur pour le pattern Kamikaze
+        sf::Vector2f playerCenter = playerPos + sf::Vector2f(playerSize.x / 2.f, playerSize.y / 2.f);
+        for (Ennemi* e : m_ennemis) {
+            e->Update(dt, playerCenter);
+            e->ResolveCollisions(levels[currentLvl]->GetBlocks());
+        }
+
         for (Shoot* s : shoot) {
             if (s != nullptr) {
                 s->Update(dt, now);
@@ -464,7 +482,6 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
             shoot.end()
         );
 
-        // Même gestion caméra que le TPS
         sf::Vector2f camCenter = camera->GetView().getCenter();
         parallax->Update(camCenter.x, camCenter.y);
         camera->Update(playerPos.x + playerSize.x / 2.f, playerPos.y + playerSize.y / 2.f, dt);
