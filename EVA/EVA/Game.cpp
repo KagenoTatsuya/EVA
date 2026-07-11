@@ -1,7 +1,7 @@
 #include "Game.h"
 #include <fstream>
 #include <string>
-
+#include "PvE.h"
 #include "StartMenu.h"
 #include "EndMenu.h"
 #include "SoundManager.h"
@@ -17,10 +17,13 @@
 #include <iostream>
 
 
+int vie = 3;
+int score = 0;
+
 Game::Game(sf::Vector2u windowSize)
     : newLvl(0), currentLvl(0), gameTime(0), state(MENU),
     m_darkness(windowSize, 250.f, 80.f),
-    m_gameMode(GameMode::TPS)
+    m_gameMode(GameMode::TPS), hud(m_font)
 {
     if (!m_font.openFromFile("assets/fonts/Pixellettersfull-BnJ5.ttf")) {}
 
@@ -92,12 +95,19 @@ Game::~Game() {
     m_npcs.clear();
     for (auto* pnj : m_pnjs) delete pnj;
     m_pnjs.clear();
+    for (auto* p : m_soldatProjectiles) delete p;
+    m_soldatProjectiles.clear();
 }
 
 void Game::SwitchToSurvival(std::vector<Level*>& levels) {
     m_gameMode = GameMode::SURVIVAL;
     currentLvl = 1;
-    // Charge le bg une seule fois
+    m_darkness.setRadius(180.f);
+
+    m_score = 0;
+    m_vies = 3;
+    m_invincibleTimer = 0.f;
+
     delete bg; delete texture;
     texture = new sf::Texture("assets/pictures/Zombie_EVA.png");
     bg = new sf::Sprite(*texture);
@@ -106,14 +116,36 @@ void Game::SwitchToSurvival(std::vector<Level*>& levels) {
     levels[1]->SetOffset(-350.f, -250.f);
 }
 
-void Game::SwitchToBattle() {
+void Game::SwitchToBattle(std::vector<Level*>& levels) {
     m_gameMode = GameMode::BATTLE;
     currentLvl = 2;
+
+    m_score = 0;
+    m_vies = 3;
+    m_invincibleTimer = 0.f;
+
+    for (Soldat* s : m_soldat) delete s;
+    m_soldat.clear();
+
     delete bg; delete texture;
-    texture = new sf::Texture("assets/pictures/Battle_EVA.png");
+    texture = new sf::Texture("assets/pictures/Battle_arene.png");
     bg = new sf::Sprite(*texture);
-    bg->setScale(sf::Vector2f(1.5f, 1.f));
-    bg->setPosition(sf::Vector2f(0.f, 0.f));
+    bg->setScale(sf::Vector2f(1.5f, 1.5f));
+    bg->setPosition(sf::Vector2f(-350.f, -250.f));
+    levels[2]->SetOffset(-355.f, -270.f);
+
+    m_zoneManager.ExtractZonesFromFile("Level3.txt", { {'K', "Zone B"}, {'J', "Zone C"} }, 24.f, { -355.f, -270.f });
+    m_zoneManager.ExtractWaypointsFromFile("Level3.txt", 24.f, { -355.f, -270.f });
+    m_zoneManager.ResetZones();
+
+    // Cache les murs une seule fois : évite de rescanner TOUS les blocks
+    // (y compris les tuiles vides) 34 fois par soldat à chaque frame
+    m_battleWalls.clear();
+    for (Block* b : levels[2]->GetBlocks()) {
+        if (b->GetBlockType() == "MBlock") {
+            m_battleWalls.push_back(b);
+        }
+    }
 }
 
 void Game::SwitchToTPS(Camera* camera) {
@@ -129,7 +161,7 @@ void Game::SwitchToTPS(Camera* camera) {
 void Game::Render(std::vector<Level*>& levels,
     sf::RenderWindow& window, Parallax* parallax, Camera* camera, CameraMenu* cameramenu,
     StartMenu* startmenu, EndMenu* endmenu, Button* start, Button* exit,
-    Button* letscontinue, Button* zombie, Button* battle, Entity* player, ChooseGame* choose, std::vector<Shoot*>& shoot)
+    Button* letscontinue, Button* zombie, Button* arene, Entity* player, ChooseGame* choose, std::vector<Shoot*>& shoot)
 {
     switch (state) {
     case MENU: {
@@ -208,7 +240,7 @@ void Game::Render(std::vector<Level*>& levels,
         window.setView(cameramenu->GetMenuView());
         choose->Render(window);
         zombie->Render(window);
-        battle->Render(window);
+        arene->Render(window);
         break;
     }
     case SURVIVALS: {
@@ -228,8 +260,9 @@ void Game::Render(std::vector<Level*>& levels,
         window.setView(window.getDefaultView());
         m_darkness.Render(window, m_sceneTexture, camera->GetView());
 
-        sf::Sprite sceneSprite(m_sceneTexture.getTexture());
-        window.draw(sceneSprite);
+        /*sf::Sprite sceneSprite(m_sceneTexture.getTexture());
+        window.draw(sceneSprite);*/
+        hud.render(window);
         break;
     }
     case BATTLES: {
@@ -238,15 +271,36 @@ void Game::Render(std::vector<Level*>& levels,
         m_sceneTexture.draw(*bg);
         levels[currentLvl]->Render(m_sceneTexture);
         player->Render(&m_sceneTexture);
-        for (auto* s : shoot)       
-            s->Render(window);
 
+        for (auto* t : m_soldat)
+            t->Render(&m_sceneTexture);
+        
+        for (auto* p : m_soldatProjectiles)
+            p->Render(&m_sceneTexture);
+
+        // Les tirs doivent être dessinés dans la même render target que le reste de la scène
+        for (auto* s : shoot)
+            s->Render(m_sceneTexture);
+
+        // display() DOIT être appelé avant de récupérer la texture pour le sprite
         m_sceneTexture.display();
         window.setView(window.getDefaultView());
-        m_darkness.Render(window, m_sceneTexture, camera->GetView());
 
         sf::Sprite sceneSprite(m_sceneTexture.getTexture());
         window.draw(sceneSprite);
+
+        // Affichage des jauges de capture pour Zone B et Zone C
+        auto& zones = m_zoneManager.GetZones();
+        float gaugeX = 40.f;
+        for (const Zone& zone : zones) {
+            hud.renderZoneGauge(window, zone, { gaugeX, 60.f }, { 40.f, 200.f });
+            gaugeX += 80.f;
+        }
+        break;
+    }
+    case SELECT_PERSO: {
+        window.setView(cameramenu->GetMenuView());
+        m_selectPerso.Render(window);
         break;
     }
     case END:
@@ -262,7 +316,7 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
     std::vector<sf::Event> events, std::vector<Level*>& levels,
     sf::RenderWindow& window, Parallax* parallax, Camera* camera,
     CameraMenu* cameramenu, SoundManager& sound, Button* start,
-    Button* exit, Button* letscontinue, Button* zombie, Button* battle,
+    Button* exit, Button* letscontinue, Button* zombie, Button* arene,
     Entity* player, ChooseGame* choose, std::vector<Shoot*>& shoot)
 {
     switch (state) {
@@ -282,6 +336,8 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
 
             player->Update(dt, window.getSize(), levels[currentLvl]->GetBlocks(), shoot, false);
             playerPos = player->rect.getPosition();
+
+            m_darkness.setPlayerPos(playerPos + sf::Vector2f(player->width / 2.f, player->height / 2.f));
 
             bool ePressed = m_input.checkInteractionPressed();
             sf::Vector2f playerCenter = playerPos + sf::Vector2f(player->width / 2.f, player->height / 2.f);
@@ -326,15 +382,15 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
                 m_hintText->setPosition(sf::Vector2f(screenPos));
             }
 
-            for (auto& b : levels[currentLvl]->GetBlocks()) {
-                if (b->GetBlockType() == "EndBlock") {
-                    sf::FloatRect playerBounds = player->rect.getGlobalBounds();
-                    sf::FloatRect blockBounds = b->rect.getGlobalBounds();
-                    if (playerBounds.findIntersection(blockBounds)) {
-                        SwitchToSurvival(levels);
-                    }
-                }
-            }
+            //for (auto& b : levels[currentLvl]->GetBlocks()) {
+            //    if (b->GetBlockType() == "EndBlock") {
+            //        sf::FloatRect playerBounds = player->rect.getGlobalBounds();
+            //        sf::FloatRect blockBounds = b->rect.getGlobalBounds();      //==========================================END BLOCK FOIREUX===============================================
+            //        if (playerBounds.findIntersection(blockBounds)) {
+            //            SwitchToSurvival(levels);
+            //        }
+            //    }
+            //}
 
             sf::Vector2f camCenter = camera->GetView().getCenter();
             parallax->Update(camCenter.x, camCenter.y);
@@ -351,8 +407,7 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
                 currentLvl = newLvl;
 
             player->Update(dt, window.getSize(), levels[currentLvl]->GetBlocks(), shoot, true);
-            m_darkness.setPlayerPos(player->rect.getPosition()
-                + sf::Vector2f(player->width / 2.f, player->height / 2.f));
+            m_darkness.setPlayerPos(player->rect.getPosition() + sf::Vector2f(player->width / 2.f, player->height / 2.f));
 
             playerPos = player->rect.getPosition();
 
@@ -361,7 +416,6 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
                     s->Update(dt, now);
                 }
             }
-
             shoot.erase(
                 std::remove_if(shoot.begin(), shoot.end(), [](Shoot* s) {
                     return !s->alive;
@@ -377,7 +431,6 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
         if (isEnd) state = END;
         break;
     }
-
     case CHOOSE_YESNO: {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::O)) {
             if (m_activeNPC) m_activeNPC->CloseDialogue();
@@ -393,7 +446,7 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
     case CHOOSE_MODE: {
         sf::View menuview = cameramenu->GetMenuView();
         zombie->UpdateHover(window, menuview);
-        battle->UpdateHover(window, menuview);
+        arene->UpdateHover(window, menuview);
 
         sf::Vector2f playerPos = player->rect.getPosition();
         sf::Vector2f playerSize = player->rect.getSize();
@@ -425,10 +478,10 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
                         m_activeNPC = nullptr;
                         state = SURVIVALS;
                     }
-                    else if (battle->IsHovered()) {
-                        SwitchToBattle();   
+                    else if (arene->IsHovered()) {
+                        SwitchToBattle(levels);   
                         player->rect.setPosition(sf::Vector2f(1057.f, 768.f));
-                        camera->SetZoom(1.5f);
+                        camera->SetZoom(1.44f);
                         camera->Update(1057.f, 768.f, 0.f);
                         m_activeNPC = nullptr;
                         state = BATTLES;
@@ -448,8 +501,7 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
         camera->SetCeilingMode(onHZone);
 
         player->Update(dt, window.getSize(), levels[currentLvl]->GetBlocks(), shoot, true);
-        m_darkness.setPlayerPos(player->rect.getPosition()
-            + sf::Vector2f(player->rect.getSize().x / 2.f, player->rect.getSize().y / 2.f));
+        m_darkness.setPlayerPos(player->rect.getPosition() + sf::Vector2f(player->rect.getSize().x / 2.f, player->rect.getSize().y / 2.f));
 
         playerPos = player->rect.getPosition();
 
@@ -469,18 +521,47 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
             e->ResolveCollisions(levels[currentLvl]->GetBlocks());
         }
 
+        PvE::ResolveEnnemiCollisions(m_ennemis);
+
         for (Shoot* s : shoot) {
             if (s != nullptr) {
                 s->Update(dt, now);
             }
         }
 
-        shoot.erase(
-            std::remove_if(shoot.begin(), shoot.end(), [](Shoot* s) {
-                return !s->alive;
-                }),
-            shoot.end()
-        );
+        for (auto& ev : events) {
+            if (auto* mb = ev.getIf<sf::Event::MouseButtonPressed>()) {
+                if (mb->button == sf::Mouse::Button::Left) {
+                    sf::View currentView = camera->GetView();
+                    Shoot::ShootVersSouris(shoot, *player, window, currentView);
+                }
+            }
+        }
+
+        // Score : chaque ennemi tué rapporte des points
+        PvE::handleCollisionsJoueurShoot(shoot, m_ennemis, m_score);
+
+        // Vies : décrément uniquement si le joueur n'est pas en invincibilité temporaire
+        if (m_invincibleTimer > 0.f) {
+            m_invincibleTimer -= dt;
+        }
+        else {
+            int viesAvant = m_vies;
+            PvE::handleCollisionsJoueurEnnemis(player, m_ennemis, m_vies);
+            if (m_vies < viesAvant) {
+                m_invincibleTimer = 1.0f; // 1 seconde d'invincibilité après un coup
+            }
+        }
+
+        PvE::cleanupEnnemis(m_ennemis);
+
+        hud.setScore(m_score);
+        hud.setVies(m_vies);
+
+        // Game over si le joueur n'a plus de vies
+        if (m_vies <= 0) {
+            isEnd = true;
+        }
 
         sf::Vector2f camCenter = camera->GetView().getCenter();
         parallax->Update(camCenter.x, camCenter.y);
@@ -500,10 +581,82 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
         camera->SetCeilingMode(onHZone);
 
         player->Update(dt, window.getSize(), levels[currentLvl]->GetBlocks(), shoot, true);
-        m_darkness.setPlayerPos(player->rect.getPosition()
-            + sf::Vector2f(player->rect.getSize().x / 2.f, player->rect.getSize().y / 2.f));
 
         playerPos = player->rect.getPosition();
+
+        // Position de spawn des ennemis
+        float spawnX = 1784.f;
+        float spawnY = 475.f;
+        float spawnXx = -229.f;
+        float spawnYy = 488.f;  
+
+        m_spawnerS.Update(dt, m_soldat, spawnX, spawnY);
+        m_spawnerS2.Update(dt, m_soldat, spawnXx, spawnYy);
+
+        AssignSoldatRoles(m_soldat, m_zoneManager, Team::Orange);
+        AssignSoldatRoles(m_soldat, m_zoneManager, Team::Bleu);
+
+        sf::Vector2f playerCenter = playerPos + sf::Vector2f(playerSize.x / 2.f, playerSize.y / 2.f);
+
+
+        for (Soldat* t : m_soldat) {
+            if (!t->alive) continue;
+
+            SoldatBlackboard bb;
+            bb.self = t;
+            bb.allSoldats = &m_soldat;
+            bb.zoneManager = &m_zoneManager;
+            bb.dt = dt;
+            bb.projectiles = &m_soldatProjectiles;
+
+            m_soldatAI->Tick(bb);
+
+            t->Update(dt, bb.moveTarget, &m_battleWalls);        // <- cache au lieu de GetBlocks()
+            t->ResolveCollisionsSold(m_battleWalls);              // <- idem
+        }
+        // Mise à jour des projectiles et application des dégâts à l'impact
+        for (SoldatProjectile* p : m_soldatProjectiles) {
+            if (!p->alive) continue;
+            p->Update(dt);
+
+            for (Soldat* target : m_soldat) {
+                if (!target->alive || target->GetTeam() == p->team) continue;
+                sf::Vector2f d = target->rect.getPosition() - p->pos;
+                float distSq = d.x * d.x + d.y * d.y;
+                if (distSq <= 20.f * 20.f) { // rayon de collision du projectile
+                    target->TakeDamage(p->damage);
+                    p->alive = false;
+                    break;
+                }
+            }
+            // Le projectile s'arrête (disparaît) en touchant un mur
+            if (p->alive) {
+                for (Block* b : m_battleWalls) { // utilise le cache déjà proposé, sinon levels[currentLvl]->GetBlocks() filtré sur "MBlock"
+                    sf::FloatRect projBounds(p->pos - sf::Vector2f(4.f, 4.f), sf::Vector2f(8.f, 8.f)); // ajuste selon la taille réelle du shape
+                    if (projBounds.findIntersection(b->rect.getGlobalBounds())) {
+                        p->alive = false;
+                        break;
+                    }
+                }
+            }
+            // Projectile sorti de la carte = mort
+            if (p->pos.x < -500.f || p->pos.x > 2200.f || p->pos.y < -500.f || p->pos.y > 2200.f) {
+                p->alive = false;
+            }
+        }
+
+        m_soldatProjectiles.erase(
+            std::remove_if(m_soldatProjectiles.begin(), m_soldatProjectiles.end(),
+                [](SoldatProjectile* p) {
+                    if (!p->alive) { delete p; return true; }
+                    return false;
+                }),
+            m_soldatProjectiles.end()
+        );
+
+        PvE::ResolveSoldatCollisions(m_soldat);
+        m_zoneManager.Update(dt, m_soldat);
+        PvE::cleanupSoldat(m_soldat);
 
         for (Shoot* s : shoot) {
             if (s != nullptr) {
@@ -511,16 +664,44 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
             }
         }
 
-        shoot.erase(
-            std::remove_if(shoot.begin(), shoot.end(), [](Shoot* s) {
-                return !s->alive;
-                }),
-            shoot.end()
-        );
+        for (auto& ev : events) {
+            if (auto* mb = ev.getIf<sf::Event::MouseButtonPressed>()) {
+                if (mb->button == sf::Mouse::Button::Left) {
+                    sf::View currentView = camera->GetView();
+                    Shoot::ShootVersSouris(shoot, *player, window, currentView);
+                }
+            }
+        }
+
+        // Score : chaque ennemi tué rapporte des points
+        PvE::handleCollisionsJoueurShootS(shoot, m_soldat, m_score);
+
+        // Vies : décrément uniquement si le joueur n'est pas en invincibilité temporaire
+        if (m_invincibleTimer > 0.f) {
+            m_invincibleTimer -= dt;
+        }
+        else {
+            int viesAvant = m_vies;
+            PvE::handleCollisionsJoueurSoldat(player, m_soldat, m_vies);
+            if (m_vies < viesAvant) {
+                m_invincibleTimer = 1.0f; // 1 seconde d'invincibilité après un coup
+            }
+        }
+
+        PvE::cleanupSoldat(m_soldat);
+
+        hud.setScore(m_score);
+        hud.setVies(m_vies);
+
+        // Game over si le joueur n'a plus de vies
+        if (m_vies <= 0) {
+            isEnd = true;
+        }
 
         sf::Vector2f camCenter = camera->GetView().getCenter();
         parallax->Update(camCenter.x, camCenter.y);
         camera->Update(playerPos.x + playerSize.x / 2.f, playerPos.y + playerSize.y / 2.f, dt);
+
         gameTime = now;
         if (isEnd) state = END;
         break;
@@ -528,6 +709,9 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
     case END: {
         if (!isEnd) {
             sound.StopMusic();
+            SwitchToTPS(camera);
+            player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
+            camera->Update(690.f, 1178.f, 0.f);
             state = RUNNING;
         }
         if (!isRunning && !isEnd) {
@@ -542,6 +726,16 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
         exit->UpdateHover(window, menuview);
 
         if (isRunning) {
+            state = SELECT_PERSO;
+            m_selectPerso.Reset();
+        }
+        break;
+    }
+    case SELECT_PERSO: {
+        sf::View menuview = cameramenu->GetMenuView();
+        m_selectPerso.Update(window, menuview, events);
+        if (m_selectPerso.IsConfirmed()) {
+            static_cast<Joueur*>(player)->ChangeSpriteSheet(m_selectPerso.GetSelectedSpriteSheet());
             state = RUNNING;
         }
         break;

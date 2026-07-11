@@ -1,10 +1,10 @@
 #include "Deplacement.h"
 
 sf::Vector2f Deplacement::getPointArrive(sf::Vector2f depart, sf::Vector2f arrivee, float vitesse,
-    float width, float height) {
-    if (arrivee.x < 0 || arrivee.x > width || arrivee.y < 0 || arrivee.y > height) {
+    float minX, float minY, float width, float height) {
+    if (arrivee.x < minX || arrivee.x > width || arrivee.y < minY || arrivee.y > height) {
         EquationDroite equationDroite = calculEquationDroite(depart, arrivee);
-        arrivee = equationDroite.trouverIntersectionAvecBord(arrivee, width, height);
+        arrivee = equationDroite.trouverIntersectionAvecBord(arrivee, minX, minY, width, height);
     }
 
     float xd = arrivee.x - depart.x;

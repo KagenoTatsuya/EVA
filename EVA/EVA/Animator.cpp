@@ -16,9 +16,8 @@ bool Animator::LoadTexture(const std::string& path) {
     return true;
 }
 
-void Animator::Play(const std::string& name) {
-    if (currentAnim == name) {
-        // Si l'animation est terminee, la relancer
+void Animator::Play(const std::string& name, bool force) {
+    if (currentAnim == name && !force) {
         if (finished) {
             currentFrame = 0;
             timer = 0.f;

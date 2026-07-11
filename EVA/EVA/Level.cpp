@@ -27,16 +27,16 @@ Level::Level(std::string path1) : nextLevel(""), prevLevel("") {
             for (int i = 0; i < line.size(); i++) {
                 std::string character(1, line[i]);
                 if (character == "X") {
-                    blocks.push_back(new MBlock(i * 48.f, lineNumber * 48.f));
+                    blocks.push_back(new MBlock(i * 24.f, lineNumber * 24.f));
                 }
                 else if (character == "F") {
-                    blocks.push_back(new EndBlock(i * 48.f, lineNumber * 48.f));
+                    blocks.push_back(new EndBlock(i * 24.f, lineNumber * 24.f));
                 }
                 else if (character == "I") {
                     blocks.push_back(new Item(i * 48.f, lineNumber * 48.f));
                 }
                 else if (character == "H") {
-                    blocks.push_back(new HBlock(i * 48.f, lineNumber * 48.f));
+                    blocks.push_back(new HBlock(i * 24.f, lineNumber * 24.f));
                 }
                 // '_' et 'W' ignorés pour l'instant
             }

@@ -6,7 +6,12 @@
 #include "Input.h"
 #include "ChooseGame.h"
 #include "Survival.h"
+#include "Battle.h"
 #include "Shoot.h"
+#include "HUD.h"
+#include "ZoneManager.h"
+#include "SoldatAI.h"
+#include "SelectPerso.h"
 
 class StartMenu;
 class EndMenu;
@@ -24,8 +29,12 @@ class NPC;
 class Input;
 class ChooseGame;
 class Survival;
+class HUD;
+class SelectPerso;
+
 
 class Game {
+private:
     int newLvl;
     int currentLvl;
     float gameTime;
@@ -36,11 +45,20 @@ class Game {
     std::vector<NPC*>   m_npcs;
     EnnemiSpawner m_spawner;
     EnnemiSpawner m_spawner2;
-    std::vector<Ennemi*> m_ennemis;    
+    std::vector<Ennemi*> m_ennemis; 
+    SoldatSpawnerB m_spawnerS;
+    SoldatSpawnerO m_spawnerS2;
+    std::vector<Soldat*> m_soldat;
     sf::Font            m_font;
     Input               m_input;
     sf::Texture* texture;
     sf::Sprite* bg;
+    HUD hud;
+    ZoneManager m_zoneManager;
+    BTNodePtr   m_soldatAI = BuildSoldatBehaviorTree();
+    SelectPerso m_selectPerso;
+    std::vector<SoldatProjectile*> m_soldatProjectiles;
+    std::vector<Block*> m_battleWalls; // sous-liste des MBlock uniquement, pour le mode Battle
 
     // Mode de jeu
     enum class GameMode {
@@ -55,11 +73,16 @@ class Game {
         SURVIVALS,
         BATTLES,
         END,
+        SELECT_PERSO,
         CHOOSE_YESNO,   // discussion avec le NPC, attend O/N
         CHOOSE_MODE,    // écran ChooseGame avec boutons Zombie/Battle
     } state;
 
     NPC* m_activeNPC = nullptr;
+
+    int m_vies = 3;
+    int m_score = 0;
+    float m_invincibleTimer = 0.f; // pour éviter de perdre 3 vies en une collision qui dure plusieurs frames
 
 public:
 
@@ -68,17 +91,17 @@ public:
 
     // Switch vers le mode platformer (appelé quand le joueur passe la porte)
     void SwitchToSurvival(std::vector<Level*>& levels);
-    void SwitchToBattle();
+    void SwitchToBattle(std::vector<Level*>& levels);
     void SwitchToTPS(Camera* camera);
 
     void Update(bool& isRunning, bool& isEnd, float dt, float now,
         std::vector<sf::Event> events, std::vector<Level*>& levels,
         sf::RenderWindow& window, Parallax* parallax, Camera* camera,
         CameraMenu* cameramenu, SoundManager& sound, Button* start,
-        Button* exit, Button* letscontinue, Button* zombie, Button* battle, Entity* player, ChooseGame* choose, std::vector<Shoot*>& shoot);
+        Button* exit, Button* letscontinue, Button* zombie, Button* arene, Entity* player, ChooseGame* choose, std::vector<Shoot*>& shoot);
 
     void Render(std::vector<Level*>& levels,
         sf::RenderWindow& window, Parallax* parallax, Camera* camera,
         CameraMenu* cameramenu, StartMenu* startmenu, EndMenu* endmenu,
-        Button* start, Button* exit, Button* letscontinue, Button* zombie, Button* battle, Entity* player, ChooseGame* choose, std::vector<Shoot*>& shoot);
+        Button* start, Button* exit, Button* letscontinue, Button* zombie, Button* arene, Entity* player, ChooseGame* choose, std::vector<Shoot*>& shoot);
 };

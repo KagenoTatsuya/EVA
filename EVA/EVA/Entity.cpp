@@ -3,6 +3,8 @@
 #include <cmath>
 #include <cstdlib>
 #include <cmath>
+#include "Shoot.h"
+
 #define _USE_MATHS_DEFINE
 
 // ===== Entity =====
@@ -120,7 +122,7 @@ void Joueur::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& bloc
     vy = (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) - sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z)) * 200.f;
 
 
-    // Choix de l’animation selon direction
+    // Choix de l'animation selon direction
     if (vy > 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
         lastDirection = Direction::DOWN;
         animator.Play("down");
@@ -154,8 +156,21 @@ void Joueur::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& bloc
         }
     }
 
-    // Déplacement
-    rect.move(sf::Vector2(vx * dt, vy * dt));
+    // Plafonne le dt utilisé pour le mouvement afin d'éviter le tunneling
+    // en cas de pic de lag (un dt trop grand ferait sauter le joueur par-dessus un mur)
+    float safeDt = std::min(dt, 1.f / 30.f);
+
+    // Récupérer position et taille (offset hitbox comme dans Render)
+    posx = rect.getPosition().x + 15.f;
+    posy = rect.getPosition().y + 13.f;
+
+    // Déplacement + collision séparés PAR AXE (X puis Y)
+    // -> empêche le joueur de glisser à travers un coin ou un mur fin
+    posx += vx * safeDt;
+    ResolveCollisionsAxis(blocks, true);   // résolution axe X
+
+    posy += vy * safeDt;
+    ResolveCollisionsAxis(blocks, false);  // résolution axe Y
 
     if (canShoot) {
         shootCooldown = std::max(0.f, shootCooldown - dt);
@@ -178,22 +193,55 @@ void Joueur::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& bloc
         }
     }
 
-    // Récupérer position et taille
-    posx = rect.getPosition().x + 15.f; // offset hitbox comme dans Render
-    posy = rect.getPosition().y + 13.f;
-
-    // Résoudre les collisions
-    ResolveCollisions(blocks);
-
-    std::cout << posx << "_" << posy << std::endl;        // Coordonée joueur 
-
     // Réappliquer la position corrigée sur rect
     rect.setPosition(sf::Vector2f(posx - 15.f, posy - 13.f));
+
+    std::cout << posx << "_" << posy << std::endl;        // Coordonée joueur 
 
     // Mise à jour animation
     animator.Update(dt);
     if (animator.sprite)
         animator.sprite->setPosition(rect.getPosition());
+}
+
+void Joueur::ResolveCollisionsAxis(std::vector<Block*>& blocks, bool horizontal) {
+    for (auto* bl : blocks) {
+        if (bl->GetBlockType() != "MBlock") continue;
+
+        float bL = bl->GetPosX();
+        float bR = bl->GetRightX();
+        float bT = bl->GetPosY();
+        float bB = bl->GetBottomY();
+
+        float pL = posx;
+        float pR = posx + width;
+        float pT = posy;
+        float pB = posy + height;
+
+        bool overlapX = pR > bL && pL < bR;
+        bool overlapY = pB > bT && pT < bB;
+
+        if (!overlapX || !overlapY) continue;
+
+        if (horizontal) {
+            float penLeft = pR - bL;   // vient de gauche
+            float penRight = bR - pL;  // vient de droite
+            if (penLeft < penRight)
+                posx = bL - width;
+            else
+                posx = bR;
+            vx = 0.f;
+        }
+        else {
+            float penTop = pB - bT;    // vient du haut
+            float penBot = bB - pT;    // vient du bas
+            if (penTop < penBot)
+                posy = bT - height;
+            else
+                posy = bB;
+            vy = 0.f;
+        }
+    }
 }
 
 void Joueur::Render(sf::RenderTarget* target) {
@@ -256,6 +304,15 @@ void Joueur::ResolveCollisions(std::vector<Block*>& blocks) {
             vy = 0;
         }
     }
+}
+
+void Joueur::ChangeSpriteSheet(const std::string& spriteSheet) {
+    if (!animator.LoadTexture(spriteSheet)) {
+        std::cout << "Erreur chargement spritesheet\n";
+        return;
+    }
+    std::string current = animator.GetCurrent(); // ex: "downIdle"
+    animator.Play(current.empty() ? "downIdle" : current, true); // force = true -> resynchro le rect sur la nouvelle texture
 }
 
 //=================================================================================================================================================

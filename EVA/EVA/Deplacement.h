@@ -11,27 +11,27 @@ struct EquationDroite {
         : pente(p), ordonneeOrigine(o), type(t) {
     }
 
-    sf::Vector2f trouverIntersectionAvecBord(sf::Vector2f arrivee, float width, float height) {
+    sf::Vector2f trouverIntersectionAvecBord(sf::Vector2f arrivee, float minX, float minY, float width, float height) {
         sf::Vector2f point = arrivee;
         if (type == 'x') {
             point.x = ordonneeOrigine;
-            point.y = (arrivee.y < 0) ? 0.f : height;
+            point.y = (arrivee.y < minY) ? minY : height;
         }
         else if (type == 'y') {
             point.y = ordonneeOrigine;
-            point.x = (arrivee.x < 0) ? 0.f : width;
+            point.x = (arrivee.x < minX) ? minX : width;
         }
         else {
-            if (arrivee.x < 0) {
-                point.x = 0.f;
+            if (arrivee.x < minX) {
+                point.x = minX;
                 point.y = pente * point.x + ordonneeOrigine;
             }
             else if (arrivee.x > width) {
                 point.x = width;
                 point.y = pente * point.x + ordonneeOrigine;
             }
-            else if (arrivee.y < 0) {
-                point.y = 0.f;
+            else if (arrivee.y < minY) {
+                point.y = minY;
                 point.x = (point.y - ordonneeOrigine) / pente;
             }
             else if (arrivee.y > height) {
@@ -46,7 +46,7 @@ struct EquationDroite {
 class Deplacement {
 public:
     static sf::Vector2f getPointArrive(sf::Vector2f depart, sf::Vector2f arrivee, float vitesse,
-        float width, float height);
+        float minX, float minY, float width, float height);
 private:
     static sf::Vector2f ajoutDeplacementToPosition(sf::Vector2f depart, sf::Vector2f arrivee,
         sf::Vector2f deplacement, float vitesse);

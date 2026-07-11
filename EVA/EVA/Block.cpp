@@ -1,7 +1,7 @@
 #include "Block.h"
 
 Block::Block()
-    : width(48.f), height(48.f), blockType("Block"),
+    : width(24.f), height(24.f), blockType("Block"),
     isNextLevel(false), isPrevLevel(false), isUse(false)
 {
     rect = sf::RectangleShape(sf::Vector2f(width, height));
@@ -21,8 +21,8 @@ MBlock::MBlock(float posx, float posy) {
 }
 
 EndBlock::EndBlock(float posx, float posy) {
-    width = 64.f;
-    height = 64.f;
+    width = 32.f;
+    height = 32.f;
     rect.setSize(sf::Vector2f(width, height));
     rect.setFillColor(sf::Color::Transparent);
     //rect.setOutlineThickness(2.f);

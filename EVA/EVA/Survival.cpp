@@ -96,7 +96,7 @@ void Ennemi::Update(float dt, sf::Vector2f cible) {
 
     switch (pattern) {
     case Pattern::Kamikaze: {
-        pos = Deplacement::getPointArrive(pos, cible, 100.f * dt, maxX, maxY);
+        pos = Deplacement::getPointArrive(pos, cible, 100.f * dt, minX, minY, maxX, maxY);
         break;
     }
     }
@@ -150,6 +150,8 @@ Ennemi::~Ennemi() {
 void Ennemi::ResolveCollisions(std::vector<Block*>& blocks) {
     sf::FloatRect bounds = rect.getGlobalBounds();
     for (Block* b : blocks) {
+        if (b->GetBlockType() != "MBlock") continue; // ne collisionne qu'avec les vrais murs
+
         sf::FloatRect bb = b->rect.getGlobalBounds();
         if (auto overlap = bounds.findIntersection(bb)) {
             float overlapX = std::min(bounds.position.x + bounds.size.x, bb.position.x + bb.size.x)

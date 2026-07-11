@@ -21,7 +21,7 @@ void Button::LoadTextures(const std::string& normalPath, const std::string& hove
     if (!textureNormal.loadFromFile(normalPath))
         std::cerr << "Erreur texture normale: " << normalPath << std::endl;
     if (!textureHover.loadFromFile(hoverPath))
-        std::cerr << "Erreur texture hover: " << hoverPath << std::endl;
+        std::cerr << "Erreur texture normale: " << hoverPath << std::endl;
 
     // Appliquer la texture normale par défaut
     button.setTexture(&textureNormal);
@@ -43,20 +43,20 @@ void Button::UpdateHover(sf::RenderWindow& window, sf::View& menuview) {
 
 
 Exit::Exit() {
-    posx = 905.f;
-    posy = 920.f;
-    width = 120.f;
-    height = 70.f;
-    if (!font.openFromFile("OpenSans-VariableFont_wdth,wght.ttf"))
+    posx = 1305.f;
+    posy = 780.f;
+    width = 180.f;
+    height = 160.f;
+    if (!font.openFromFile("assets/fonts/arial.ttf"))
         std::cerr << "Can't find the font file" << std::endl;
 
     button.setPosition(sf::Vector2f(posx, posy));
     button.setSize(sf::Vector2f(width, height));
-    button.setFillColor(sf::Color::Red);
+    //button.setFillColor(sf::Color::Red);
 
-    //LoadTextures("assets/pictures/menus/BUTTON_EXIT.png", "assets/pictures/menus/BUTTON_EXIT_PRESSED.png");
+    LoadTextures("assets/pictures/menus/Button_exit.png", "assets/pictures/menus/Button_exit2.png");
 
-    SetText("Exit", posx, posy, width, height, font);
+    SetText("", posx, posy, width, height, font);
 }
 
 void Exit::Render(sf::RenderWindow& window) {
@@ -74,20 +74,20 @@ void Exit::OnNormal() {
 
 
 Start::Start() {
-    posx = 905.f;
-    posy = 740.f;
-    width = 120.f;
-    height = 70.f;
-    if (!font.openFromFile("OpenSans-VariableFont_wdth,wght.ttf"))
+    posx = 405.f;
+    posy = 720.f;
+    width = 280.f;
+    height = 270.f;
+    if (!font.openFromFile("assets/fonts/arial.ttf"))
         std::cerr << "Can't find the font file" << std::endl;
 
     button.setPosition(sf::Vector2f(posx, posy));
     button.setSize(sf::Vector2f(width, height));
-    button.setFillColor(sf::Color::Green);
+    //button.setFillColor(sf::Color::Green);
 
-    //LoadTextures("assets/pictures/menus/BUTTON_START.png", "assets/pictures/menus/BUTTON_START_PRESSED.png");
+    LoadTextures("assets/pictures/menus/Button_start.png", "assets/pictures/menus/Button_start2.png");
 
-    SetText("Start", posx, posy, width, height, font);
+    SetText("", posx, posy, width, height, font);
 }
 
 void Start::Render(sf::RenderWindow& window) {
@@ -108,14 +108,14 @@ Continue::Continue() {
     posy = 740.f;
     width = 120.f;
     height = 70.f;
-    if (!font.openFromFile("OpenSans-VariableFont_wdth,wght.ttf"))
+    if (!font.openFromFile("assets/fonts/arial.ttf"))
         std::cerr << "Can't find the font file" << std::endl;
 
     button.setPosition(sf::Vector2f(posx, posy));
     button.setSize(sf::Vector2f(width, height));
     button.setFillColor(sf::Color::Green);
 
-    //LoadTextures("assets/pictures/menus/BUTTON_CONTINUE.png", "assets/pictures/menus/BUTTON_CONTINUE_PRESSED.png");
+    LoadTextures("assets/pictures/menus/Button_continue.png", "assets/pictures/menus/Button_continue2.png");
 
     SetText("Continue", posx, posy, width, height, font);
 }
@@ -135,20 +135,20 @@ void Continue::OnNormal() {
 
 
 Zombie::Zombie() {
-    posx = 895.f;
-    posy = 740.f;
-    width = 120.f;
-    height = 70.f;
-    if (!font.openFromFile("OpenSans-VariableFont_wdth,wght.ttf"))
+    posx = 405.f;
+    posy = 540.f;
+    width = 300.f;
+    height = 300.f;
+    if (!font.openFromFile("assets/fonts/arial.ttf"))
         std::cerr << "Can't find the font file" << std::endl;
 
     button.setPosition(sf::Vector2f(posx, posy));
     button.setSize(sf::Vector2f(width, height));
-    button.setFillColor(sf::Color::Magenta);
+    //button.setFillColor(sf::Color::Magenta);
 
-    //LoadTextures("assets/pictures/menus/BUTTON_START.png", "assets/pictures/menus/BUTTON_START_PRESSED.png");
+    LoadTextures("assets/pictures/menus/Button_zombi.png", "assets/pictures/menus/Button_zombi2.png");
 
-    SetText("Zombie", posx, posy, width, height, font);
+    SetText("", posx, posy, width, height, font);
 }
 
 void Zombie::Render(sf::RenderWindow& window) {
@@ -165,32 +165,32 @@ void Zombie::OnNormal() {
 }
 
 
-Battle::Battle() {
-    posx = 905.f;
-    posy = 740.f;
-    width = 120.f;
-    height = 70.f;
-    if (!font.openFromFile("OpenSans-VariableFont_wdth,wght.ttf"))
+Arene::Arene() {
+    posx = 1305.f;
+    posy = 540.f;
+    width = 300.f;
+    height = 300.f;
+    if (!font.openFromFile("assets/fonts/arial.ttf"))
         std::cerr << "Can't find the font file" << std::endl;
 
     button.setPosition(sf::Vector2f(posx, posy));
     button.setSize(sf::Vector2f(width, height));
-    button.setFillColor(sf::Color::Blue);
+    //button.setFillColor(sf::Color::Blue);
 
-    //LoadTextures("assets/pictures/menus/BUTTON_START.png", "assets/pictures/menus/BUTTON_START_PRESSED.png");
+    LoadTextures("assets/pictures/menus/Button_arene.png", "assets/pictures/menus/Button_arene2.png");
 
-    SetText("Battle", posx, posy, width, height, font);
+    SetText("", posx, posy, width, height, font);
 }
 
-void Battle::Render(sf::RenderWindow& window) {
+void Arene::Render(sf::RenderWindow& window) {
     window.draw(button);
     window.draw(text);
 }
 
-void Battle::OnHover() {
+void Arene::OnHover() {
     button.setTexture(&textureHover);
 }
 
-void Battle::OnNormal() {
+void Arene::OnNormal() {
     button.setTexture(&textureNormal);
 }

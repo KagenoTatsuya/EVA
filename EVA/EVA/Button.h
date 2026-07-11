@@ -98,14 +98,14 @@ public:
 	void OnNormal() override;
 };
 
-class Battle : public Button {
+class Arene : public Button {
 	float posx;
 	float posy;
 	float width;
 	float height;
 public:
-	Battle();
-	virtual ~Battle() {};
+	Arene();
+	virtual ~Arene() {};
 	inline float GetPosX() override { return posx; };
 	inline float GetRightX() override { return posx + width; };
 	inline float GetPosY() override { return posy; };

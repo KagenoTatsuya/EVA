@@ -6,7 +6,8 @@
 #include "Animator.h"
 #include <ctime>
 #include "Block.h"
-#include "Shoot.h"
+
+class Shoot;
 
 // ===== Entity class =====
 class Entity {
@@ -49,9 +50,11 @@ public:
     Animator animator;
     Joueur(float x, float y);
     sf::FloatRect GetGlobalBounds() const;
+    void ChangeSpriteSheet(const std::string& spriteSheet);
     void Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& blocks, std::vector<Shoot*>& shoot, bool canShoot = false) override; // player movement
     void Render(sf::RenderTarget* target) override;
     void ResolveCollisions(std::vector<Block*>& blocks);
+    void ResolveCollisionsAxis(std::vector<Block*>& blocks, bool horizontal);
 };
 
 class PNJ : public Entity {

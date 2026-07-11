@@ -33,7 +33,7 @@ int main() {
     std::cout << "Shaders OK" << std::endl;
 
     // Limite le framerate pour éviter une utilisation CPU/GPU excessive
-    window.setFramerateLimit(120);
+    window.setFramerateLimit(60);
 
     Game game(window.getSize());
     Input input;
@@ -47,8 +47,8 @@ int main() {
     Button* letscontinue = new Continue();
     Button* exit = new Exit();
     Button* start = new Start();
-    Button* zombie = new Start();
-    Button* battle = new Start();
+    Button* zombie = new Zombie();
+    Button* arene = new Arene();
     ChooseGame* choose = new ChooseGame();
     SoundManager* soundManager = new SoundManager();
     Parallax* parallax = new Parallax(1920, 1080.f);
@@ -62,6 +62,9 @@ int main() {
     Joueur* player = new Joueur(690.f, 1178.f);
 
     bool isRunning = false;
+    bool isChoose = false;
+    bool isZombie = false;
+    bool isBattle = false;
     bool isSettings = false;
     bool endSim = false;
     bool isPause = false;
@@ -93,17 +96,19 @@ int main() {
                         start->GetPosY() <= static_cast<float>(mousePos.y) && start->GetBottomY() >= static_cast<float>(mousePos.y)) {
                         isRunning = true;
                     }
-                    else if (zombie->GetPosX() <= static_cast<float>(mousePos.x) && zombie->GetRightX() >= static_cast<float>(mousePos.x) &&
-                        zombie->GetPosY() <= static_cast<float>(mousePos.y) && zombie->GetBottomY() >= static_cast<float>(mousePos.y)) {
-                        isRunning = true;
-                    }
-                    else if (battle->GetPosX() <= static_cast<float>(mousePos.x) && battle->GetRightX() >= static_cast<float>(mousePos.x) &&
-                        battle->GetPosY() <= static_cast<float>(mousePos.y) && battle->GetBottomY() >= static_cast<float>(mousePos.y)) {
-                        isRunning = true;
-                    }
                     else if (exit->GetPosX() <= static_cast<float>(mousePos.x) && exit->GetRightX() >= static_cast<float>(mousePos.x) &&
                         exit->GetPosY() <= static_cast<float>(mousePos.y) && exit->GetBottomY() >= static_cast<float>(mousePos.y)) {
                         window.close();
+                    }
+                }
+                if (isChoose) {
+                    if (zombie->GetPosX() <= static_cast<float>(mousePos.x) && zombie->GetRightX() >= static_cast<float>(mousePos.x) &&
+                        zombie->GetPosY() <= static_cast<float>(mousePos.y) && zombie->GetBottomY() >= static_cast<float>(mousePos.y)) {
+                        isZombie = true;
+                    }
+                    else if (arene->GetPosX() <= static_cast<float>(mousePos.x) && arene->GetRightX() >= static_cast<float>(mousePos.x) &&
+                        arene->GetPosY() <= static_cast<float>(mousePos.y) && arene->GetBottomY() >= static_cast<float>(mousePos.y)) {
+                        isBattle = true;
                     }
                 }
                 if (endSim) {
@@ -129,11 +134,11 @@ int main() {
 
         game.Update(isRunning, endSim, /*isPause,*/ dt, now,
             events, levels, window, parallax, camera, cameramenu, *soundManager,
-            start, exit, letscontinue, zombie, battle, player, choose, shoot);
+            start, exit, letscontinue, zombie, arene, player, choose, shoot);
 
         // Draw the sprite
         game.Render(levels, window, parallax, camera, cameramenu, startmenu, endmenu,/* pause,*/
-            start, exit, letscontinue, zombie, battle, player, choose, shoot);
+            start, exit, letscontinue, zombie, arene, player, choose, shoot);
 
         //player->Render(&window);
 
@@ -151,7 +156,7 @@ int main() {
     delete start; start = nullptr;
     delete exit; exit = nullptr;
     delete zombie; zombie = nullptr;
-    delete battle; battle = nullptr;
+    delete arene; arene = nullptr;
     delete choose; choose = nullptr;
     delete letscontinue; letscontinue = nullptr;
     delete endmenu; endmenu = nullptr;

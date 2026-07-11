@@ -77,6 +77,31 @@ void Shoot::handleInput(float dt, Joueur& player, std::vector<Shoot*>& shoot, fl
     }
 }
 
+void Shoot::ShootVersSouris(std::vector<Shoot*>& shoot, const Entity& player,
+    sf::RenderWindow& window, sf::View& view, float speed)
+{
+    sf::Vector2f pos = player.rect.getPosition();
+    sf::Vector2f size = player.rect.getSize();
+    sf::Vector2f playerCenter = pos + size / 2.f;
+
+    // Position souris > coordonnées monde (tient compte du zoom/scroll caméra)
+    sf::Vector2i mousePixel = sf::Mouse::getPosition(window);
+    sf::Vector2f mouseWorld = window.mapPixelToCoords(mousePixel, view);
+
+    // Vecteur direction normalisé
+    sf::Vector2f dir = mouseWorld - playerCenter;
+    float length = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+    if (length < 0.0001f) return; // évite division par zéro si souris == joueur
+
+    dir /= length;
+
+    shoot.push_back(new Shoot(
+        playerCenter.x, playerCenter.y,
+        dir.x * speed, dir.y * speed,
+        ShootType::Player
+    ));
+}
+
 void Shoot::Update(float dt, float now) {
     sf::Vector2f pos = rect.getPosition();
     pos.x += vx * dt;

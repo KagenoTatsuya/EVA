@@ -2,5 +2,5 @@
 C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\ChooseGame.h(3,10): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
   (compiler le fichier source 'Game.cpp')
   
-C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\Game.cpp(34,26): warning C4834: abandon de la valeur de retour de la fonction avec l’attribut [[nodiscard]]
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\Game.cpp(37,26): warning C4834: abandon de la valeur de retour de la fonction avec l’attribut [[nodiscard]]
   EVA.vcxproj -> C:\Users\theob\Documents\GitHub\EVA\EVA\x64\Debug\EVA.exe

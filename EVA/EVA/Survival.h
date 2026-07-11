@@ -1,4 +1,3 @@
-// Survival.h
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Animator.h"
