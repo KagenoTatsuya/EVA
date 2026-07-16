@@ -78,12 +78,28 @@ void AssignSoldatRoles(std::vector<Soldat*>& soldats, ZoneManager& zoneManager, 
     }
 }
 
+
 BTNodePtr BuildSoldatBehaviorTree() {
     return MakeSelector(
+        // --- Branche repli : vie basse, priorité absolue ---
+        MakeSequence(
+            MakeCondition([](SoldatBlackboard& bb) {
+                return bb.self->GetHealth() <= bb.retreatHealthThreshold
+                    && bb.zoneManager->GetZoneOwnedByTeam(bb.self->GetTeam()) != nullptr;
+                }),
+            MakeAction([](SoldatBlackboard& bb) {
+                Zone* safeZone = bb.zoneManager->GetZoneOwnedByTeam(bb.self->GetTeam());
+                bb.moveTarget = safeZone->GetCenter();
+                return BTStatus::Success;
+                })
+        ),
         // --- Branche combat : priorité sur la capture de zone ---
         MakeSequence(
             MakeCondition([](SoldatBlackboard& bb) {
                 bb.targetEnemy = FindNearestEnemy(bb, bb.chaseRange);
+                if (bb.targetEnemy) {
+                    bb.self->SetLastKnownEnemyPos(bb.targetEnemy->rect.getPosition());
+                }
                 return bb.targetEnemy != nullptr;
                 }),
             MakeAction([](SoldatBlackboard& bb) {
@@ -93,15 +109,24 @@ BTNodePtr BuildSoldatBehaviorTree() {
                 float dist = std::sqrt(d.x * d.x + d.y * d.y);
 
                 if (dist <= bb.attackRange) {
-                    // à portée : on reste sur place et on tire
                     bb.moveTarget = myPos;
-                    bb.self->TryAttack(bb.targetEnemy, bb.dt, bb.attackRange, *bb.projectiles);
+                    bb.self->TryAttack(bb.targetEnemy, bb.dt, bb.attackRange, *bb.projectiles, *bb.blocks);
                 }
                 else {
-                    // pas encore à portée : on avance mais pas jusqu'au corps à corps
                     sf::Vector2f dir = d / dist;
-                    bb.moveTarget = enemyPos - dir * bb.attackRange; // s'arrête à distance de tir
+                    bb.moveTarget = enemyPos - dir * bb.attackRange;
                 }
+                return BTStatus::Success;
+                })
+        ),
+        // --- Branche recherche : va vérifier la dernière position connue d'un ennemi perdu de vue ---
+        MakeSequence(
+            MakeCondition([](SoldatBlackboard& bb) {
+                bb.self->TickSearchTimer(bb.dt);
+                return bb.self->HasLastKnownEnemyPos();
+                }),
+            MakeAction([](SoldatBlackboard& bb) {
+                bb.moveTarget = bb.self->GetLastKnownEnemyPos();
                 return BTStatus::Success;
                 })
         ),
@@ -124,6 +149,11 @@ BTNodePtr BuildSoldatBehaviorTree() {
                 bb.moveTarget = bb.self->GetOrAssignZonePoint(zoneId, bb.targetZone->bounds);
                 return BTStatus::Success;
                 })
-        )
+        ),
+        // --- Branche patrouille : dernier recours, exploration de la carte ---
+        MakeAction([](SoldatBlackboard& bb) {
+            bb.moveTarget = bb.self->GetOrAssignWaypoint('P', *bb.zoneManager, bb.self->rect.getPosition());
+            return BTStatus::Success;
+            })
     );
 }

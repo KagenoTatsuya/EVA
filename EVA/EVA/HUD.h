@@ -17,6 +17,7 @@ public:
     // Show the HUD
     void renderZoneGauge(sf::RenderTarget& target, const Zone& zone, sf::Vector2f position, sf::Vector2f size);
     void render(sf::RenderTarget& target);
+    void renderTimer(sf::RenderTarget& target, float timeRemaining);
 
 private:
     sf::Font& font;

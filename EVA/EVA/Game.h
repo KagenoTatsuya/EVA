@@ -12,9 +12,11 @@
 #include "ZoneManager.h"
 #include "SoldatAI.h"
 #include "SelectPerso.h"
+#include "Pause.h"
 
 class StartMenu;
 class EndMenu;
+class Pause;
 class Button;
 class Level;
 class Entity;
@@ -59,6 +61,8 @@ private:
     SelectPerso m_selectPerso;
     std::vector<SoldatProjectile*> m_soldatProjectiles;
     std::vector<Block*> m_battleWalls; // sous-liste des MBlock uniquement, pour le mode Battle
+    Pause* m_pause = nullptr;
+    
 
     // Mode de jeu
     enum class GameMode {
@@ -76,6 +80,7 @@ private:
         SELECT_PERSO,
         CHOOSE_YESNO,   // discussion avec le NPC, attend O/N
         CHOOSE_MODE,    // écran ChooseGame avec boutons Zombie/Battle
+        PAUSE,
     } state;
 
     NPC* m_activeNPC = nullptr;
@@ -83,6 +88,9 @@ private:
     int m_vies = 3;
     int m_score = 0;
     float m_invincibleTimer = 0.f; // pour éviter de perdre 3 vies en une collision qui dure plusieurs frames
+    State m_stateBeforePause = RUNNING; float m_battleTimer = 0.f;                        //    temps restant en mode Battle
+    static constexpr float BATTLE_DURATION = 600.f;   //AJOUT : 10 minutes = 600.f
+    std::string m_battleResultText;
 
 public:
 
@@ -93,9 +101,10 @@ public:
     void SwitchToSurvival(std::vector<Level*>& levels);
     void SwitchToBattle(std::vector<Level*>& levels);
     void SwitchToTPS(Camera* camera);
+    std::string ComputeBattleWinner();
 
-    void Update(bool& isRunning, bool& isEnd, float dt, float now,
-        std::vector<sf::Event> events, std::vector<Level*>& levels,
+    void Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float now,
+        std::vector<sf::Event>& events, std::vector<Level*>& levels,
         sf::RenderWindow& window, Parallax* parallax, Camera* camera,
         CameraMenu* cameramenu, SoundManager& sound, Button* start,
         Button* exit, Button* letscontinue, Button* zombie, Button* arene, Entity* player, ChooseGame* choose, std::vector<Shoot*>& shoot);

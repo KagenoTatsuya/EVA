@@ -120,11 +120,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>sfml-main.lib;sfml-audio.lib;sfml-graphics.lib;sfml-system.lib;sfml-window.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -147,6 +150,7 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="Parallax.cpp" />
+    <ClCompile Include="Pause.cpp" />
     <ClCompile Include="PvE.cpp" />
     <ClCompile Include="SelectPerso.cpp" />
     <ClCompile Include="Shoot.cpp" />
@@ -177,6 +181,7 @@
     <ClInclude Include="Level.h" />
     <ClInclude Include="NPC.h" />
     <ClInclude Include="Parallax.h" />
+    <ClInclude Include="Pause.h" />
     <ClInclude Include="PvE.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SelectPerso.h" />

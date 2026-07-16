@@ -42,10 +42,15 @@ private:
     Team team;
     SoldatRole m_role = SoldatRole::Unassigned;
     float m_health = 100.f;
-    float m_attackDamage = 10.f;
+    float m_attackDamage = 20.f;
     float m_attackInterval = 1.f;
     float m_attackCooldown = 0.f;
     float m_speed = 80.f;
+
+    sf::Vector2f m_lastKnownEnemyPos{ 0.f, 0.f };
+    bool m_hasLastKnownEnemyPos = false;
+    float m_searchTimeRemaining = 0.f;
+    static constexpr float kSearchDuration = 3.f; // secondes passées à chercher avant d'abandonner
 
     // Diversité de destination dans une zone
     char m_assignedZone = '\0';   // symbole de la Zone visée, au lieu d'un pointeur
@@ -57,6 +62,7 @@ private:
     int m_personalWaypointId = -1;
     bool m_hasWaypoint = false;
     bool WouldCollide(sf::Vector2f testPos, const std::vector<Block*>& blocks) const;
+    bool HasLineOfSight(sf::Vector2f targetPos, const std::vector<Block*>& blocks) const;
     sf::Vector2f ComputeSteering(sf::Vector2f target, const std::vector<Block*>& blocks) const;
 
 public:
@@ -67,6 +73,20 @@ public:
     sf::Vector2f center;
     bool hasSprite = false;
     bool HasValidWaypoint() const;
+
+    void SetLastKnownEnemyPos(sf::Vector2f pos) {
+        m_lastKnownEnemyPos = pos;
+        m_hasLastKnownEnemyPos = true;
+        m_searchTimeRemaining = kSearchDuration;
+    }
+    bool HasLastKnownEnemyPos() const { return m_hasLastKnownEnemyPos; }
+    sf::Vector2f GetLastKnownEnemyPos() const { return m_lastKnownEnemyPos; }
+    void ClearLastKnownEnemyPos() { m_hasLastKnownEnemyPos = false; }
+    void TickSearchTimer(float dt) {
+        if (!m_hasLastKnownEnemyPos) return;
+        m_searchTimeRemaining -= dt;
+        if (m_searchTimeRemaining <= 0.f) ClearLastKnownEnemyPos();
+    }
 
     char GetTargetZoneSymbol() const { return m_targetZoneSymbol; }
     void SetTargetZoneSymbol(char c) { m_targetZoneSymbol = c; }
@@ -86,7 +106,7 @@ public:
     void SetRole(SoldatRole role) { m_role = role; };
     float GetHealth() const { return m_health; };
 
-    bool TryAttack(Soldat* target, float dt, float attackRange, std::vector<SoldatProjectile*>& projectiles);
+    bool TryAttack(Soldat* target, float dt, float attackRange, std::vector<SoldatProjectile*>& projectiles, const std::vector<Block*>& blocks);
     void TakeDamage(float dmg);
 
     sf::Vector2f GetOrAssignZonePoint(char zoneSymbol, const sf::FloatRect& zoneBounds);

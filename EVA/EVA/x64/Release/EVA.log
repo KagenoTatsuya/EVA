@@ -1,0 +1,54 @@
+﻿  Animator.cpp
+  Battle.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\numbers(11): warning STL4038: The contents of <numbers> are available only with C++20 or later.
+  BehaviorTree.cpp
+  Block.cpp
+  Button.cpp
+  Camera.cpp
+  CameraMenu.cpp
+  ChooseGame.cpp
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\ChooseGame.h(3,10): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
+  (compiler le fichier source 'ChooseGame.cpp')
+  
+  DarknessEffect.cpp
+  Deplacement.cpp
+  EndMenu.cpp
+  Entity.cpp
+  EVA.cpp
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\ChooseGame.h(3,10): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
+  (compiler le fichier source 'EVA.cpp')
+  
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\EVA.cpp(39,11): warning C4101: 'input' : variable locale non référencée
+  Game.cpp
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\ChooseGame.h(3,10): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
+  (compiler le fichier source 'Game.cpp')
+  
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\Game.cpp(37,26): warning C4834: abandon de la valeur de retour de la fonction avec l’attribut [[nodiscard]]
+  HUD.cpp
+  Input.cpp
+  Level.cpp
+  NPC.cpp
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\NPC.cpp(76,39): warning C4834: abandon de la valeur de retour de la fonction avec l’attribut [[nodiscard]]
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\NPC.cpp(166,22): warning C4834: abandon de la valeur de retour de la fonction avec l’attribut [[nodiscard]]
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\NPC.cpp(185,30): warning C4834: abandon de la valeur de retour de la fonction avec l’attribut [[nodiscard]]
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\NPC.cpp(195,35): warning C4834: abandon de la valeur de retour de la fonction avec l’attribut [[nodiscard]]
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\NPC.cpp(200,35): warning C4834: abandon de la valeur de retour de la fonction avec l’attribut [[nodiscard]]
+  Parallax.cpp
+  Pause.cpp
+  Compilation en cours...
+  PvE.cpp
+  SelectPerso.cpp
+  Shoot.cpp
+  SoldatAI.cpp
+  SoundManager.cpp
+  StartMenu.cpp
+  Survival.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\numbers(11): warning STL4038: The contents of <numbers> are available only with C++20 or later.
+  Tile.cpp
+  Zone.cpp
+  ZoneManager.cpp
+  Génération de code en cours
+  Previous IPDB not found, fall back to full compilation.
+  All 2462 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Fin de la génération du code
+  EVA.vcxproj -> C:\Users\theob\Documents\GitHub\EVA\EVA\x64\Release\EVA.exe

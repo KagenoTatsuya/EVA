@@ -4,15 +4,18 @@
 #include <string>
 #include "Button.h"
 
+
 class PersoButton : public Button {
     float posx, posy, width, height;
     std::string m_spriteSheet;
+    std::string m_facePath;
     float m_hoverScale = 11.f;
 public:
     PersoButton(float x, float y, float w, float h,
         const std::string& normalTexture, const std::string& hoverTexture,
         const std::string& spriteSheet);
     const std::string& GetSpriteSheet() const { return m_spriteSheet; }
+    const std::string& GetFacePath() const { return m_facePath; }
     inline float GetPosX() override { return posx; }
     inline float GetRightX() override { return posx + width; }
     inline float GetPosY() override { return posy; }
@@ -23,6 +26,7 @@ public:
     void OnNormal() override;
 };
 
+
 class SelectPerso {
 public:
     SelectPerso();
@@ -31,8 +35,8 @@ public:
     void Update(sf::RenderWindow& window, sf::View& menuView, std::vector<sf::Event>& events);
     bool IsConfirmed() const { return m_confirmed; }
     std::string GetSelectedSpriteSheet() const;
+    std::string GetSelectedFacePath() const;
     void Reset();
-
 private:
     static constexpr int kCount = 8;
     std::array<PersoButton*, kCount> m_buttons;

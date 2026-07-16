@@ -18,6 +18,7 @@ public:
     void CloseDialogue();
     bool IsDialogueOpen() const;
     bool IsLastDialogue() const;
+    void SetPlayerFace(const std::string& facePath);
 
 private:
     void SetupDialogBox(unsigned int winW, unsigned int winH);

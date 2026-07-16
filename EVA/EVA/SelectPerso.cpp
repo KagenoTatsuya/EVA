@@ -3,7 +3,7 @@
 PersoButton::PersoButton(float x, float y, float w, float h,
     const std::string& normalTexture, const std::string& hoverTexture,
     const std::string& spriteSheet)
-    : posx(x), posy(y), width(w), height(h), m_spriteSheet(spriteSheet)
+    : posx(x), posy(y), width(w), height(h), m_spriteSheet(spriteSheet), m_facePath(normalTexture)
 {
     LoadTextures(normalTexture, hoverTexture);
     button.setSize({ w, h });
@@ -112,6 +112,11 @@ void SelectPerso::Update(sf::RenderWindow& window, sf::View& menuView, std::vect
 std::string SelectPerso::GetSelectedSpriteSheet() const {
     if (m_selectedIndex < 0) return "character-spritesheet.png"; // fallback par défaut
     return m_buttons[m_selectedIndex]->GetSpriteSheet();
+}
+
+std::string SelectPerso::GetSelectedFacePath() const {
+    if (m_selectedIndex < 0) return "assets/pictures/BoyFace.png"; // fallback par défaut
+    return m_buttons[m_selectedIndex]->GetFacePath();
 }
 
 void SelectPerso::Reset() {

@@ -106,18 +106,18 @@ void Start::OnNormal() {
 Continue::Continue() {
     posx = 905.f;
     posy = 740.f;
-    width = 120.f;
-    height = 70.f;
+    width = 280.f;
+    height = 270.f;
     if (!font.openFromFile("assets/fonts/arial.ttf"))
         std::cerr << "Can't find the font file" << std::endl;
 
     button.setPosition(sf::Vector2f(posx, posy));
     button.setSize(sf::Vector2f(width, height));
-    button.setFillColor(sf::Color::Green);
+    //button.setFillColor(sf::Color::Green);
 
     LoadTextures("assets/pictures/menus/Button_continue.png", "assets/pictures/menus/Button_continue2.png");
 
-    SetText("Continue", posx, posy, width, height, font);
+    SetText("", posx, posy, width, height, font);
 }
 
 void Continue::Render(sf::RenderWindow& window) {

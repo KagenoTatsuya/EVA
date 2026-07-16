@@ -265,3 +265,10 @@ void ChoiceDialog::render(sf::RenderWindow& window) {
     window.draw(*lblPlay);
     window.draw(*lblWork);
 }
+
+void NPC::SetPlayerFace(const std::string& facePath) {
+    if (facePath.empty()) return;
+    m_hasPlayerFace = m_playerFaceTexture.loadFromFile(facePath);
+    if (m_hasPlayerFace)
+        m_playerFaceRect.setTexture(&m_playerFaceTexture);
+}

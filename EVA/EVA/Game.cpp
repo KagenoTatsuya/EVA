@@ -35,6 +35,7 @@ Game::Game(sf::Vector2u windowSize)
     bg = new sf::Sprite(*texture);
     bg->setScale(sf::Vector2f(1.5f, 1.f));
     m_sceneTexture.resize(windowSize);
+    m_pause = new Pause(m_font);
 
     m_npcs.push_back(new NPC(
         1056.f, 668.f,
@@ -85,12 +86,29 @@ Game::Game(sf::Vector2u windowSize)
         sf::Vector2f(1016.f, 414.f)
         });
     m_pnjs.push_back(pnj3);
+
+    PNJ* pnj4 = new PNJ(680.f, 558.f, "character-spritesheet13.png");
+    pnj4->SetWaypoints({
+        sf::Vector2f(680.f, 558.f),
+        sf::Vector2f(1077.f, 1113.f),
+        sf::Vector2f(975.f, 54.f)
+        });
+    m_pnjs.push_back(pnj4);
+
+    PNJ* pnj5 = new PNJ(197.f, 834.f, "character-spritesheet14.png");
+    pnj5->SetWaypoints({
+        sf::Vector2f(197.f, 834.f),
+        sf::Vector2f(570.f, 698.f),
+        sf::Vector2f(555.f, 699.f)
+        });
+    m_pnjs.push_back(pnj5);
 }
 
 Game::~Game() {
     delete texture;    texture = nullptr;
     delete bg;         bg = nullptr;
     delete m_hintText; m_hintText = nullptr;
+    delete m_pause; m_pause = nullptr;
     for (auto* npc : m_npcs) delete npc;
     m_npcs.clear();
     for (auto* pnj : m_pnjs) delete pnj;
@@ -108,6 +126,10 @@ void Game::SwitchToSurvival(std::vector<Level*>& levels) {
     m_vies = 3;
     m_invincibleTimer = 0.f;
 
+    // Nettoyage des ennemis d'une partie Survival précédente
+    for (Ennemi* e : m_ennemis) delete e;
+    m_ennemis.clear();
+
     delete bg; delete texture;
     texture = new sf::Texture("assets/pictures/Zombie_EVA.png");
     bg = new sf::Sprite(*texture);
@@ -123,6 +145,8 @@ void Game::SwitchToBattle(std::vector<Level*>& levels) {
     m_score = 0;
     m_vies = 3;
     m_invincibleTimer = 0.f;
+    m_battleTimer = BATTLE_DURATION;
+    m_battleResultText.clear();
 
     for (Soldat* s : m_soldat) delete s;
     m_soldat.clear();
@@ -274,15 +298,13 @@ void Game::Render(std::vector<Level*>& levels,
 
         for (auto* t : m_soldat)
             t->Render(&m_sceneTexture);
-        
+
         for (auto* p : m_soldatProjectiles)
             p->Render(&m_sceneTexture);
 
-        // Les tirs doivent être dessinés dans la même render target que le reste de la scène
         for (auto* s : shoot)
             s->Render(m_sceneTexture);
 
-        // display() DOIT être appelé avant de récupérer la texture pour le sprite
         m_sceneTexture.display();
         window.setView(window.getDefaultView());
 
@@ -296,6 +318,10 @@ void Game::Render(std::vector<Level*>& levels,
             hud.renderZoneGauge(window, zone, { gaugeX, 60.f }, { 40.f, 200.f });
             gaugeX += 80.f;
         }
+
+        // Affichage du timer de partie (mode Battle)
+        hud.renderTimer(window, m_battleTimer);
+
         break;
     }
     case SELECT_PERSO: {
@@ -303,22 +329,115 @@ void Game::Render(std::vector<Level*>& levels,
         m_selectPerso.Render(window);
         break;
     }
+    case PAUSE: {
+        switch (m_stateBeforePause) {
+        case RUNNING: {
+            m_sceneTexture.clear(sf::Color::Black);
+            m_sceneTexture.setView(camera->GetView());
+            m_sceneTexture.draw(*bg);
+            levels[currentLvl]->Render(m_sceneTexture);
+            player->Render(&m_sceneTexture);
+            if (m_gameMode == GameMode::TPS) {
+                for (auto* npc : m_npcs) npc->Render(&m_sceneTexture);
+                for (auto* pnj : m_pnjs) pnj->Render(&m_sceneTexture);
+            }
+            m_sceneTexture.display();
+            window.setView(window.getDefaultView());
+            m_darkness.Render(window, m_sceneTexture, camera->GetView());
+            sf::Sprite sceneSprite(m_sceneTexture.getTexture());
+            window.draw(sceneSprite);
+            break;
+        }
+        case SURVIVALS: {
+            m_sceneTexture.clear(sf::Color::Black);
+            m_sceneTexture.setView(camera->GetView());
+            m_sceneTexture.draw(*bg);
+            levels[currentLvl]->Render(m_sceneTexture);
+            player->Render(&m_sceneTexture);
+            for (auto* e : m_ennemis) e->Render(&m_sceneTexture);
+            m_sceneTexture.display();
+            window.setView(window.getDefaultView());
+            m_darkness.Render(window, m_sceneTexture, camera->GetView());
+            hud.render(window);
+            break;
+        }
+        case BATTLES: {
+            m_sceneTexture.clear(sf::Color::Black);
+            m_sceneTexture.setView(camera->GetView());
+            m_sceneTexture.draw(*bg);
+            levels[currentLvl]->Render(m_sceneTexture);
+            player->Render(&m_sceneTexture);
+            for (auto* t : m_soldat) t->Render(&m_sceneTexture);
+            for (auto* p : m_soldatProjectiles) p->Render(&m_sceneTexture);
+            // Affichage des jauges de capture pour Zone B et Zone C
+            auto& zones = m_zoneManager.GetZones();
+            float gaugeX = 40.f;
+            for (const Zone& zone : zones) {
+                hud.renderZoneGauge(window, zone, { gaugeX, 60.f }, { 40.f, 200.f });
+                gaugeX += 80.f;
+            }
+
+            hud.renderTimer(window, m_battleTimer);
+            m_sceneTexture.display();
+            window.setView(window.getDefaultView());
+            sf::Sprite sceneSprite(m_sceneTexture.getTexture());
+            window.draw(sceneSprite);
+            break;
+        }
+        default: break;
+        }
+
+        sf::View menuview = cameramenu->GetMenuView();
+        m_pause->Render(window, menuview);
+        break;
+    }
     case END:
         window.setView(cameramenu->GetMenuView());
         endmenu->Render(window);
+
+        if (m_gameMode == GameMode::BATTLE && !m_battleResultText.empty()) {
+            sf::Text resultText(m_font, m_battleResultText, 48);
+            resultText.setFillColor(sf::Color::Yellow);
+
+            sf::FloatRect bounds = resultText.getLocalBounds();
+            sf::Vector2f viewSize = cameramenu->GetMenuView().getSize();
+            sf::Vector2f viewCenter = cameramenu->GetMenuView().getCenter();
+
+            resultText.setOrigin(bounds.getCenter());
+            resultText.setPosition(sf::Vector2f(viewCenter.x, viewCenter.y - viewSize.y / 2.f + 100.f));
+
+            window.draw(resultText);
+        }
+
         letscontinue->Render(window);
         exit->Render(window);
         break;
     }
 }
 
-void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
-    std::vector<sf::Event> events, std::vector<Level*>& levels,
+void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float now,
+    std::vector<sf::Event>& events, std::vector<Level*>& levels,
     sf::RenderWindow& window, Parallax* parallax, Camera* camera,
     CameraMenu* cameramenu, SoundManager& sound, Button* start,
     Button* exit, Button* letscontinue, Button* zombie, Button* arene,
     Entity* player, ChooseGame* choose, std::vector<Shoot*>& shoot)
 {
+    for (auto& ev : events) {
+        if (auto* kp = ev.getIf<sf::Event::KeyPressed>()) {
+            if (kp->code == sf::Keyboard::Key::Escape) {
+                if (state == RUNNING || state == SURVIVALS || state == BATTLES) {
+                    m_stateBeforePause = state;
+                    state = PAUSE;
+                }
+                else if (state == PAUSE) {
+                    state = m_stateBeforePause;
+                }
+            }
+        }
+    }
+
+    isPause = (state == PAUSE);
+
     switch (state) {
     case RUNNING: {
         sf::Vector2f playerPos = player->rect.getPosition();
@@ -480,7 +599,7 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
                     }
                     else if (arene->IsHovered()) {
                         SwitchToBattle(levels);   
-                        player->rect.setPosition(sf::Vector2f(1057.f, 768.f));
+                        player->rect.setPosition(sf::Vector2f(1784.f, 475.f));
                         camera->SetZoom(1.44f);
                         camera->Update(1057.f, 768.f, 0.f);
                         m_activeNPC = nullptr;
@@ -608,6 +727,7 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
             bb.zoneManager = &m_zoneManager;
             bb.dt = dt;
             bb.projectiles = &m_soldatProjectiles;
+            bb.blocks = &m_battleWalls;
 
             m_soldatAI->Tick(bb);
 
@@ -657,6 +777,20 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
         PvE::ResolveSoldatCollisions(m_soldat);
         m_zoneManager.Update(dt, m_soldat);
         PvE::cleanupSoldat(m_soldat);
+        //PvE::cleanupSoldat(m_soldat);
+
+        hud.setScore(m_score);
+        hud.setVies(m_vies);
+
+        // Décompte du timer de partie (mode Battle uniquement)
+        m_battleTimer -= dt;
+        if (m_battleTimer < 0.f) m_battleTimer = 0.f;
+
+        // Game over si le joueur n'a plus de vies OU si le temps est écoulé
+        if ((m_vies <= 0 || m_battleTimer <= 0.f) && !isEnd) {
+            m_battleResultText = ComputeBattleWinner();   // <-- calcul une seule fois
+            isEnd = true;
+        }
 
         for (Shoot* s : shoot) {
             if (s != nullptr) {
@@ -688,7 +822,7 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
             }
         }
 
-        PvE::cleanupSoldat(m_soldat);
+        //PvE::cleanupSoldat(m_soldat);
 
         hud.setScore(m_score);
         hud.setVies(m_vies);
@@ -707,16 +841,55 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
         break;
     }
     case END: {
-        if (!isEnd) {
-            sound.StopMusic();
-            SwitchToTPS(camera);
-            player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
-            camera->Update(690.f, 1178.f, 0.f);
-            state = RUNNING;
-        }
-        if (!isRunning && !isEnd) {
-            sound.StopMusic();
-            state = MENU;
+        sf::View menuview = cameramenu->GetMenuView();
+        letscontinue->UpdateHover(window, menuview);
+        exit->UpdateHover(window, menuview);
+
+        for (auto& ev : events) {
+            if (auto* mb = ev.getIf<sf::Event::MouseButtonPressed>()) {
+                if (mb->button == sf::Mouse::Button::Left) {
+                    if (letscontinue->IsHovered()) {
+                        sound.StopMusic();
+                        isEnd = false;      // <-- essentiel : sinon retour immédiat à END
+                        isRunning = true;
+
+                        switch (m_gameMode) {
+                        case GameMode::SURVIVAL:
+                            SwitchToSurvival(levels);
+                            player->rect.setPosition(sf::Vector2f(802.f, 926.f));
+                            camera->SetZoom(1.25f);
+                            camera->Update(802.f, 926.f, 0.f);
+                            state = SURVIVALS;
+                            break;
+
+                        case GameMode::BATTLE:
+                            SwitchToBattle(levels);
+                            player->rect.setPosition(sf::Vector2f(1784.f, 475.f));
+                            camera->SetZoom(1.44f);
+                            camera->Update(1057.f, 768.f, 0.f);
+                            state = BATTLES;
+                            break;
+
+                        case GameMode::TPS:
+                        default:
+                            SwitchToTPS(camera);
+                            player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
+                            camera->Update(690.f, 1178.f, 0.f);
+                            state = RUNNING;
+                            break;
+                        }
+                    }
+                    else if (exit->IsHovered()) {
+                        sound.StopMusic();
+                        isEnd = false;
+                        SwitchToTPS(camera);
+                        player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
+                        camera->Update(690.f, 1178.f, 0.f);
+                        isRunning = false;
+                        state = MENU;
+                    }
+                }
+            }
         }
         break;
     }
@@ -731,14 +904,62 @@ void Game::Update(bool& isRunning, bool& isEnd, float dt, float now,
         }
         break;
     }
+    case PAUSE: {
+        sf::View menuview = cameramenu->GetMenuView();
+        m_pause->UpdateHover(window, menuview);
+
+        for (auto& ev : events) {
+            if (auto* mb = ev.getIf<sf::Event::MouseButtonPressed>()) {
+                if (mb->button == sf::Mouse::Button::Left) {
+                    if (m_pause->IsResumeHovered()) {
+                        state = m_stateBeforePause;
+                    }
+                    else if (m_pause->IsQuitHovered()) {
+                        sound.StopMusic();
+
+                        // Réinitialise complètement l'état de jeu avant de retourner au menu,
+                        // sinon le prochain lancement garde l'ancien mode (fond, niveau, blocks)
+                        SwitchToTPS(camera);
+                        player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
+                        camera->Update(690.f, 1178.f, 0.f);
+
+                        isRunning = false;
+                        state = MENU;
+                    }
+                }
+            }
+        }
+        break;
+    }
     case SELECT_PERSO: {
         sf::View menuview = cameramenu->GetMenuView();
         m_selectPerso.Update(window, menuview, events);
         if (m_selectPerso.IsConfirmed()) {
             static_cast<Joueur*>(player)->ChangeSpriteSheet(m_selectPerso.GetSelectedSpriteSheet());
+
+            std::string facePath = m_selectPerso.GetSelectedFacePath();
+            for (auto* npc : m_npcs) {
+                npc->SetPlayerFace(facePath);
+            }
+
             state = RUNNING;
         }
         break;
     }
     }
+}
+
+std::string Game::ComputeBattleWinner() {
+    auto& zones = m_zoneManager.GetZones();
+    if (zones.empty()) return "Match nul";
+
+    float totalBleu = 0.f;
+    for (const Zone& zone : zones) {
+        totalBleu += std::clamp(zone.GetCapturePercent(Team::Bleu), 0.f, 100.f);
+    }
+    float avgBleu = totalBleu / static_cast<float>(zones.size());
+    float avgOrange = 100.f - avgBleu;
+
+    if (std::abs(avgBleu - avgOrange) < 0.01f) return "Match nul";
+    return (avgBleu > avgOrange) ? "L'equipe Bleu a gagne !" : "L'equipe Orange a gagne !";
 }

@@ -1,6 +1,8 @@
 #include "HUD.h"
 #include <iostream>
 #include <algorithm>
+#include <sstream>
+#include <iomanip>
 
 HUD::HUD(sf::Font& f)
     : font(f), score(0), vies(3),
@@ -79,4 +81,25 @@ void HUD::renderZoneGauge(sf::RenderTarget& target, const Zone& zone,
     sf::FloatRect bounds = label.getLocalBounds();
     label.setPosition({ position.x + size.x / 2.f - bounds.size.x / 2.f, position.y - 22.f });
     target.draw(label);
+}
+
+// Affiche le timer de la partie, centré en haut de l'écran, format MM:SS
+void HUD::renderTimer(sf::RenderTarget& target, float timeRemaining) {
+    int totalSeconds = static_cast<int>(std::ceil(std::max(0.f, timeRemaining)));
+    int minutes = totalSeconds / 60;
+    int seconds = totalSeconds % 60;
+
+    std::ostringstream oss;
+    oss << std::setfill('0') << std::setw(2) << minutes
+        << ":" << std::setfill('0') << std::setw(2) << seconds;
+
+    sf::Text timerText(font, oss.str(), 36);
+    // Rouge quand il reste moins de 30 secondes, pour prévenir le joueur
+    timerText.setFillColor(timeRemaining <= 30.f ? sf::Color::Red : sf::Color::White);
+
+    sf::FloatRect bounds = timerText.getLocalBounds();
+    float targetWidth = static_cast<float>(target.getSize().x);
+    timerText.setPosition(sf::Vector2f(targetWidth / 2.f - bounds.size.x / 2.f, 20.f));
+
+    target.draw(timerText);
 }

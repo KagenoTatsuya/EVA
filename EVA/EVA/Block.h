@@ -14,6 +14,7 @@ protected:
 	sf::Sprite* sprite;
 public:
 	sf::RectangleShape rect;
+	sf::Vector2f basePos; // position d'origine (grille du .txt), avant tout offset
 	bool isNextLevel;
 	bool isPrevLevel;
 	bool isUse;

@@ -23,7 +23,7 @@ int main() {
     sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
 
     // Création de la fenêtre en plein écran
-    sf::RenderWindow window(desktopMode, " EVA ", sf::Style::Default);
+    sf::RenderWindow window(desktopMode, " EVA ", sf::Style::None);
 
     // Juste après la création de la fenêtre
     if (!sf::Shader::isAvailable()) {
@@ -132,12 +132,12 @@ int main() {
         // Efface l'écran avec une couleur
         window.clear(sf::Color::Black);
 
-        game.Update(isRunning, endSim, /*isPause,*/ dt, now,
+        game.Update(isRunning, endSim, isPause, dt, now,
             events, levels, window, parallax, camera, cameramenu, *soundManager,
             start, exit, letscontinue, zombie, arene, player, choose, shoot);
 
         // Draw the sprite
-        game.Render(levels, window, parallax, camera, cameramenu, startmenu, endmenu,/* pause,*/
+        game.Render(levels, window, parallax, camera, cameramenu, startmenu, endmenu,
             start, exit, letscontinue, zombie, arene, player, choose, shoot);
 
         //player->Render(&window);

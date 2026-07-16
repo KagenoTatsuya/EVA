@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include "Block.h"
 
 struct Texture;
 struct Sprite;

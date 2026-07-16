@@ -173,7 +173,28 @@ void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks) {
         animator.sprite->setPosition(rect.getPosition());
 }
 
-bool Soldat::TryAttack(Soldat* target, float dt, float attackRange, std::vector<SoldatProjectile*>& projectiles) {
+bool Soldat::HasLineOfSight(sf::Vector2f targetPos, const std::vector<Block*>& blocks) const {
+    sf::Vector2f start = rect.getPosition() + rect.getSize() / 2.f;
+    sf::Vector2f end = targetPos + sf::Vector2f(16.f, 24.f); // approx centre de la cible
+
+    sf::Vector2f dir = end - start;
+    float dist = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+    if (dist < 1.f) return true;
+
+    dir /= dist;
+    const float step = 8.f; // pas d'échantillonnage le long du rayon
+    for (float t = 0.f; t < dist; t += step) {
+        sf::Vector2f p = start + dir * t;
+        for (Block* b : blocks) {
+            if (b->rect.getGlobalBounds().contains(p)) {
+                return false; // un mur bloque la vue
+            }
+        }
+    }
+    return true;
+}
+
+bool Soldat::TryAttack(Soldat* target, float dt, float attackRange, std::vector<SoldatProjectile*>& projectiles, const std::vector<Block*>& blocks) {
     m_attackCooldown -= dt;
     if (m_attackCooldown > 0.f) return false;
     if (!target || !target->alive) return false;
@@ -181,6 +202,9 @@ bool Soldat::TryAttack(Soldat* target, float dt, float attackRange, std::vector<
     sf::Vector2f d = target->rect.getPosition() - rect.getPosition();
     float distSq = d.x * d.x + d.y * d.y;
     if (distSq > attackRange * attackRange) return false;
+
+    // Ne tire pas s'il y a un mur entre lui et la cible
+    if (!HasLineOfSight(target->rect.getPosition(), blocks)) return false;
 
     float dist = std::sqrt(distSq);
     sf::Vector2f dir = d / dist;
@@ -264,7 +288,7 @@ void SoldatSpawnerB::Update(float dt, std::vector<Soldat*>& soldat, float spawnX
         if (s->GetTeam() == Team::Bleu) aliveCount++;
     }
 
-    if (aliveCount >= 10) return; // limite atteinte, on n'ajoute rien
+    if (aliveCount >= 6) return; // limite atteinte, on n'ajoute rien
 
     if (m_soldatsQueued > 0) {
         m_spawnTimer -= dt;
@@ -274,7 +298,7 @@ void SoldatSpawnerB::Update(float dt, std::vector<Soldat*>& soldat, float spawnX
             m_spawnTimer = 1.f;
             aliveCount++;
 
-            if (aliveCount >= 10) return;
+            if (aliveCount >= 6) return;
         }
         return;
     }
@@ -282,7 +306,7 @@ void SoldatSpawnerB::Update(float dt, std::vector<Soldat*>& soldat, float spawnX
     m_waveTimer -= dt;
     if (m_waveTimer <= 0.f) {
         // On ne queue que ce qu'il manque pour atteindre 10 sur la carte
-        m_soldatsQueued = 10 - aliveCount;
+        m_soldatsQueued = 6 - aliveCount;
         m_spawnTimer = 0.f;
         m_waveTimer = GetWaveInterval();
     }
@@ -309,7 +333,18 @@ sf::Vector2f Soldat::GetOrAssignZonePoint(char zoneSymbol, const sf::FloatRect& 
 }
 
 sf::Vector2f Soldat::GetOrAssignWaypoint(char zoneSymbol, ZoneManager& zoneManager, sf::Vector2f myPos) {
-    if (m_assignedZone != zoneSymbol || !m_hasWaypoint) {
+    constexpr float kWaypointReachRadius = 24.f;
+
+    bool needNew = !m_hasWaypoint || m_assignedZone != zoneSymbol;
+
+    if (!needNew) {
+        sf::Vector2f d = m_personalWaypoint - myPos;
+        if (d.x * d.x + d.y * d.y <= kWaypointReachRadius * kWaypointReachRadius) {
+            needNew = true; // arrivé : direction la prochaine étape du graphe
+        }
+    }
+
+    if (needNew) {
         int newId = zoneManager.GetRandomWaypointId(m_personalWaypointId, myPos);
         if (newId != -1) {
             sf::Vector2f pos;

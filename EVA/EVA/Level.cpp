@@ -41,6 +41,12 @@ Level::Level(std::string path1) : nextLevel(""), prevLevel("") {
                 // '_' et 'W' ignorés pour l'instant
             }
         }
+        // Mémorise la position d'origine (grille du .txt) de chaque block,
+        // AVANT tout appel à SetOffset -> sert de référence absolue et
+        // évite que les offsets s'accumulent à chaque changement de mode
+        for (auto* block : blocks) {
+            block->basePos = block->rect.getPosition();
+        }
     }
 }
 
@@ -92,7 +98,6 @@ void Level::Update(int currentLvl, int& newLvl, float dt, float now, float playe
 
 void Level::SetOffset(float x, float y) {
     for (auto* block : blocks) {
-        sf::Vector2f pos = block->rect.getPosition();
-        block->rect.setPosition(sf::Vector2f(pos.x + x, pos.y + y));
+        block->rect.setPosition(sf::Vector2f(block->basePos.x + x, block->basePos.y + y));
     }
 }
