@@ -62,7 +62,6 @@ private:
     int m_personalWaypointId = -1;
     bool m_hasWaypoint = false;
     bool WouldCollide(sf::Vector2f testPos, const std::vector<Block*>& blocks) const;
-    bool HasLineOfSight(sf::Vector2f targetPos, const std::vector<Block*>& blocks) const;
     sf::Vector2f ComputeSteering(sf::Vector2f target, const std::vector<Block*>& blocks) const;
 
 public:
@@ -88,6 +87,7 @@ public:
         if (m_searchTimeRemaining <= 0.f) ClearLastKnownEnemyPos();
     }
 
+    bool HasLineOfSight(sf::Vector2f targetPos, const std::vector<Block*>& blocks) const;
     char GetTargetZoneSymbol() const { return m_targetZoneSymbol; }
     void SetTargetZoneSymbol(char c) { m_targetZoneSymbol = c; }
 
@@ -151,7 +151,7 @@ public:
 
 private:
     int m_totalSpawned = 0;
-    const int m_maxTotal = 10;
+    const int m_maxTotal = 8;
 
     float m_waveTimer = 0.f;     // temps entre deux vagues
     float m_spawnTimer = 0.f;    // temps entre deux ennemis dans une vague

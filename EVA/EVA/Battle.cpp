@@ -186,6 +186,7 @@ bool Soldat::HasLineOfSight(sf::Vector2f targetPos, const std::vector<Block*>& b
     for (float t = 0.f; t < dist; t += step) {
         sf::Vector2f p = start + dir * t;
         for (Block* b : blocks) {
+            if (b->GetBlockType() != "MBlock") continue; // seuls les murs bloquent la vue
             if (b->rect.getGlobalBounds().contains(p)) {
                 return false; // un mur bloque la vue
             }
@@ -365,7 +366,7 @@ void SoldatSpawnerO::Update(float dt, std::vector<Soldat*>& soldat, float spawnX
         if (s->GetTeam() == Team::Orange) aliveCount++;
     }
 
-    if (aliveCount >= 10) return;
+    if (aliveCount >= 8) return;
 
     if (m_soldatsQueued > 0) {
         m_spawnTimer -= dt;
@@ -375,7 +376,7 @@ void SoldatSpawnerO::Update(float dt, std::vector<Soldat*>& soldat, float spawnX
             m_spawnTimer = 1.f;
             aliveCount++;
 
-            if (aliveCount >= 10) return;
+            if (aliveCount >= 8) return;
         }
         return;
     }

@@ -10,8 +10,8 @@ struct SoldatBlackboard {
     ZoneManager* zoneManager = nullptr;
     float dt = 0.f;
 
-    float attackRange = 500.f;
-    float chaseRange = 500.f;
+    float attackRange = 150.f;
+    float chaseRange = 350.f;
     float retreatHealthThreshold = 25.f;
 
     Soldat* targetEnemy = nullptr;

@@ -10,8 +10,8 @@ Block::Block()
 
 void Block::Render(sf::RenderTarget& target) {
     // DEBUG en rouge
-    rect.setOutlineThickness(1.f);
-    rect.setOutlineColor(sf::Color::Red);
+    //rect.setOutlineThickness(1.f);
+    //rect.setOutlineColor(sf::Color::Red);
     target.draw(rect);
 }
 MBlock::MBlock(float posx, float posy) {

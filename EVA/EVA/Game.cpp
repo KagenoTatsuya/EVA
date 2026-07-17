@@ -90,18 +90,38 @@ Game::Game(sf::Vector2u windowSize)
     PNJ* pnj4 = new PNJ(680.f, 558.f, "character-spritesheet13.png");
     pnj4->SetWaypoints({
         sf::Vector2f(680.f, 558.f),
+        sf::Vector2f(817.f, 650.f),
         sf::Vector2f(1077.f, 1113.f),
-        sf::Vector2f(975.f, 54.f)
+        sf::Vector2f(975.f, 744.f)
         });
     m_pnjs.push_back(pnj4);
 
     PNJ* pnj5 = new PNJ(197.f, 834.f, "character-spritesheet14.png");
     pnj5->SetWaypoints({
         sf::Vector2f(197.f, 834.f),
-        sf::Vector2f(570.f, 698.f),
-        sf::Vector2f(555.f, 699.f)
+        sf::Vector2f(339.f, 723.f),
+        sf::Vector2f(555.f, 699.f),
+        sf::Vector2f(1100.f, 855.f)
         });
     m_pnjs.push_back(pnj5);
+
+    PNJ* pnj6 = new PNJ(1083.f, 1149.f, "character-spritesheet15.png");
+    pnj6->SetWaypoints({
+        sf::Vector2f(1083.f, 1149.f),
+        sf::Vector2f(436.f, 1149.f),
+        sf::Vector2f(436.f, 864.f),
+        sf::Vector2f(635.f, 704.f)
+        });
+    m_pnjs.push_back(pnj6);
+
+    PNJ* pnj7 = new PNJ(979.f, 761.f, "character-spritesheet16.png");
+    pnj7->SetWaypoints({
+        sf::Vector2f(979.f, 761.f),
+        sf::Vector2f(770.f, 900.f),
+        sf::Vector2f(599.f, 1037.f),
+        sf::Vector2f(434.f, 1129.f)
+        });
+    m_pnjs.push_back(pnj7);
 }
 
 Game::~Game() {

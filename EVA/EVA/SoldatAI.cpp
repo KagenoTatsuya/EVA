@@ -4,12 +4,20 @@ Soldat* FindNearestEnemy(SoldatBlackboard& bb, float maxRange) {
     Soldat* best = nullptr;
     float bestDist = maxRange * maxRange;
     sf::Vector2f myPos = bb.self->rect.getPosition();
+
     for (Soldat* other : *bb.allSoldats) {
         if (other == bb.self || !other->alive) continue;
         if (other->GetTeam() == bb.self->GetTeam()) continue;
+
         sf::Vector2f d = other->rect.getPosition() - myPos;
         float dist = d.x * d.x + d.y * d.y;
-        if (dist <= bestDist) { bestDist = dist; best = other; }
+        if (dist > bestDist) continue;
+
+        // Ignore les ennemis cachés derrière un mur (MBlock)
+        if (bb.blocks && !bb.self->HasLineOfSight(other->rect.getPosition(), *bb.blocks)) continue;
+
+        bestDist = dist;
+        best = other;
     }
     return best;
 }

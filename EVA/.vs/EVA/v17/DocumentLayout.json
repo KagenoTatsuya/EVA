@@ -3,6 +3,26 @@
   "WorkspaceRootPath": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Block.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Block.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Battle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Battle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Battle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Battle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\SoldatAI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\SoldatAI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -17,22 +37,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Battle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Battle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\SoldatAI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\SoldatAI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Battle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Battle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -42,87 +46,102 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "Block.cpp",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Block.cpp",
+              "RelativeDocumentMoniker": "EVA\\Block.cpp",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Block.cpp",
+              "RelativeToolTip": "EVA\\Block.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-07-17T12:55:44.882Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "Entity.cpp",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.cpp",
               "RelativeDocumentMoniker": "EVA\\Entity.cpp",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.cpp",
               "RelativeToolTip": "EVA\\Entity.cpp",
-              "ViewState": "AgIAALoAAAAAAAAAAAAAAMYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAALoAAAAAAAAAAAAAAMcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-07-16T14:31:07.682Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "Battle.h",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Battle.h",
               "RelativeDocumentMoniker": "EVA\\Battle.h",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Battle.h",
               "RelativeToolTip": "EVA\\Battle.h",
-              "ViewState": "AgIAAEUAAAAAAAAAAAAAAFgAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAJAAAAAAAAAAAAAAAJkAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-07-02T16:55:22.464Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 1,
               "Title": "Battle.cpp",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Battle.cpp",
               "RelativeDocumentMoniker": "EVA\\Battle.cpp",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Battle.cpp",
               "RelativeToolTip": "EVA\\Battle.cpp",
-              "ViewState": "AgIAAEoBAAAAAAAAAAAowGcBAAABAAAAAAAAAA==",
+              "ViewState": "AgIAADEBAAAAAAAAAAAAAHoBAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-07-02T16:55:18.748Z"
+              "WhenOpened": "2026-07-02T16:55:18.748Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "SoldatAI.h",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.h",
               "RelativeDocumentMoniker": "EVA\\SoldatAI.h",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.h",
               "RelativeToolTip": "EVA\\SoldatAI.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAkAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-07-04T13:16:57.003Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 3,
               "Title": "SoldatAI.cpp",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.cpp",
               "RelativeDocumentMoniker": "EVA\\SoldatAI.cpp",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.cpp",
               "RelativeToolTip": "EVA\\SoldatAI.cpp",
-              "ViewState": "AgIAAEYAAAAAAAAAAAAowFAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-07-04T13:17:17.156Z"
+              "WhenOpened": "2026-07-04T13:17:17.156Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "Game.cpp",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.cpp",
               "RelativeDocumentMoniker": "EVA\\Game.cpp",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.cpp",
               "RelativeToolTip": "EVA\\Game.cpp",
-              "ViewState": "AgIAAFAAAAAAAAAAAAAAwFwAAAAhAAAAAAAAAA==",
+              "ViewState": "AgIAAKAAAAAAlJmZmZkNwIEAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-05-28T16:28:12.301Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 8,
               "Title": "Game.h",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.h",
               "RelativeDocumentMoniker": "EVA\\Game.h",
@@ -130,12 +149,11 @@
               "RelativeToolTip": "EVA\\Game.h",
               "ViewState": "AgIAAE0AAAAAAAAAAADwv1wAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-07-01T16:16:33.576Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-01T16:16:33.576Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 7,
               "Title": "EVA.cpp",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EVA.cpp",
               "RelativeDocumentMoniker": "EVA\\EVA.cpp",
@@ -143,8 +161,7 @@
               "RelativeToolTip": "EVA\\EVA.cpp",
               "ViewState": "AgIAAIcAAAAAAAAAAAAAwJ8AAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-05-28T15:55:18.201Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-28T15:55:18.201Z"
             }
           ]
         }
