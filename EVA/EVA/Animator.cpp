@@ -1,4 +1,5 @@
 #include "Animator.h"
+#include "TextureCache.h"
 #include <iostream>
 
 Animator::Animator() : currentFrame(0), timer(0.f), finished(false) {}
@@ -6,13 +7,12 @@ Animator::Animator() : currentFrame(0), timer(0.f), finished(false) {}
 void Animator::AddAnimation(const std::string& name, std::vector<sf::IntRect> frames, float frameDuration, bool loop) {
     animations[name] = { frames, frameDuration, loop };
 }
+
 bool Animator::LoadTexture(const std::string& path) {
-    texture = sf::Texture();
-    if (!texture.loadFromFile(path)) {
-        std::cerr << "Erreur chargement spritesheet: " << path << std::endl;
-        return false;
-    }
-    sprite.emplace(texture);
+    texture = TextureCache::Instance().Get(path); // charge depuis le disque UNE seule fois par fichier, réutilisé ensuite
+    if (!texture) return false;
+
+    sprite.emplace(*texture);
     return true;
 }
 
@@ -40,7 +40,6 @@ void Animator::Update(float dt) {
     if (currentAnim.empty() || !animations.count(currentAnim)) return;
     Animation& anim = animations[currentAnim];
     if (finished && !anim.loop) return;
-
     timer += dt;
     if (timer >= anim.frameDuration) {
         timer = 0.f;

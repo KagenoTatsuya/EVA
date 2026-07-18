@@ -1,25 +1,35 @@
 #include "SoldatAI.h"
+#include <algorithm>
+
 
 Soldat* FindNearestEnemy(SoldatBlackboard& bb, float maxRange) {
-    Soldat* best = nullptr;
-    float bestDist = maxRange * maxRange;
+    struct Candidate { Soldat* s; float distSq; };
+    std::vector<Candidate> candidates;
+
     sf::Vector2f myPos = bb.self->rect.getPosition();
+    float maxRangeSq = maxRange * maxRange;
 
     for (Soldat* other : *bb.allSoldats) {
         if (other == bb.self || !other->alive) continue;
         if (other->GetTeam() == bb.self->GetTeam()) continue;
 
         sf::Vector2f d = other->rect.getPosition() - myPos;
-        float dist = d.x * d.x + d.y * d.y;
-        if (dist > bestDist) continue;
+        float distSq = d.x * d.x + d.y * d.y;
+        if (distSq > maxRangeSq) continue;
 
-        // Ignore les ennemis cachés derrière un mur (MBlock)
-        if (bb.blocks && !bb.self->HasLineOfSight(other->rect.getPosition(), *bb.blocks)) continue;
-
-        bestDist = dist;
-        best = other;
+        candidates.push_back({ other, distSq });
     }
-    return best;
+
+    // Trie du plus proche au plus loin, pour ne raycaster que le strict nécessaire
+    std::sort(candidates.begin(), candidates.end(),
+        [](const Candidate& a, const Candidate& b) { return a.distSq < b.distSq; });
+
+    for (const Candidate& c : candidates) {
+        if (!bb.blocks || bb.self->HasLineOfSight(c.s->rect.getPosition(), *bb.blocks, bb.wallGrid)) {
+            return c.s; // premier (donc le plus proche) avec ligne de vue dégagée
+        }
+    }
+    return nullptr;
 }
 
 void AssignSoldatRoles(std::vector<Soldat*>& soldats, ZoneManager& zoneManager, Team team) {
@@ -92,12 +102,26 @@ BTNodePtr BuildSoldatBehaviorTree() {
         // --- Branche repli : vie basse, priorité absolue ---
         MakeSequence(
             MakeCondition([](SoldatBlackboard& bb) {
-                return bb.self->GetHealth() <= bb.retreatHealthThreshold
-                    && bb.zoneManager->GetZoneOwnedByTeam(bb.self->GetTeam()) != nullptr;
+                bb.targetEnemy = FindNearestEnemy(bb, bb.chaseRange);
+                if (bb.targetEnemy) {
+                    bb.self->SetLastKnownEnemyPos(bb.targetEnemy->rect.getPosition());
+                }
+                return bb.targetEnemy != nullptr;
                 }),
             MakeAction([](SoldatBlackboard& bb) {
-                Zone* safeZone = bb.zoneManager->GetZoneOwnedByTeam(bb.self->GetTeam());
-                bb.moveTarget = safeZone->GetCenter();
+                sf::Vector2f myPos = bb.self->rect.getPosition();
+                sf::Vector2f enemyPos = bb.targetEnemy->rect.getPosition();
+                sf::Vector2f d = enemyPos - myPos;
+                float dist = std::sqrt(d.x * d.x + d.y * d.y);
+
+                if (dist <= bb.attackRange) {
+                    bb.moveTarget = myPos;
+                    bb.self->TryAttack(bb.targetEnemy, bb.dt, bb.attackRange, *bb.projectiles, *bb.blocks, *bb.projectilePool, bb.wallGrid);
+                }
+                else {
+                    sf::Vector2f dir = d / dist;
+                    bb.moveTarget = enemyPos - dir * bb.attackRange;
+                }
                 return BTStatus::Success;
                 })
         ),
@@ -118,7 +142,7 @@ BTNodePtr BuildSoldatBehaviorTree() {
 
                 if (dist <= bb.attackRange) {
                     bb.moveTarget = myPos;
-                    bb.self->TryAttack(bb.targetEnemy, bb.dt, bb.attackRange, *bb.projectiles, *bb.blocks);
+                    bb.self->TryAttack(bb.targetEnemy, bb.dt, bb.attackRange, *bb.projectiles, *bb.blocks, *bb.projectilePool);
                 }
                 else {
                     sf::Vector2f dir = d / dist;

@@ -1,5 +1,6 @@
 #include "ZoneManager.h"
 #include "Battle.h"
+#include "Entity.h"
 #include <fstream>
 #include <limits>
 #include <algorithm>
@@ -215,8 +216,8 @@ void ZoneManager::ResetZones() {
     }
 }
 
-void ZoneManager::Update(float dt, std::vector<Soldat*>& soldats) {
-    UpdateOccupiedWaypoints(soldats); // recalcule les waypoints occupés cette frame
+void ZoneManager::Update(float dt, std::vector<Soldat*>& soldats, Entity* player) {
+    UpdateOccupiedWaypoints(soldats);
     for (Zone& zone : m_zones) {
         int orangeCount = 0, bleuCount = 0;
 
@@ -227,11 +228,15 @@ void ZoneManager::Update(float dt, std::vector<Soldat*>& soldats) {
             }
         }
 
+        // Le joueur compte comme un soldat Bleu supplémentaire pour la capture
+        if (player && zone.bounds.contains(player->rect.getPosition())) {
+            bleuCount++;
+        }
+
         if (orangeCount > bleuCount)
             zone.captureProgress -= Zone::kCaptureSpeed * dt * (orangeCount - bleuCount);
         else if (bleuCount > orangeCount)
             zone.captureProgress += Zone::kCaptureSpeed * dt * (bleuCount - orangeCount);
-        // Égalité = zone contestée, elle ne bouge pas
 
         zone.captureProgress = std::clamp(zone.captureProgress, -Zone::kCaptureMax, Zone::kCaptureMax);
 

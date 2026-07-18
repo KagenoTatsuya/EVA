@@ -30,10 +30,16 @@ public:
         std::vector<Ennemi*>& ennemis,
         int& vies);
 
-    static void handleCollisionsJoueurSoldat(
+    // Retourne true si le joueur a été touché ce tick (utile pour déclencher des effets indépendants des vies)
+    static bool handleCollisionsJoueurSoldat(
         Entity* player,
         std::vector<Soldat*>& soldat,
         int& vies);
+
+    // Collision tirs de soldat (SoldatProjectile) > joueur ; seule l'équipe Orange peut toucher le joueur
+    static bool handleCollisionsJoueurProjectilesSoldat(
+        Entity* player,
+        std::vector<SoldatProjectile*>& projectiles);
 
     // Tir automatique des ennemis
     static void enemyShoot(

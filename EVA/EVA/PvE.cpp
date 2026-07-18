@@ -164,7 +164,7 @@ void PvE::handleCollisionsJoueurShootS(std::vector<Shoot*>& shoot, std::vector<S
     }
 }
 
-void PvE::handleCollisionsJoueurSoldat(Entity* player, std::vector<Soldat*>& soldat, int& vies) {
+bool PvE::handleCollisionsJoueurSoldat(Entity* player, std::vector<Soldat*>& soldat, int& vies) {
     sf::FloatRect playerBounds = player->rect.getGlobalBounds();
 
     for (Soldat* t : soldat) {
@@ -174,10 +174,12 @@ void PvE::handleCollisionsJoueurSoldat(Entity* player, std::vector<Soldat*>& sol
         if (t->rect.getGlobalBounds().findIntersection(playerBounds)) {
             vies -= 1;
             t->alive = false;
-            break;
+            return true;
         }
     }
+    return false;
 }
+
 void PvE::soldatShoot(
     std::vector<Shoot*>& shoot,
     std::vector<Soldat*>& soldat,

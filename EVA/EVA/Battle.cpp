@@ -1,6 +1,8 @@
 #include "Battle.h"
 #include "Deplacement.h"
-#include "ZoneManager.h"    
+#include "ZoneManager.h"
+#include "ProjectilePool.h"
+#include "WallGrid.h"
 #include <cmath>
 #include <numbers>
 
@@ -125,11 +127,11 @@ Soldat::Soldat(float x, float y, Team team)
     animator.Play("down"); // animation par défaut
 }
 
-void Battle::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks) {
+void Battle::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks, const WallGrid* grid) {
     // comportement par défaut, ou vide
 }
 
-void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks) {
+void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks, const WallGrid* grid) {
     timeAlive += dt;
 
     const float minX = -175.f, maxX = 1920.f, minY = -175.f, maxY = 1920.f;
@@ -138,7 +140,7 @@ void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks) {
     sf::Vector2f size = rect.getSize();
     sf::Vector2f oldPos = pos;
 
-    sf::Vector2f steeredTarget = blocks ? ComputeSteering(cible, *blocks) : cible;
+    sf::Vector2f steeredTarget = blocks ? ComputeSteering(cible, *blocks, grid) : cible;
 
     pos = Deplacement::getPointArrive(pos, steeredTarget, m_speed * dt, minX, minY, maxX, maxY);
 
@@ -173,29 +175,37 @@ void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks) {
         animator.sprite->setPosition(rect.getPosition());
 }
 
-bool Soldat::HasLineOfSight(sf::Vector2f targetPos, const std::vector<Block*>& blocks) const {
+bool Soldat::HasLineOfSight(sf::Vector2f targetPos, const std::vector<Block*>& blocks, const WallGrid* grid) const {
     sf::Vector2f start = rect.getPosition() + rect.getSize() / 2.f;
-    sf::Vector2f end = targetPos + sf::Vector2f(16.f, 24.f); // approx centre de la cible
+    sf::Vector2f end = targetPos + sf::Vector2f(16.f, 24.f);
 
     sf::Vector2f dir = end - start;
     float dist = std::sqrt(dir.x * dir.x + dir.y * dir.y);
     if (dist < 1.f) return true;
 
+    // Seuls les murs proches du segment sont testés si une grille est fournie
+    const std::vector<Block*>* candidates = &blocks;
+    std::vector<Block*> nearby;
+    if (grid) {
+        nearby = grid->QueryAlongSegment(start, end);
+        candidates = &nearby;
+    }
+
     dir /= dist;
-    const float step = 8.f; // pas d'échantillonnage le long du rayon
+    const float step = 8.f;
     for (float t = 0.f; t < dist; t += step) {
         sf::Vector2f p = start + dir * t;
-        for (Block* b : blocks) {
-            if (b->GetBlockType() != "MBlock") continue; // seuls les murs bloquent la vue
+        for (Block* b : *candidates) {
+            if (b->GetBlockType() != "MBlock") continue;
             if (b->rect.getGlobalBounds().contains(p)) {
-                return false; // un mur bloque la vue
+                return false;
             }
         }
     }
     return true;
 }
 
-bool Soldat::TryAttack(Soldat* target, float dt, float attackRange, std::vector<SoldatProjectile*>& projectiles, const std::vector<Block*>& blocks) {
+bool Soldat::TryAttack(Soldat* target, float dt, float attackRange, std::vector<SoldatProjectile*>& projectiles, const std::vector<Block*>& blocks, ProjectilePool& pool, const WallGrid* grid) {
     m_attackCooldown -= dt;
     if (m_attackCooldown > 0.f) return false;
     if (!target || !target->alive) return false;
@@ -204,14 +214,13 @@ bool Soldat::TryAttack(Soldat* target, float dt, float attackRange, std::vector<
     float distSq = d.x * d.x + d.y * d.y;
     if (distSq > attackRange * attackRange) return false;
 
-    // Ne tire pas s'il y a un mur entre lui et la cible
-    if (!HasLineOfSight(target->rect.getPosition(), blocks)) return false;
+    if (!HasLineOfSight(target->rect.getPosition(), blocks, grid)) return false;
 
     float dist = std::sqrt(distSq);
     sf::Vector2f dir = d / dist;
     const float projSpeed = 500.f;
 
-    SoldatProjectile* p = new SoldatProjectile();
+    SoldatProjectile* p = pool.Acquire();
     p->pos = rect.getPosition();
     p->velocity = dir * projSpeed;
     p->damage = m_attackDamage;
@@ -220,6 +229,65 @@ bool Soldat::TryAttack(Soldat* target, float dt, float attackRange, std::vector<
 
     m_attackCooldown = m_attackInterval;
     return true;
+}
+
+bool Soldat::WouldCollide(sf::Vector2f testPos, const std::vector<Block*>& blocks, const WallGrid* grid) const {
+    sf::FloatRect testBounds(testPos, rect.getSize());
+
+    if (grid) {
+        for (Block* b : grid->QueryNear(testPos + rect.getSize() / 2.f, 48.f)) {
+            if (b->GetBlockType() != "MBlock") continue;
+            if (testBounds.findIntersection(b->rect.getGlobalBounds())) return true;
+        }
+        return false;
+    }
+
+    for (Block* b : blocks) {
+        if (b->GetBlockType() != "MBlock") continue;
+        if (testBounds.findIntersection(b->rect.getGlobalBounds())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+sf::Vector2f Soldat::ComputeSteering(sf::Vector2f target, const std::vector<Block*>& blocks, const WallGrid* grid) const {
+    sf::Vector2f pos = rect.getPosition();
+    sf::Vector2f toTarget = target - pos;
+    float dist = std::sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
+    if (dist < 1.f) return target;
+
+    sf::Vector2f dir = toTarget / dist;
+    const float probeDist = 40.f;
+
+    if (!WouldCollide(pos + dir * probeDist, blocks, grid)) {
+        return target;
+    }
+
+    const float degToRad = 3.14159265f / 180.f;
+    for (float angleDeg = 10.f; angleDeg <= 170.f; angleDeg += 10.f) {
+        float angleRad = angleDeg * degToRad;
+        float cosA = std::cos(angleRad);
+        float sinA = std::sin(angleRad);
+
+        sf::Vector2f dirRight(
+            dir.x * cosA - dir.y * sinA,
+            dir.x * sinA + dir.y * cosA
+        );
+        if (!WouldCollide(pos + dirRight * probeDist, blocks, grid)) {
+            return pos + dirRight * dist;
+        }
+
+        sf::Vector2f dirLeft(
+            dir.x * cosA + dir.y * sinA,
+            -dir.x * sinA + dir.y * cosA
+        );
+        if (!WouldCollide(pos + dirLeft * probeDist, blocks, grid)) {
+            return pos + dirLeft * dist;
+        }
+    }
+
+    return pos - dir * (probeDist * 0.5f);
 }
 
 void SoldatProjectile::Update(float dt) {
@@ -391,63 +459,4 @@ void SoldatSpawnerO::Update(float dt, std::vector<Soldat*>& soldat, float spawnX
 
 bool Soldat::HasValidWaypoint() const {
     return m_hasWaypoint;
-}
-
-bool Soldat::WouldCollide(sf::Vector2f testPos, const std::vector<Block*>& blocks) const {
-    sf::FloatRect testBounds(testPos, rect.getSize());
-    for (Block* b : blocks) {
-        if (b->GetBlockType() != "MBlock") continue; // ne teste que les vrais murs
-        if (testBounds.findIntersection(b->rect.getGlobalBounds())) {
-            return true;
-        }
-    }
-    return false;
-}
-
-sf::Vector2f Soldat::ComputeSteering(sf::Vector2f target, const std::vector<Block*>& blocks) const {
-    sf::Vector2f pos = rect.getPosition();
-    sf::Vector2f toTarget = target - pos;
-    float dist = std::sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
-    if (dist < 1.f) return target;
-
-    sf::Vector2f dir = toTarget / dist;
-    const float probeDist = 40.f; // distance de sondage devant le soldat
-
-    // Rien devant : trajectoire directe
-    if (!WouldCollide(pos + dir * probeDist, blocks)) {
-        return target;
-    }
-
-    // Obstacle détecté : on balaie des angles croissants de part et d'autre
-    // de la direction voulue, du plus proche au plus large, pour trouver
-    // la trajectoire libre la plus proche (permet de raser/effleurer le mur
-    // au lieu de rester bloqué dessus).
-    const float degToRad = 3.14159265f / 180.f;
-    for (float angleDeg = 10.f; angleDeg <= 170.f; angleDeg += 10.f) {
-        float angleRad = angleDeg * degToRad;
-        float cosA = std::cos(angleRad);
-        float sinA = std::sin(angleRad);
-
-        // essai côté "droit"
-        sf::Vector2f dirRight(
-            dir.x * cosA - dir.y * sinA,
-            dir.x * sinA + dir.y * cosA
-        );
-        if (!WouldCollide(pos + dirRight * probeDist, blocks)) {
-            return pos + dirRight * dist;
-        }
-
-        // essai côté "gauche" (symétrique)
-        sf::Vector2f dirLeft(
-            dir.x * cosA + dir.y * sinA,
-            -dir.x * sinA + dir.y * cosA
-        );
-        if (!WouldCollide(pos + dirLeft * probeDist, blocks)) {
-            return pos + dirLeft * dist;
-        }
-    }
-
-    // Vraiment coincé de tous les côtés (coin/impasse, cas rare) :
-    // on recule légèrement au lieu de rester figé contre le mur.
-    return pos - dir * (probeDist * 0.5f);
 }

@@ -13,6 +13,9 @@
 #include "SoldatAI.h"
 #include "SelectPerso.h"
 #include "Pause.h"
+#include "WallGrid.h"
+#include "ProjectilePool.h"
+
 
 class StartMenu;
 class EndMenu;
@@ -33,7 +36,6 @@ class ChooseGame;
 class Survival;
 class HUD;
 class SelectPerso;
-
 
 class Game {
 private:
@@ -61,9 +63,11 @@ private:
     SelectPerso m_selectPerso;
     std::vector<SoldatProjectile*> m_soldatProjectiles;
     std::vector<Block*> m_battleWalls; // sous-liste des MBlock uniquement, pour le mode Battle
+    WallGrid m_wallGrid;                // grille spatiale des murs, reconstruite dans SwitchToBattle
     Pause* m_pause = nullptr;
-    
+    ProjectilePool m_projectilePool;
 
+    
     // Mode de jeu
     enum class GameMode {
         TPS,        // vue du dessus avec Joueur
@@ -84,31 +88,38 @@ private:
     } state;
 
     NPC* m_activeNPC = nullptr;
-
     int m_vies = 3;
     int m_score = 0;
     float m_invincibleTimer = 0.f; // pour éviter de perdre 3 vies en une collision qui dure plusieurs frames
-    State m_stateBeforePause = RUNNING; float m_battleTimer = 0.f;                        //    temps restant en mode Battle
-    static constexpr float BATTLE_DURATION = 600.f;   //AJOUT : 10 minutes = 600.f
+    State m_stateBeforePause = RUNNING;
+    float m_battleTimer = 0.f;                        // temps restant en mode Battle
+    static constexpr float BATTLE_DURATION = 300.f;   // 10 minutes = 600.f
     std::string m_battleResultText;
 
-public:
+    // Effet sombre déclenché par un tir/collision Orange
+    float m_hitDarknessTimer = 0.f;
+    static constexpr float kBattleDarknessRadius = 3000.f; // assez grand pour ne créer aucun assombrissement visible
+    static constexpr float kHitDarknessRadius = 15.f;     // rayon "aveuglé"
+    static constexpr float kHitDarknessDuration = 10.f;    // durée de l'effet
+    static constexpr float kHitDarknessFadeDuration = 1.f;      // durée de l'assombrissement ET de l'illumination
+    static constexpr sf::Vector2f kBattleSpawnPos{ 1784.f, 475.f }; // cible de la flèche = spawn joueur en Battle
+    void TriggerHitDarkness();
+    void UpdateHitDarkness(float dt);
+    void RenderSpawnArrow(sf::RenderWindow& window, Camera* camera, Entity* player);
 
+public:
     Game(sf::Vector2u windowSize);
     ~Game();
-
     // Switch vers le mode platformer (appelé quand le joueur passe la porte)
     void SwitchToSurvival(std::vector<Level*>& levels);
     void SwitchToBattle(std::vector<Level*>& levels);
     void SwitchToTPS(Camera* camera);
     std::string ComputeBattleWinner();
-
     void Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float now,
         std::vector<sf::Event>& events, std::vector<Level*>& levels,
         sf::RenderWindow& window, Parallax* parallax, Camera* camera,
         CameraMenu* cameramenu, SoundManager& sound, Button* start,
         Button* exit, Button* letscontinue, Button* zombie, Button* arene, Entity* player, ChooseGame* choose, std::vector<Shoot*>& shoot);
-
     void Render(std::vector<Level*>& levels,
         sf::RenderWindow& window, Parallax* parallax, Camera* camera,
         CameraMenu* cameramenu, StartMenu* startmenu, EndMenu* endmenu,

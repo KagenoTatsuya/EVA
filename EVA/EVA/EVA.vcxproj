@@ -151,6 +151,7 @@
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="Parallax.cpp" />
     <ClCompile Include="Pause.cpp" />
+    <ClCompile Include="ProjectilePool.cpp" />
     <ClCompile Include="PvE.cpp" />
     <ClCompile Include="SelectPerso.cpp" />
     <ClCompile Include="Shoot.cpp" />
@@ -158,7 +159,9 @@
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="StartMenu.cpp" />
     <ClCompile Include="Survival.cpp" />
+    <ClCompile Include="TextureCache.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="WallGrid.cpp" />
     <ClCompile Include="Zone.cpp" />
     <ClCompile Include="ZoneManager.cpp" />
   </ItemGroup>
@@ -182,6 +185,7 @@
     <ClInclude Include="NPC.h" />
     <ClInclude Include="Parallax.h" />
     <ClInclude Include="Pause.h" />
+    <ClInclude Include="ProjectilePool.h" />
     <ClInclude Include="PvE.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SelectPerso.h" />
@@ -190,7 +194,9 @@
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="StartMenu.h" />
     <ClInclude Include="Survival.h" />
+    <ClInclude Include="TextureCache.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="WallGrid.h" />
     <ClInclude Include="Zone.h" />
     <ClInclude Include="ZoneManager.h" />
   </ItemGroup>

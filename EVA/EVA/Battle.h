@@ -1,12 +1,15 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <cstdlib>
 #include "Animator.h"
 #include "Block.h"
 #include <random>
 #include <array>
 #include <vector>
 
+class ProjectilePool;
 class ZoneManager;
+class WallGrid;
 
 class Battle {
 public:
@@ -19,7 +22,7 @@ public:
         : rect(r), vx(vx), vy(vy), alive(true), timeAlive(0.f) {
     }
 
-    virtual void Update(float dt, sf::Vector2f cible = { 0.f, 0.f }, std::vector<Block*>* blocks = nullptr);
+    virtual void Update(float dt, sf::Vector2f cible = { 0.f, 0.f }, std::vector<Block*>* blocks = nullptr, const WallGrid* grid = nullptr);
     virtual void Render(sf::RenderTarget* target) = 0; // méthode virtuelle pure
     virtual ~Battle() = default;
 };
@@ -47,6 +50,9 @@ private:
     float m_attackCooldown = 0.f;
     float m_speed = 80.f;
 
+    int m_aiTickOffset = rand() % 4; // décalage aléatoire à la construction
+    sf::Vector2f m_moveTarget{ 0.f, 0.f }; // dernière destination décidée par l'IA, réutilisée entre deux ticks
+
     sf::Vector2f m_lastKnownEnemyPos{ 0.f, 0.f };
     bool m_hasLastKnownEnemyPos = false;
     float m_searchTimeRemaining = 0.f;
@@ -61,6 +67,9 @@ private:
     sf::Vector2f m_personalWaypoint{ 0.f, 0.f };
     int m_personalWaypointId = -1;
     bool m_hasWaypoint = false;
+    bool WouldCollide(sf::Vector2f testPos, const std::vector<Block*>& blocks, const WallGrid* grid) const;
+    sf::Vector2f ComputeSteering(sf::Vector2f target, const std::vector<Block*>& blocks, const WallGrid* grid) const;
+
     bool WouldCollide(sf::Vector2f testPos, const std::vector<Block*>& blocks) const;
     sf::Vector2f ComputeSteering(sf::Vector2f target, const std::vector<Block*>& blocks) const;
 
@@ -72,6 +81,10 @@ public:
     sf::Vector2f center;
     bool hasSprite = false;
     bool HasValidWaypoint() const;
+    float GetHealth() const { return m_health; };
+    int GetAITickOffset() const { return m_aiTickOffset; }
+    sf::Vector2f GetMoveTarget() const { return m_moveTarget; }
+    void SetMoveTarget(sf::Vector2f target) { m_moveTarget = target; }
 
     void SetLastKnownEnemyPos(sf::Vector2f pos) {
         m_lastKnownEnemyPos = pos;
@@ -87,7 +100,7 @@ public:
         if (m_searchTimeRemaining <= 0.f) ClearLastKnownEnemyPos();
     }
 
-    bool HasLineOfSight(sf::Vector2f targetPos, const std::vector<Block*>& blocks) const;
+    bool HasLineOfSight(sf::Vector2f targetPos, const std::vector<Block*>& blocks, const WallGrid* grid = nullptr) const;
     char GetTargetZoneSymbol() const { return m_targetZoneSymbol; }
     void SetTargetZoneSymbol(char c) { m_targetZoneSymbol = c; }
 
@@ -104,9 +117,7 @@ public:
     Team GetTeam() const { return team; };
     SoldatRole GetRole() const { return m_role; };
     void SetRole(SoldatRole role) { m_role = role; };
-    float GetHealth() const { return m_health; };
-
-    bool TryAttack(Soldat* target, float dt, float attackRange, std::vector<SoldatProjectile*>& projectiles, const std::vector<Block*>& blocks);
+    bool TryAttack(Soldat* target, float dt, float attackRange, std::vector<SoldatProjectile*>& projectiles, const std::vector<Block*>& blocks, ProjectilePool& pool, const WallGrid* grid = nullptr);
     void TakeDamage(float dmg);
 
     sf::Vector2f GetOrAssignZonePoint(char zoneSymbol, const sf::FloatRect& zoneBounds);
@@ -122,7 +133,7 @@ public:
 
     Soldat(float x, float y, Team team);
     void ResolveCollisionsSold(std::vector<Block*>& blocks);
-    void Update(float dt, sf::Vector2f cible = { 0.f, 0.f }, std::vector<Block*>* blocks = nullptr) override;
+    void Update(float dt, sf::Vector2f cible = { 0.f, 0.f }, std::vector<Block*>* blocks = nullptr, const WallGrid* grid = nullptr) override;
     void Render(sf::RenderTarget* target) override;
 };
 

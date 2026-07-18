@@ -12,16 +12,14 @@ struct Animation {
 };
 
 class Animator {
-    sf::Texture texture;
+    sf::Texture* texture = nullptr; // pointeur vers une texture partagée (TextureCache), plus de copie/rechargement par soldat
     std::map<std::string, Animation> animations;
     std::string currentAnim;
     int currentFrame;
     float timer;
     bool finished;
-
 public:
     std::optional<sf::Sprite> sprite;
-
     Animator();
     bool LoadTexture(const std::string& path);
     void AddAnimation(const std::string& name, std::vector<sf::IntRect> frames, float frameDuration, bool loop = true);

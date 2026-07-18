@@ -133,7 +133,6 @@ Game::~Game() {
     m_npcs.clear();
     for (auto* pnj : m_pnjs) delete pnj;
     m_pnjs.clear();
-    for (auto* p : m_soldatProjectiles) delete p;
     m_soldatProjectiles.clear();
 }
 
@@ -167,6 +166,8 @@ void Game::SwitchToBattle(std::vector<Level*>& levels) {
     m_invincibleTimer = 0.f;
     m_battleTimer = BATTLE_DURATION;
     m_battleResultText.clear();
+    m_hitDarknessTimer = 0.f;
+    m_darkness.setRadius(kBattleDarknessRadius);
 
     for (Soldat* s : m_soldat) delete s;
     m_soldat.clear();
@@ -182,13 +183,73 @@ void Game::SwitchToBattle(std::vector<Level*>& levels) {
     m_zoneManager.ExtractWaypointsFromFile("Level3.txt", 24.f, { -355.f, -270.f });
     m_zoneManager.ResetZones();
 
-    // Cache les murs une seule fois : évite de rescanner TOUS les blocks
-    // (y compris les tuiles vides) 34 fois par soldat à chaque frame
     m_battleWalls.clear();
     for (Block* b : levels[2]->GetBlocks()) {
         if (b->GetBlockType() == "MBlock") {
             m_battleWalls.push_back(b);
         }
+    }
+    m_wallGrid.Build(m_battleWalls, 64.f);
+}
+
+void Game::RenderSpawnArrow(sf::RenderWindow& window, Camera* camera, Entity* player) {
+    if (m_hitDarknessTimer <= 0.f) return; // flèche visible uniquement pendant l'effet sombre
+
+    sf::Vector2f playerCenter = player->rect.getPosition() + player->rect.getSize() / 2.f;
+    sf::Vector2f toSpawn = kBattleSpawnPos - playerCenter;
+    float length = std::sqrt(toSpawn.x * toSpawn.x + toSpawn.y * toSpawn.y);
+    if (length < 1.f) return; // déjà sur le spawn, rien à pointer
+
+    float angleDeg = std::atan2(toSpawn.y, toSpawn.x) * 180.f / 3.14159265f;
+
+    sf::ConvexShape arrow(3);
+    arrow.setPoint(0, sf::Vector2f(14.f, 0.f));   // pointe
+    arrow.setPoint(1, sf::Vector2f(-8.f, -8.f));  // base haut
+    arrow.setPoint(2, sf::Vector2f(-8.f, 8.f));   // base bas
+    arrow.setFillColor(sf::Color::Yellow);
+    arrow.setOutlineColor(sf::Color::Black);
+    arrow.setOutlineThickness(1.5f);
+
+    arrow.setRotation(sf::degrees(angleDeg));
+    arrow.setPosition(playerCenter + sf::Vector2f(0.f, -50.f)); // flotte au-dessus du joueur
+
+    window.setView(camera->GetView());
+    window.draw(arrow);
+}
+
+void Game::TriggerHitDarkness() {
+    m_hitDarknessTimer = kHitDarknessDuration;
+    // Le rayon est désormais géré progressivement dans UpdateHitDarkness, pas de saut brutal ici
+}
+
+void Game::UpdateHitDarkness(float dt) {
+    if (m_hitDarknessTimer <= 0.f) return;
+
+    m_hitDarknessTimer -= dt;
+    if (m_hitDarknessTimer < 0.f) m_hitDarknessTimer = 0.f;
+
+    float elapsed = kHitDarknessDuration - m_hitDarknessTimer;
+    float radius;
+
+    if (elapsed <= kHitDarknessFadeDuration) {
+        // Phase 1 (0 -> 3s) : assombrissement progressif
+        float t = elapsed / kHitDarknessFadeDuration;
+        radius = kBattleDarknessRadius + (kHitDarknessRadius - kBattleDarknessRadius) * t;
+    }
+    else if (elapsed >= kHitDarknessDuration - kHitDarknessFadeDuration) {
+        // Phase 3 (7 -> 10s) : retour progressif à la lumière normale
+        float t = (elapsed - (kHitDarknessDuration - kHitDarknessFadeDuration)) / kHitDarknessFadeDuration;
+        radius = kHitDarknessRadius + (kBattleDarknessRadius - kHitDarknessRadius) * t;
+    }
+    else {
+        // Phase 2 (3 -> 7s) : joueur totalement aveuglé
+        radius = kHitDarknessRadius;
+    }
+
+    m_darkness.setRadius(radius);
+
+    if (m_hitDarknessTimer <= 0.f) {
+        m_darkness.setRadius(kBattleDarknessRadius); // sécurité : garantit un retour exact au rayon normal
     }
 }
 
@@ -315,21 +376,19 @@ void Game::Render(std::vector<Level*>& levels,
         m_sceneTexture.draw(*bg);
         levels[currentLvl]->Render(m_sceneTexture);
         player->Render(&m_sceneTexture);
-
-        for (auto* t : m_soldat)
-            t->Render(&m_sceneTexture);
-
-        for (auto* p : m_soldatProjectiles)
-            p->Render(&m_sceneTexture);
-
-        for (auto* s : shoot)
-            s->Render(m_sceneTexture);
-
+        for (auto* t : m_soldat) t->Render(&m_sceneTexture);
+        for (auto* p : m_soldatProjectiles) p->Render(&m_sceneTexture);
         m_sceneTexture.display();
-        window.setView(window.getDefaultView());
 
-        sf::Sprite sceneSprite(m_sceneTexture.getTexture());
-        window.draw(sceneSprite);
+        window.setView(window.getDefaultView());
+        m_darkness.Render(window, m_sceneTexture, camera->GetView());
+
+        window.setView(camera->GetView());   // CORRECTION : sans ça, les tirs restent dans le mauvais référentiel
+        for (auto* s : shoot)
+            s->Render(window);
+            
+        RenderSpawnArrow(window, camera, player); // flèche vers le spawn pendant l'effet sombre
+        window.setView(window.getDefaultView()); // retour en coordonnées écran pour le HUD
 
         // Affichage des jauges de capture pour Zone B et Zone C
         auto& zones = m_zoneManager.GetZones();
@@ -338,10 +397,7 @@ void Game::Render(std::vector<Level*>& levels,
             hud.renderZoneGauge(window, zone, { gaugeX, 60.f }, { 40.f, 200.f });
             gaugeX += 80.f;
         }
-
-        // Affichage du timer de partie (mode Battle)
         hud.renderTimer(window, m_battleTimer);
-
         break;
     }
     case SELECT_PERSO: {
@@ -711,6 +767,22 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
         break;
     }
     case BATTLES: {
+        // Décompte du timer de partie EN PREMIER, avant toute logique de combat
+        m_battleTimer -= dt;
+        if (m_battleTimer < 0.f) m_battleTimer = 0.f;
+
+        if (m_battleTimer <= 0.f) {
+            if (!isEnd) {
+                m_battleResultText = ComputeBattleWinner();
+                isEnd = true;
+            }
+            gameTime = now;
+            state = END;
+            break;
+        }
+
+        UpdateHitDarkness(dt); // AJOUT : décompte/restaure l'effet sombre
+
         sf::Vector2f playerPos = player->rect.getPosition();
         sf::Vector2f playerSize = player->rect.getSize();
 
@@ -720,6 +792,8 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
         camera->SetCeilingMode(onHZone);
 
         player->Update(dt, window.getSize(), levels[currentLvl]->GetBlocks(), shoot, true);
+        playerPos = player->rect.getPosition();
+        m_darkness.setPlayerPos(playerPos + sf::Vector2f(playerSize.x / 2.f, playerSize.y / 2.f)); // AJOUT
 
         playerPos = player->rect.getPosition();
 
@@ -727,7 +801,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
         float spawnX = 1784.f;
         float spawnY = 475.f;
         float spawnXx = -229.f;
-        float spawnYy = 488.f;  
+        float spawnYy = 488.f;
 
         m_spawnerS.Update(dt, m_soldat, spawnX, spawnY);
         m_spawnerS2.Update(dt, m_soldat, spawnXx, spawnYy);
@@ -737,23 +811,30 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
 
         sf::Vector2f playerCenter = playerPos + sf::Vector2f(playerSize.x / 2.f, playerSize.y / 2.f);
 
-
+        static int frameCounter = 0;
+        frameCounter++;
         for (Soldat* t : m_soldat) {
             if (!t->alive) continue;
 
-            SoldatBlackboard bb;
-            bb.self = t;
-            bb.allSoldats = &m_soldat;
-            bb.zoneManager = &m_zoneManager;
-            bb.dt = dt;
-            bb.projectiles = &m_soldatProjectiles;
-            bb.blocks = &m_battleWalls;
+            if ((frameCounter + t->GetAITickOffset()) % 4 == 0) {
+                SoldatBlackboard bb;
+                bb.self = t;
+                bb.allSoldats = &m_soldat;
+                bb.zoneManager = &m_zoneManager;
+                bb.dt = dt;
+                bb.projectiles = &m_soldatProjectiles;
+                bb.blocks = &m_battleWalls;
+                bb.projectilePool = &m_projectilePool;
+                bb.wallGrid = &m_wallGrid;
 
-            m_soldatAI->Tick(bb);
+                m_soldatAI->Tick(bb);
+                t->SetMoveTarget(bb.moveTarget);
+            }
 
-            t->Update(dt, bb.moveTarget, &m_battleWalls);        // <- cache au lieu de GetBlocks()
-            t->ResolveCollisionsSold(m_battleWalls);              // <- idem
+            t->Update(dt, t->GetMoveTarget(), &m_battleWalls, &m_wallGrid);
+            t->ResolveCollisionsSold(m_battleWalls);
         }
+
         // Mise à jour des projectiles et application des dégâts à l'impact
         for (SoldatProjectile* p : m_soldatProjectiles) {
             if (!p->alive) continue;
@@ -763,53 +844,61 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
                 if (!target->alive || target->GetTeam() == p->team) continue;
                 sf::Vector2f d = target->rect.getPosition() - p->pos;
                 float distSq = d.x * d.x + d.y * d.y;
-                if (distSq <= 20.f * 20.f) { // rayon de collision du projectile
+                if (distSq <= 20.f * 20.f) {
                     target->TakeDamage(p->damage);
                     p->alive = false;
                     break;
                 }
             }
-            // Le projectile s'arrête (disparaît) en touchant un mur
+
             if (p->alive) {
-                for (Block* b : m_battleWalls) { // utilise le cache déjà proposé, sinon levels[currentLvl]->GetBlocks() filtré sur "MBlock"
-                    sf::FloatRect projBounds(p->pos - sf::Vector2f(4.f, 4.f), sf::Vector2f(8.f, 8.f)); // ajuste selon la taille réelle du shape
+                sf::FloatRect projBounds(p->pos - sf::Vector2f(4.f, 4.f), sf::Vector2f(8.f, 8.f));
+                for (Block* b : m_wallGrid.QueryNear(p->pos, 32.f)) {
                     if (projBounds.findIntersection(b->rect.getGlobalBounds())) {
                         p->alive = false;
                         break;
                     }
                 }
             }
-            // Projectile sorti de la carte = mort
+
             if (p->pos.x < -500.f || p->pos.x > 2200.f || p->pos.y < -500.f || p->pos.y > 2200.f) {
                 p->alive = false;
             }
         }
 
+        // AJOUT : projectile Orange qui touche le joueur -> effet sombre (pas de perte de vie)
+        {
+            sf::FloatRect playerBoundsForHit = player->rect.getGlobalBounds();
+            for (SoldatProjectile* p : m_soldatProjectiles) {
+                if (!p->alive || p->team != Team::Orange) continue;
+                sf::FloatRect projBounds(p->pos - sf::Vector2f(4.f, 4.f), sf::Vector2f(8.f, 8.f));
+                if (projBounds.findIntersection(playerBoundsForHit)) {
+                    p->alive = false;
+                    TriggerHitDarkness();
+                }
+            }
+        }
+
         m_soldatProjectiles.erase(
             std::remove_if(m_soldatProjectiles.begin(), m_soldatProjectiles.end(),
-                [](SoldatProjectile* p) {
-                    if (!p->alive) { delete p; return true; }
-                    return false;
-                }),
+                [](SoldatProjectile* p) { return !p->alive; }),
             m_soldatProjectiles.end()
         );
 
         PvE::ResolveSoldatCollisions(m_soldat);
-        m_zoneManager.Update(dt, m_soldat);
+        m_zoneManager.Update(dt, m_soldat, player);
         PvE::cleanupSoldat(m_soldat);
-        //PvE::cleanupSoldat(m_soldat);
 
-        hud.setScore(m_score);
-        hud.setVies(m_vies);
-
-        // Décompte du timer de partie (mode Battle uniquement)
-        m_battleTimer -= dt;
-        if (m_battleTimer < 0.f) m_battleTimer = 0.f;
-
-        // Game over si le joueur n'a plus de vies OU si le temps est écoulé
-        if ((m_vies <= 0 || m_battleTimer <= 0.f) && !isEnd) {
-            m_battleResultText = ComputeBattleWinner();   // <-- calcul une seule fois
-            isEnd = true;
+        // AJOUT : collision physique avec un soldat Orange -> effet sombre (pas de perte de vie)
+        {
+            sf::FloatRect playerBounds = player->rect.getGlobalBounds();
+            for (Soldat* t : m_soldat) {
+                if (!t->alive || t->GetTeam() != Team::Orange) continue;
+                if (playerBounds.findIntersection(t->rect.getGlobalBounds())) {
+                    TriggerHitDarkness();
+                    break;
+                }
+            }
         }
 
         for (Shoot* s : shoot) {
@@ -827,29 +916,19 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
             }
         }
 
-        // Score : chaque ennemi tué rapporte des points
         PvE::handleCollisionsJoueurShootS(shoot, m_soldat, m_score);
 
-        // Vies : décrément uniquement si le joueur n'est pas en invincibilité temporaire
         if (m_invincibleTimer > 0.f) {
             m_invincibleTimer -= dt;
         }
         else {
             int viesAvant = m_vies;
-            PvE::handleCollisionsJoueurSoldat(player, m_soldat, m_vies);
-            if (m_vies < viesAvant) {
-                m_invincibleTimer = 1.0f; // 1 seconde d'invincibilité après un coup
+            if (PvE::handleCollisionsJoueurSoldat(player, m_soldat, m_vies)) {
+                TriggerHitDarkness(); // le contact avec un Orange déclenche aussi l'effet sombre
             }
-        }
-
-        //PvE::cleanupSoldat(m_soldat);
-
-        hud.setScore(m_score);
-        hud.setVies(m_vies);
-
-        // Game over si le joueur n'a plus de vies
-        if (m_vies <= 0) {
-            isEnd = true;
+            if (m_vies < viesAvant) {
+                m_invincibleTimer = 1.0f;
+            }
         }
 
         sf::Vector2f camCenter = camera->GetView().getCenter();
@@ -857,7 +936,6 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
         camera->Update(playerPos.x + playerSize.x / 2.f, playerPos.y + playerSize.y / 2.f, dt);
 
         gameTime = now;
-        if (isEnd) state = END;
         break;
     }
     case END: {
