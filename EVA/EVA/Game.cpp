@@ -831,7 +831,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
                 t->SetMoveTarget(bb.moveTarget);
             }
 
-            t->Update(dt, t->GetMoveTarget(), &m_battleWalls, &m_wallGrid);
+            t->Update(dt, t->GetMoveTarget(), &m_battleWalls, &m_wallGrid, playerCenter, m_vies > 0);
             t->ResolveCollisionsSold(m_battleWalls);
         }
 

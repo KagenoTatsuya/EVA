@@ -22,7 +22,7 @@ public:
         : rect(r), vx(vx), vy(vy), alive(true), timeAlive(0.f) {
     }
 
-    virtual void Update(float dt, sf::Vector2f cible = { 0.f, 0.f }, std::vector<Block*>* blocks = nullptr, const WallGrid* grid = nullptr);
+    virtual void Update(float dt, sf::Vector2f cible = { 0.f, 0.f }, std::vector<Block*>* blocks = nullptr, const WallGrid* grid = nullptr, sf::Vector2f playerPos = { 0.f, 0.f }, bool playerAlive = false);
     virtual void Render(sf::RenderTarget* target) = 0; // méthode virtuelle pure
     virtual ~Battle() = default;
 };
@@ -38,11 +38,14 @@ enum class SoldatRole {
     Defend
 };
 
-class SoldatProjectile; 
+class SoldatProjectile;
+
+enum class Patterne { Kamikaze };
 
 class Soldat : public Battle {
 private:
     Team team;
+    Patterne patterne;
     SoldatRole m_role = SoldatRole::Unassigned;
     float m_health = 100.f;
     float m_attackDamage = 20.f;
@@ -58,6 +61,9 @@ private:
     float m_searchTimeRemaining = 0.f;
     static constexpr float kSearchDuration = 3.f; // secondes passées à chercher avant d'abandonner
 
+    bool m_isPursuingPlayer = false;
+    static constexpr float kPlayerPursuitTriggerRadius = 150.f; // rayon de déclenchement de la poursuite kamikaze
+
     // Diversité de destination dans une zone
     char m_assignedZone = '\0';   // symbole de la Zone visée, au lieu d'un pointeur
     char m_targetZoneSymbol = '\0';     // zone attribuée pour l'attaque
@@ -67,11 +73,11 @@ private:
     sf::Vector2f m_personalWaypoint{ 0.f, 0.f };
     int m_personalWaypointId = -1;
     bool m_hasWaypoint = false;
+
+    // Retiré : les surcharges sans "grid" n'étaient jamais définies dans le .cpp
+    // (elles auraient provoqué une erreur de link si un jour quelqu'un les appelle).
     bool WouldCollide(sf::Vector2f testPos, const std::vector<Block*>& blocks, const WallGrid* grid) const;
     sf::Vector2f ComputeSteering(sf::Vector2f target, const std::vector<Block*>& blocks, const WallGrid* grid) const;
-
-    bool WouldCollide(sf::Vector2f testPos, const std::vector<Block*>& blocks) const;
-    sf::Vector2f ComputeSteering(sf::Vector2f target, const std::vector<Block*>& blocks) const;
 
 public:
     float timeAlive;
@@ -125,19 +131,22 @@ public:
 
     Soldat()
         : Battle(sf::RectangleShape(sf::Vector2f(60.f, 40.f)), 0.f, -1.f)
+        , patterne(Patterne::Kamikaze) // valeur par défaut explicite, patterne était non initialisé sinon
     {
-        rect.setPosition({ 0.f, 0.f }); 
+        rect.setPosition({ 0.f, 0.f });
     }
 
     ~Soldat();
 
-    Soldat(float x, float y, Team team);
+    bool IsPursuingPlayer() const { return m_isPursuingPlayer; }
+
+    Soldat(float x, float y, Team team, Patterne p);
     void ResolveCollisionsSold(std::vector<Block*>& blocks);
-    void Update(float dt, sf::Vector2f cible = { 0.f, 0.f }, std::vector<Block*>* blocks = nullptr, const WallGrid* grid = nullptr) override;
+    void Update(float dt, sf::Vector2f cible = { 0.f, 0.f }, std::vector<Block*>* blocks = nullptr, const WallGrid* grid = nullptr, sf::Vector2f playerPos = { 0.f, 0.f }, bool playerAlive = false) override;
     void Render(sf::RenderTarget* target) override;
 };
 
-class SoldatSpawnerB {  
+class SoldatSpawnerB {
 public:
     SoldatSpawnerB() = default;
 
@@ -152,12 +161,12 @@ private:
     int   m_soldatsQueued = 0;   // ennemis restants à spawn dans la vague en cours
 
     float GetWaveInterval() const;
-};  
+};
 
 class SoldatSpawnerO {
 public:
     SoldatSpawnerO() = default;
-        
+
     void Update(float dt, std::vector<Soldat*>& soldat, float spawnX, float spawnY);
 
 private:

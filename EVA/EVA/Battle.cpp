@@ -33,14 +33,15 @@ namespace {
     }
 }
 
-Soldat::Soldat(float x, float y, Team team)
+Soldat::Soldat(float x, float y, Team team, Patterne p)
     : Battle(sf::RectangleShape(sf::Vector2f(32.f, 48.f)), 0.f, -1.f)
+    , patterne(p)
     , timeAlive(0.f)
     , phaseX(0.f)
     , phaseY(0.f)
     , cycleX(0)
     , center{ 720.f, y }
-    ,team(team)
+    , team(team)
 {
     rect.setPosition({ x, y });
 
@@ -127,11 +128,11 @@ Soldat::Soldat(float x, float y, Team team)
     animator.Play("down"); // animation par défaut
 }
 
-void Battle::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks, const WallGrid* grid) {
+void Battle::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks, const WallGrid* grid, sf::Vector2f playerPos, bool playerAlive) {
     // comportement par défaut, ou vide
 }
 
-void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks, const WallGrid* grid) {
+void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks, const WallGrid* grid, sf::Vector2f playerPos, bool playerAlive) {
     timeAlive += dt;
 
     const float minX = -175.f, maxX = 1920.f, minY = -175.f, maxY = 1920.f;
@@ -140,7 +141,18 @@ void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks, c
     sf::Vector2f size = rect.getSize();
     sf::Vector2f oldPos = pos;
 
-    sf::Vector2f steeredTarget = blocks ? ComputeSteering(cible, *blocks, grid) : cible;
+    // --- Poursuite kamikaze du joueur (Orange uniquement) ---
+    if (team == Team::Orange && playerAlive && !m_isPursuingPlayer) {
+        sf::Vector2f toPlayer = playerPos - pos;
+        float distSq = toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y;
+        if (distSq <= kPlayerPursuitTriggerRadius * kPlayerPursuitTriggerRadius) {
+            m_isPursuingPlayer = true; // ne redevient jamais false : poursuite jusqu'à la mort du soldat
+        }
+    }
+
+    sf::Vector2f effectiveTarget = (m_isPursuingPlayer && playerAlive) ? playerPos : cible;
+
+    sf::Vector2f steeredTarget = blocks ? ComputeSteering(effectiveTarget, *blocks, grid) : effectiveTarget;
 
     pos = Deplacement::getPointArrive(pos, steeredTarget, m_speed * dt, minX, minY, maxX, maxY);
 
@@ -362,7 +374,7 @@ void SoldatSpawnerB::Update(float dt, std::vector<Soldat*>& soldat, float spawnX
     if (m_soldatsQueued > 0) {
         m_spawnTimer -= dt;
         if (m_spawnTimer <= 0.f) {
-            soldat.push_back(new Soldat(spawnX, spawnY, Team::Bleu));
+            soldat.push_back(new Soldat(spawnX, spawnY, Team::Bleu, Patterne::Kamikaze));
             m_soldatsQueued--;
             m_spawnTimer = 1.f;
             aliveCount++;
@@ -439,7 +451,7 @@ void SoldatSpawnerO::Update(float dt, std::vector<Soldat*>& soldat, float spawnX
     if (m_soldatsQueued > 0) {
         m_spawnTimer -= dt;
         if (m_spawnTimer <= 0.f) {
-            soldat.push_back(new Soldat(spawnX, spawnY, Team::Orange));
+            soldat.push_back(new Soldat(spawnX, spawnY, Team::Orange, Patterne::Kamikaze));
             m_soldatsQueued--;
             m_spawnTimer = 1.f;
             aliveCount++;
