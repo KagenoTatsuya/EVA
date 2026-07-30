@@ -161,6 +161,7 @@
     <ClCompile Include="Survival.cpp" />
     <ClCompile Include="TextureCache.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="TouchInput.cpp" />
     <ClCompile Include="WallGrid.cpp" />
     <ClCompile Include="Zone.cpp" />
     <ClCompile Include="ZoneManager.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="Survival.h" />
     <ClInclude Include="TextureCache.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="TouchInput.h" />
     <ClInclude Include="WallGrid.h" />
     <ClInclude Include="Zone.h" />
     <ClInclude Include="ZoneManager.h" />

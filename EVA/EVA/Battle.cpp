@@ -146,15 +146,87 @@ void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks, c
         sf::Vector2f toPlayer = playerPos - pos;
         float distSq = toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y;
         if (distSq <= kPlayerPursuitTriggerRadius * kPlayerPursuitTriggerRadius) {
-            m_isPursuingPlayer = true; // ne redevient jamais false : poursuite jusqu'à la mort du soldat
+            m_isPursuingPlayer = true;
         }
     }
 
     sf::Vector2f effectiveTarget = (m_isPursuingPlayer && playerAlive) ? playerPos : cible;
 
-    sf::Vector2f steeredTarget = blocks ? ComputeSteering(effectiveTarget, *blocks, grid) : effectiveTarget;
+    // --- Détection de coincement : s'applique quelle que soit la branche IA qui a fixé la cible ---
+    if (m_escapePhase == EscapePhase::None) {
+        m_stuckCheckTimer += dt;
+        if (m_stuckCheckTimer >= kStuckCheckInterval) {
+            sf::Vector2f moved = pos - m_stuckCheckPos;
+            float movedSq = moved.x * moved.x + moved.y * moved.y;
 
-    pos = Deplacement::getPointArrive(pos, steeredTarget, m_speed * dt, minX, minY, maxX, maxY);
+            sf::Vector2f toTarget = effectiveTarget - pos;
+            float distToTargetSq = toTarget.x * toTarget.x + toTarget.y * toTarget.y;
+            bool stillTryingToMove = distToTargetSq > (kStuckMoveThreshold * kStuckMoveThreshold);
+
+            if (stillTryingToMove && movedSq < kStuckMoveThreshold * kStuckMoveThreshold) {
+                m_stuckStrikes++;
+                if (m_stuckStrikes >= kStuckStrikesToEscape) {
+                    // Déclenche l'itinéraire de secours : côté selon l'équipe, puis vers le haut
+                    m_escapePhase = EscapePhase::MovingSide;
+                    m_escapePhaseStartPos = pos;
+                    m_escapeSafetyTimer = kEscapeMaxPhaseDuration;
+                    m_stuckStrikes = 0;
+                }
+            }
+            else {
+                m_stuckStrikes = 0;
+            }
+
+            m_stuckCheckPos = pos;
+            m_stuckCheckTimer = 0.f;
+        }
+    }
+
+    if (m_escapePhase != EscapePhase::None && blocks) {
+        // Direction fixe selon la phase et l'équipe : Orange va à gauche, Bleu va à droite, puis les deux montent
+        sf::Vector2f dir = (m_escapePhase == EscapePhase::MovingSide)
+            ? ((team == Team::Orange) ? sf::Vector2f(-1.f, 0.f) : sf::Vector2f(1.f, 0.f))
+            : sf::Vector2f(0.f, -1.f);
+
+        sf::Vector2f probePoint = pos + dir * kEscapeStepDist;
+        bool blockedAhead = WouldCollide(probePoint, *blocks, grid);
+
+        m_escapeSafetyTimer -= dt;
+
+        if (blockedAhead) {
+            if (m_escapePhase == EscapePhase::MovingSide) {
+                // Mur latéral atteint : on passe à la montée vers la zone de capture
+                m_escapePhase = EscapePhase::MovingUp;
+                m_escapePhaseStartPos = pos;
+                m_escapeSafetyTimer = kEscapeMaxPhaseDuration;
+            }
+            else {
+                // Mur du haut atteint : manœuvre terminée, on rend la main à l'IA normale
+                m_escapePhase = EscapePhase::None;
+            }
+        }
+        else if (m_escapePhase == EscapePhase::MovingUp) {
+            float traveledUp = m_escapePhaseStartPos.y - pos.y;
+            if (traveledUp >= kEscapeMaxUpDistance) {
+                m_escapePhase = EscapePhase::None; // assez monté, on laisse l'IA reprendre la main
+            }
+        }
+
+        if (m_escapeSafetyTimer <= 0.f) {
+            m_escapePhase = EscapePhase::None; // sécurité anti-boucle infinie si jamais rien ne bloque
+        }
+
+        if (m_escapePhase != EscapePhase::None) {
+            // Mouvement direct, SANS repasser par ComputeSteering : c'est cet algorithme qui les coinçait
+            sf::Vector2f directTarget = pos + dir * (kEscapeStepDist * 2.f);
+            pos = Deplacement::getPointArrive(pos, directTarget, m_speed * dt, minX, minY, maxX, maxY);
+        }
+    }
+
+    if (m_escapePhase == EscapePhase::None) {
+        sf::Vector2f steeredTarget = blocks ? ComputeSteering(effectiveTarget, *blocks, grid) : effectiveTarget;
+        pos = Deplacement::getPointArrive(pos, steeredTarget, m_speed * dt, minX, minY, maxX, maxY);
+    }
 
     if (timeAlive >= 3.f) {
         pos.x = std::max(minX, std::min(pos.x, maxX - size.x));
@@ -261,6 +333,24 @@ bool Soldat::WouldCollide(sf::Vector2f testPos, const std::vector<Block*>& block
         }
     }
     return false;
+}
+
+sf::Vector2f Soldat::ComputeEscapeTarget(const std::vector<Block*>& blocks, const WallGrid* grid) const {
+    sf::Vector2f pos = rect.getPosition();
+    static std::mt19937 rng(std::random_device{}());
+    std::uniform_real_distribution<float> angleDist(0.f, 360.f);
+    float baseAngle = angleDist(rng); // départ aléatoire pour éviter que plusieurs soldats coincés au même endroit choisissent tous la même sortie
+
+    const float degToRad = 3.14159265f / 180.f;
+    for (int i = 0; i < 12; ++i) {
+        float angle = (baseAngle + i * 30.f) * degToRad;
+        sf::Vector2f dir(std::cos(angle), std::sin(angle));
+        sf::Vector2f candidate = pos + dir * kEscapeStepDist;
+        if (!WouldCollide(candidate, blocks, grid)) {
+            return candidate; // première direction dégagée trouvée
+        }
+    }
+    return pos; // cas extrême : aucune direction libre, on ne bouge pas plutôt que de forcer un mur
 }
 
 sf::Vector2f Soldat::ComputeSteering(sf::Vector2f target, const std::vector<Block*>& blocks, const WallGrid* grid) const {

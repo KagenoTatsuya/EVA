@@ -104,8 +104,8 @@ void Start::OnNormal() {
 }
 
 Continue::Continue() {
-    posx = 905.f;
-    posy = 740.f;
+    posx = 405.f;
+    posy = 720.f;
     width = 280.f;
     height = 270.f;
     if (!font.openFromFile("assets/fonts/arial.ttf"))

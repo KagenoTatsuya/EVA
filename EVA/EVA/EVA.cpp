@@ -124,6 +124,23 @@ int main() {
                     }
                 }
             }
+            if (event->is<sf::Event::TouchBegan>()) {
+                if (!isRunning) {
+                    if (Input::IsButtonTouched(*event, start))      isRunning = true;
+                    else if (Input::IsButtonTouched(*event, exit))  window.close();
+                }
+                if (isChoose) {
+                    if (Input::IsButtonTouched(*event, zombie))      isZombie = true;
+                    else if (Input::IsButtonTouched(*event, arene))  isBattle = true;
+                }
+                if (endSim) {
+                    if (Input::IsButtonTouched(*event, letscontinue) ||
+                        Input::IsButtonTouched(*event, exit)) {
+                        endSim = false;
+                        isRunning = false;
+                    }
+                }
+            }
             events.push_back(*event);
         }
         // Update du joueur

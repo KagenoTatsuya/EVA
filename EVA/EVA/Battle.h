@@ -79,6 +79,24 @@ private:
     bool WouldCollide(sf::Vector2f testPos, const std::vector<Block*>& blocks, const WallGrid* grid) const;
     sf::Vector2f ComputeSteering(sf::Vector2f target, const std::vector<Block*>& blocks, const WallGrid* grid) const;
 
+    // --- Détection et déblocage anti-coincement, avec itinéraire de secours dirigé par équipe ---
+    sf::Vector2f m_stuckCheckPos{ 0.f, 0.f };
+    float m_stuckCheckTimer = 0.f;
+    int m_stuckStrikes = 0;
+    static constexpr float kStuckCheckInterval = 0.5f;   // fréquence de vérification
+    static constexpr float kStuckMoveThreshold = 25.f;   // déplacement minimum attendu entre deux checks
+    static constexpr int   kStuckStrikesToEscape = 2;    // nb de checks consécutifs immobiles avant déclenchement (~1s)
+
+    enum class EscapePhase { None, MovingSide, MovingUp };
+    EscapePhase m_escapePhase = EscapePhase::None;
+    sf::Vector2f m_escapePhaseStartPos{ 0.f, 0.f };
+    float m_escapeSafetyTimer = 0.f;
+    static constexpr float kEscapeStepDist = 5.f;      // distance de sonde pour détecter le mur devant
+    static constexpr float kEscapeMaxUpDistance = 150.f; // distance verticale max avant d'abandonner la manœuvre (sécurité)
+    static constexpr float kEscapeMaxPhaseDuration = 10.f; // sécurité anti-boucle infinie par phase
+
+    sf::Vector2f ComputeEscapeTarget(const std::vector<Block*>& blocks, const WallGrid* grid) const;
+
 public:
     float timeAlive;
     float phaseX;

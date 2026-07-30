@@ -2,6 +2,9 @@
 #include "PvE.h"
 #include <cstdlib>
 #include <algorithm>
+#include <unordered_map>
+#include <cmath>
+#include <functional>
 
 
 void PvE::handleCollisionsJoueurShoot(std::vector<Shoot*>& shoot, std::vector<Ennemi*>& ennemis, int& score) {
@@ -85,49 +88,77 @@ void PvE::enemyShoot(
 
 void PvE::ResolveEnnemiCollisions(std::vector<Ennemi*>& ennemis)
 {
-    for (size_t i = 0; i < ennemis.size(); ++i) {
-        Ennemi* a = ennemis[i];
+    const float cellSize = 64.f;
+
+    auto cellKeyOf = [cellSize](sf::Vector2f center) -> long long {
+        int cx = static_cast<int>(std::floor(center.x / cellSize));
+        int cy = static_cast<int>(std::floor(center.y / cellSize));
+        return (static_cast<long long>(cx) << 32) ^ static_cast<unsigned int>(cy);
+        };
+
+    // 1) On range chaque ennemi vivant dans une cellule de grille selon sa position
+    std::unordered_map<long long, std::vector<Ennemi*>> grid;
+    for (Ennemi* e : ennemis) {
+        if (!e->alive) continue;
+        sf::FloatRect b = e->rect.getGlobalBounds();
+        sf::Vector2f center = b.position + b.size / 2.f;
+        grid[cellKeyOf(center)].push_back(e);
+    }
+
+    static const int offsets[9][2] = {
+        {0,0},{1,0},{-1,0},{0,1},{0,-1},{1,1},{1,-1},{-1,1},{-1,-1}
+    };
+
+    // 2) Chaque ennemi ne se compare qu'aux ennemis des cellules voisines (9 cellules max)
+    for (Ennemi* a : ennemis) {
         if (!a->alive) continue;
+        sf::FloatRect boundsA = a->rect.getGlobalBounds();
+        sf::Vector2f centerA = boundsA.position + boundsA.size / 2.f;
+        int cx = static_cast<int>(std::floor(centerA.x / cellSize));
+        int cy = static_cast<int>(std::floor(centerA.y / cellSize));
 
-        for (size_t j = i + 1; j < ennemis.size(); ++j) {
-            Ennemi* b = ennemis[j];
-            if (!b->alive) continue;
+        for (auto& off : offsets) {
+            long long key = (static_cast<long long>(cx + off[0]) << 32) ^ static_cast<unsigned int>(cy + off[1]);
+            auto it = grid.find(key);
+            if (it == grid.end()) continue;
 
-            sf::FloatRect boundsA = a->rect.getGlobalBounds();
-            sf::FloatRect boundsB = b->rect.getGlobalBounds();
+            for (Ennemi* b : it->second) {
+                if (b == a || !b->alive) continue;
+                if (!std::less<Ennemi*>{}(a, b)) continue; // évite de traiter la paire (a,b) deux fois
 
-            auto intersection = boundsA.findIntersection(boundsB);
-            if (!intersection.has_value()) continue;
+                sf::FloatRect boundsB = b->rect.getGlobalBounds();
+                auto intersection = boundsA.findIntersection(boundsB);
+                if (!intersection.has_value()) continue;
 
-            sf::FloatRect overlap = intersection.value();
+                sf::FloatRect overlap = intersection.value();
+                sf::Vector2f centerB = boundsB.position + boundsB.size / 2.f;
 
-            // Centres pour connaitre la direction de poussée
-            sf::Vector2f centerA = boundsA.position + boundsA.size / 2.f;
-            sf::Vector2f centerB = boundsB.position + boundsB.size / 2.f;
-
-            // On pousse sur l'axe où le chevauchement est le plus petit
-            // (évite les à-coups quand les ennemis se croisent en diagonale)
-            if (overlap.size.x < overlap.size.y) {
-                float push = overlap.size.x / 2.f;
-                if (centerA.x < centerB.x) {
-                    a->rect.move(sf::Vector2f(-push, 0.f));
-                    b->rect.move(sf::Vector2f(push, 0.f));
+                if (overlap.size.x < overlap.size.y) {
+                    float push = overlap.size.x / 2.f;
+                    if (centerA.x < centerB.x) {
+                        a->rect.move(sf::Vector2f(-push, 0.f));
+                        b->rect.move(sf::Vector2f(push, 0.f));
+                    }
+                    else {
+                        a->rect.move(sf::Vector2f(push, 0.f));
+                        b->rect.move(sf::Vector2f(-push, 0.f));
+                    }
                 }
                 else {
-                    a->rect.move(sf::Vector2f(push, 0.f));
-                    b->rect.move(sf::Vector2f(-push, 0.f));
+                    float push = overlap.size.y / 2.f;
+                    if (centerA.y < centerB.y) {
+                        a->rect.move(sf::Vector2f(0.f, -push));
+                        b->rect.move(sf::Vector2f(0.f, push));
+                    }
+                    else {
+                        a->rect.move(sf::Vector2f(0.f, push));
+                        b->rect.move(sf::Vector2f(0.f, -push));
+                    }
                 }
-            }
-            else {
-                float push = overlap.size.y / 2.f;
-                if (centerA.y < centerB.y) {
-                    a->rect.move(sf::Vector2f(0.f, -push));
-                    b->rect.move(sf::Vector2f(0.f, push));
-                }
-                else {
-                    a->rect.move(sf::Vector2f(0.f, push));
-                    b->rect.move(sf::Vector2f(0.f, -push));
-                }
+
+                // Recalcule les bounds de a après déplacement, pour les comparaisons suivantes dans la boucle
+                boundsA = a->rect.getGlobalBounds();
+                centerA = boundsA.position + boundsA.size / 2.f;
             }
         }
     }

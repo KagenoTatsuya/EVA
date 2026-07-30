@@ -49,7 +49,7 @@ private:
     std::vector<NPC*>   m_npcs;
     EnnemiSpawner m_spawner;
     EnnemiSpawner m_spawner2;
-    std::vector<Ennemi*> m_ennemis; 
+    std::vector<Ennemi*> m_ennemis;
     SoldatSpawnerB m_spawnerS;
     SoldatSpawnerO m_spawnerS2;
     std::vector<Soldat*> m_soldat;
@@ -63,6 +63,7 @@ private:
     SelectPerso m_selectPerso;
     std::vector<SoldatProjectile*> m_soldatProjectiles;
     std::vector<Block*> m_battleWalls; // sous-liste des MBlock uniquement, pour le mode Battle
+    std::vector<Block*> m_ennemiWalls; // sous-liste des MBlock uniquement, pour le mode Battle
     WallGrid m_wallGrid;                // grille spatiale des murs, reconstruite dans SwitchToBattle
     Pause* m_pause = nullptr;
     ProjectilePool m_projectilePool;
@@ -97,14 +98,15 @@ private:
     std::string m_battleResultText;
 
     // Effet sombre déclenché par un tir/collision Orange
-    float m_hitDarknessTimer = 0.f;
+    enum class DarknessPhase { None, FadeIn, Blinded, FadeOut } m_darknessPhase = DarknessPhase::None;
+    float m_darknessPhaseTimer = 0.f; // temps écoulé dans la phase courante (FadeIn/FadeOut)
     static constexpr float kBattleDarknessRadius = 3000.f; // assez grand pour ne créer aucun assombrissement visible
     static constexpr float kHitDarknessRadius = 15.f;     // rayon "aveuglé"
-    static constexpr float kHitDarknessDuration = 10.f;    // durée de l'effet
     static constexpr float kHitDarknessFadeDuration = 1.f;      // durée de l'assombrissement ET de l'illumination
+    static constexpr float kSpawnReturnRadius = 40.f;      // distance en dessous de laquelle le joueur est "revenu au spawn"
     static constexpr sf::Vector2f kBattleSpawnPos{ 1784.f, 475.f }; // cible de la flèche = spawn joueur en Battle
     void TriggerHitDarkness();
-    void UpdateHitDarkness(float dt);
+    void UpdateHitDarkness(float dt, sf::Vector2f playerPos);
     void RenderSpawnArrow(sf::RenderWindow& window, Camera* camera, Entity* player);
 
 public:

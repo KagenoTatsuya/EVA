@@ -1,20 +1,2 @@
-﻿  Battle.cpp
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\numbers(11): warning STL4038: The contents of <numbers> are available only with C++20 or later.
-  EVA.cpp
-C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\ChooseGame.h(3,10): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
-  (compiler le fichier source 'EVA.cpp')
-  
-C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\EVA.cpp(39,11): warning C4101: 'input' : variable locale non référencée
-  Game.cpp
-C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\ChooseGame.h(3,10): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
-  (compiler le fichier source 'Game.cpp')
-  
-C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\Game.cpp(37,26): warning C4834: abandon de la valeur de retour de la fonction avec l’attribut [[nodiscard]]
-  HUD.cpp
-  ProjectilePool.cpp
-  PvE.cpp
-  SoldatAI.cpp
-  Zone.cpp
-  ZoneManager.cpp
-  Génération de code en cours...
+﻿  Button.cpp
   EVA.vcxproj -> C:\Users\theob\Documents\GitHub\EVA\EVA\x64\Debug\EVA.exe

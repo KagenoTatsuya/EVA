@@ -148,6 +148,12 @@ void Game::SwitchToSurvival(std::vector<Level*>& levels) {
     // Nettoyage des ennemis d'une partie Survival précédente
     for (Ennemi* e : m_ennemis) delete e;
     m_ennemis.clear();
+    m_ennemiWalls.clear();
+    for (Block* b : levels[1]->GetBlocks()) {
+        if (b->GetBlockType() == "MBlock") { // ?? à confirmer : même type que Battle ?
+            m_ennemiWalls.push_back(b);
+        }
+    }
 
     delete bg; delete texture;
     texture = new sf::Texture("assets/pictures/Zombie_EVA.png");
@@ -166,7 +172,7 @@ void Game::SwitchToBattle(std::vector<Level*>& levels) {
     m_invincibleTimer = 0.f;
     m_battleTimer = BATTLE_DURATION;
     m_battleResultText.clear();
-    m_hitDarknessTimer = 0.f;
+    m_darknessPhase = DarknessPhase::None;   // remise à zéro de l'effet sombre à chaque nouvelle partie Battle
     m_darkness.setRadius(kBattleDarknessRadius);
 
     for (Soldat* s : m_soldat) delete s;
@@ -193,7 +199,7 @@ void Game::SwitchToBattle(std::vector<Level*>& levels) {
 }
 
 void Game::RenderSpawnArrow(sf::RenderWindow& window, Camera* camera, Entity* player) {
-    if (m_hitDarknessTimer <= 0.f) return; // flèche visible uniquement pendant l'effet sombre
+    if (m_darknessPhase == DarknessPhase::None) return; // flèche visible uniquement pendant l'effet sombre
 
     sf::Vector2f playerCenter = player->rect.getPosition() + player->rect.getSize() / 2.f;
     sf::Vector2f toSpawn = kBattleSpawnPos - playerCenter;
@@ -218,38 +224,50 @@ void Game::RenderSpawnArrow(sf::RenderWindow& window, Camera* camera, Entity* pl
 }
 
 void Game::TriggerHitDarkness() {
-    m_hitDarknessTimer = kHitDarknessDuration;
-    // Le rayon est désormais géré progressivement dans UpdateHitDarkness, pas de saut brutal ici
+    if (m_darknessPhase != DarknessPhase::None) return; // déjà aveuglé : un nouveau coup ne relance pas l'animation
+    m_darknessPhase = DarknessPhase::FadeIn;
+    m_darknessPhaseTimer = 0.f;
 }
 
-void Game::UpdateHitDarkness(float dt) {
-    if (m_hitDarknessTimer <= 0.f) return;
+void Game::UpdateHitDarkness(float dt, sf::Vector2f playerPos) {
+    if (m_darknessPhase == DarknessPhase::None) return;
 
-    m_hitDarknessTimer -= dt;
-    if (m_hitDarknessTimer < 0.f) m_hitDarknessTimer = 0.f;
+    m_darknessPhaseTimer += dt;
 
-    float elapsed = kHitDarknessDuration - m_hitDarknessTimer;
-    float radius;
-
-    if (elapsed <= kHitDarknessFadeDuration) {
-        // Phase 1 (0 -> 3s) : assombrissement progressif
-        float t = elapsed / kHitDarknessFadeDuration;
-        radius = kBattleDarknessRadius + (kHitDarknessRadius - kBattleDarknessRadius) * t;
+    switch (m_darknessPhase) {
+    case DarknessPhase::FadeIn: {
+        float t = std::min(m_darknessPhaseTimer / kHitDarknessFadeDuration, 1.f);
+        float radius = kBattleDarknessRadius + (kHitDarknessRadius - kBattleDarknessRadius) * t;
+        m_darkness.setRadius(radius);
+        if (t >= 1.f) {
+            m_darknessPhase = DarknessPhase::Blinded;
+            m_darknessPhaseTimer = 0.f;
+        }
+        break;
     }
-    else if (elapsed >= kHitDarknessDuration - kHitDarknessFadeDuration) {
-        // Phase 3 (7 -> 10s) : retour progressif à la lumière normale
-        float t = (elapsed - (kHitDarknessDuration - kHitDarknessFadeDuration)) / kHitDarknessFadeDuration;
-        radius = kHitDarknessRadius + (kBattleDarknessRadius - kHitDarknessRadius) * t;
+    case DarknessPhase::Blinded: {
+        m_darkness.setRadius(kHitDarknessRadius);
+        // Reste aveuglé tant que le joueur n'est pas physiquement revenu au spawn
+        sf::Vector2f d = playerPos - kBattleSpawnPos;
+        float distSq = d.x * d.x + d.y * d.y;
+        if (distSq <= kSpawnReturnRadius * kSpawnReturnRadius) {
+            m_darknessPhase = DarknessPhase::FadeOut;
+            m_darknessPhaseTimer = 0.f;
+        }
+        break;
     }
-    else {
-        // Phase 2 (3 -> 7s) : joueur totalement aveuglé
-        radius = kHitDarknessRadius;
+    case DarknessPhase::FadeOut: {
+        float t = std::min(m_darknessPhaseTimer / kHitDarknessFadeDuration, 1.f);
+        float radius = kHitDarknessRadius + (kBattleDarknessRadius - kHitDarknessRadius) * t;
+        m_darkness.setRadius(radius);
+        if (t >= 1.f) {
+            m_darkness.setRadius(kBattleDarknessRadius);
+            m_darknessPhase = DarknessPhase::None;
+            m_darknessPhaseTimer = 0.f;
+        }
+        break;
     }
-
-    m_darkness.setRadius(radius);
-
-    if (m_hitDarknessTimer <= 0.f) {
-        m_darkness.setRadius(kBattleDarknessRadius); // sécurité : garantit un retour exact au rayon normal
+    default: break;
     }
 }
 
@@ -662,27 +680,33 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
         parallax->Update(camCenter.x, camCenter.y);
         camera->Update(playerPos.x + playerSize.x / 2.f, playerPos.y + playerSize.y / 2.f, dt);
 
+        bool zombieClicked = false, areneClicked = false;
         for (auto& ev : events) {
             if (auto* mb = ev.getIf<sf::Event::MouseButtonPressed>()) {
                 if (mb->button == sf::Mouse::Button::Left) {
-                    if (zombie->IsHovered()) {
-                        SwitchToSurvival(levels);
-                        player->rect.setPosition(sf::Vector2f(802.f, 926.f)); // reset spawn zombie
-                        camera->SetZoom(1.25f);
-                        camera->Update(802.f, 926.f, 0.f); // force la caméra sur le bon spawn
-                        m_activeNPC = nullptr;
-                        state = SURVIVALS;
-                    }
-                    else if (arene->IsHovered()) {
-                        SwitchToBattle(levels);   
-                        player->rect.setPosition(sf::Vector2f(1784.f, 475.f));
-                        camera->SetZoom(1.44f);
-                        camera->Update(1057.f, 768.f, 0.f);
-                        m_activeNPC = nullptr;
-                        state = BATTLES;
-                    }
+                    if (zombie->IsHovered()) zombieClicked = true;
+                    else if (arene->IsHovered()) areneClicked = true;
                 }
             }
+        }
+        if (Input::IsButtonTouched(events, zombie)) zombieClicked = true;
+        else if (Input::IsButtonTouched(events, arene)) areneClicked = true;
+
+        if (zombieClicked) {
+            SwitchToSurvival(levels);
+            player->rect.setPosition(sf::Vector2f(802.f, 926.f));
+            camera->SetZoom(1.25f);
+            camera->Update(802.f, 926.f, 0.f);
+            m_activeNPC = nullptr;
+            state = SURVIVALS;
+        }
+        else if (areneClicked) {
+            SwitchToBattle(levels);
+            player->rect.setPosition(sf::Vector2f(1784.f, 475.f));
+            camera->SetZoom(1.44f);
+            camera->Update(1057.f, 768.f, 0.f);
+            m_activeNPC = nullptr;
+            state = BATTLES;
         }
         break;
     }
@@ -713,7 +737,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
         sf::Vector2f playerCenter = playerPos + sf::Vector2f(playerSize.x / 2.f, playerSize.y / 2.f);
         for (Ennemi* e : m_ennemis) {
             e->Update(dt, playerCenter);
-            e->ResolveCollisions(levels[currentLvl]->GetBlocks());
+            e->ResolveCollisions(m_ennemiWalls);
         }
 
         PvE::ResolveEnnemiCollisions(m_ennemis);
@@ -723,6 +747,12 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
                 s->Update(dt, now);
             }
         }
+        shoot.erase(
+            std::remove_if(shoot.begin(), shoot.end(), [](Shoot* s) {
+                return !s->alive;
+                }),
+            shoot.end()
+        );
 
         for (auto& ev : events) {
             if (auto* mb = ev.getIf<sf::Event::MouseButtonPressed>()) {
@@ -781,10 +811,10 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
             break;
         }
 
-        UpdateHitDarkness(dt); // AJOUT : décompte/restaure l'effet sombre
-
         sf::Vector2f playerPos = player->rect.getPosition();
         sf::Vector2f playerSize = player->rect.getSize();
+
+        UpdateHitDarkness(dt, playerPos); // AJOUT : décompte/restaure l'effet sombre
 
         bool onHZone = false;
         levels[currentLvl]->Update(currentLvl, newLvl, dt, now,
@@ -866,7 +896,6 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
             }
         }
 
-        // AJOUT : projectile Orange qui touche le joueur -> effet sombre (pas de perte de vie)
         {
             sf::FloatRect playerBoundsForHit = player->rect.getGlobalBounds();
             for (SoldatProjectile* p : m_soldatProjectiles) {
@@ -886,7 +915,8 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
         );
 
         PvE::ResolveSoldatCollisions(m_soldat);
-        m_zoneManager.Update(dt, m_soldat, player);
+        // Le joueur ne peut plus capturer de zone tant qu'il est sous l'effet sombre
+        m_zoneManager.Update(dt, m_soldat, (m_darknessPhase == DarknessPhase::None) ? player : nullptr);
         PvE::cleanupSoldat(m_soldat);
 
         // AJOUT : collision physique avec un soldat Orange -> effet sombre (pas de perte de vie)
@@ -906,12 +936,20 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
                 s->Update(dt, now);
             }
         }
+        shoot.erase(
+            std::remove_if(shoot.begin(), shoot.end(), [](Shoot* s) {
+                return !s->alive;
+                }),
+            shoot.end()
+        );
 
-        for (auto& ev : events) {
-            if (auto* mb = ev.getIf<sf::Event::MouseButtonPressed>()) {
-                if (mb->button == sf::Mouse::Button::Left) {
-                    sf::View currentView = camera->GetView();
-                    Shoot::ShootVersSouris(shoot, *player, window, currentView);
+        if (m_darknessPhase == DarknessPhase::None) {
+            for (auto& ev : events) {
+                if (auto* mb = ev.getIf<sf::Event::MouseButtonPressed>()) {
+                    if (mb->button == sf::Mouse::Button::Left) {
+                        sf::View currentView = camera->GetView();
+                        Shoot::ShootVersSouris(shoot, *player, window, currentView);
+                    }
                 }
             }
         }
@@ -943,51 +981,58 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
         letscontinue->UpdateHover(window, menuview);
         exit->UpdateHover(window, menuview);
 
+        bool continueClicked = Input::IsButtonTouched(events, letscontinue);
+        bool exitClicked = Input::IsButtonTouched(events, exit);
+
         for (auto& ev : events) {
             if (auto* mb = ev.getIf<sf::Event::MouseButtonPressed>()) {
                 if (mb->button == sf::Mouse::Button::Left) {
-                    if (letscontinue->IsHovered()) {
-                        sound.StopMusic();
-                        isEnd = false;      // <-- essentiel : sinon retour immédiat à END
-                        isRunning = true;
-
-                        switch (m_gameMode) {
-                        case GameMode::SURVIVAL:
-                            SwitchToSurvival(levels);
-                            player->rect.setPosition(sf::Vector2f(802.f, 926.f));
-                            camera->SetZoom(1.25f);
-                            camera->Update(802.f, 926.f, 0.f);
-                            state = SURVIVALS;
-                            break;
-
-                        case GameMode::BATTLE:
-                            SwitchToBattle(levels);
-                            player->rect.setPosition(sf::Vector2f(1784.f, 475.f));
-                            camera->SetZoom(1.44f);
-                            camera->Update(1057.f, 768.f, 0.f);
-                            state = BATTLES;
-                            break;
-
-                        case GameMode::TPS:
-                        default:
-                            SwitchToTPS(camera);
-                            player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
-                            camera->Update(690.f, 1178.f, 0.f);
-                            state = RUNNING;
-                            break;
-                        }
-                    }
-                    else if (exit->IsHovered()) {
-                        sound.StopMusic();
-                        isEnd = false;
-                        SwitchToTPS(camera);
-                        player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
-                        camera->Update(690.f, 1178.f, 0.f);
-                        isRunning = false;
-                        state = MENU;
-                    }
+                    if (letscontinue->IsHovered()) continueClicked = true;
+                    else if (exit->IsHovered()) exitClicked = true;
                 }
             }
+        }
+
+        if (continueClicked) {
+            sound.StopMusic();
+            isEnd = false;      // <-- essentiel : sinon retour immédiat à END
+            isRunning = true;
+
+            switch (m_gameMode) {
+            case GameMode::SURVIVAL:
+                SwitchToSurvival(levels);
+                player->rect.setPosition(sf::Vector2f(802.f, 926.f));
+                camera->SetZoom(1.25f);
+                camera->Update(802.f, 926.f, 0.f);
+                state = SURVIVALS;
+                break;
+
+            case GameMode::BATTLE:
+                SwitchToBattle(levels);
+                player->rect.setPosition(sf::Vector2f(1784.f, 475.f));
+                camera->SetZoom(1.44f);
+                camera->Update(1057.f, 768.f, 0.f);
+                state = BATTLES;
+                break;
+
+            case GameMode::TPS:
+            default:
+                SwitchToTPS(camera);
+                player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
+                camera->Update(690.f, 1178.f, 0.f);
+                state = RUNNING;
+                break;
+            }
+        }
+        else if (exitClicked) {
+            sound.StopMusic();
+            isEnd = false;
+            m_vies = 3;
+            SwitchToTPS(camera);
+            player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
+            camera->Update(690.f, 1178.f, 0.f);
+            isRunning = false;
+            state = MENU;
         }
         break;
     }
@@ -1006,26 +1051,39 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
         sf::View menuview = cameramenu->GetMenuView();
         m_pause->UpdateHover(window, menuview);
 
+        // Étape A — détecter souris OU tactile
+        bool resumeClicked = false;
+        bool quitClicked = false;
+
         for (auto& ev : events) {
             if (auto* mb = ev.getIf<sf::Event::MouseButtonPressed>()) {
                 if (mb->button == sf::Mouse::Button::Left) {
-                    if (m_pause->IsResumeHovered()) {
-                        state = m_stateBeforePause;
-                    }
-                    else if (m_pause->IsQuitHovered()) {
-                        sound.StopMusic();
-
-                        // Réinitialise complètement l'état de jeu avant de retourner au menu,
-                        // sinon le prochain lancement garde l'ancien mode (fond, niveau, blocks)
-                        SwitchToTPS(camera);
-                        player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
-                        camera->Update(690.f, 1178.f, 0.f);
-
-                        isRunning = false;
-                        state = MENU;
-                    }
+                    if (m_pause->IsResumeHovered()) resumeClicked = true;
+                    else if (m_pause->IsQuitHovered()) quitClicked = true;
                 }
             }
+            // tactile : à remplacer par les vrais getters une fois Pause.h connu
+            if (const auto* began = ev.getIf<sf::Event::TouchBegan>()) {
+                float x = static_cast<float>(began->position.x);
+                float y = static_cast<float>(began->position.y);
+                // ex: if (m_pause->GetResumePosX() <= x && ...) resumeClicked = true;
+                // ex: if (m_pause->GetQuitPosX() <= x && ...) quitClicked = true;
+            }
+        }
+
+        // Étape B — action inchangée, déclenchée par le bool
+        if (resumeClicked) {
+            state = m_stateBeforePause;
+        }
+        else if (quitClicked) {
+            sound.StopMusic();
+            isEnd = false;
+            m_vies = 3;
+            SwitchToTPS(camera);
+            player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
+            camera->Update(690.f, 1178.f, 0.f);
+            isRunning = false;
+            state = MENU;
         }
         break;
     }

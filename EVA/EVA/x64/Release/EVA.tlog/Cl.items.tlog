@@ -18,6 +18,7 @@ C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\Level.cpp;C:\Users\theob\Documents\G
 C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\NPC.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\NPC.obj
 C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\Parallax.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\Parallax.obj
 C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\Pause.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\Pause.obj
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\ProjectilePool.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\ProjectilePool.obj
 C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\PvE.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\PvE.obj
 C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\SelectPerso.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\SelectPerso.obj
 C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\Shoot.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\Shoot.obj
@@ -25,6 +26,9 @@ C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\SoldatAI.cpp;C:\Users\theob\Document
 C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\SoundManager.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\SoundManager.obj
 C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\StartMenu.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\StartMenu.obj
 C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\Survival.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\Survival.obj
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\TextureCache.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\TextureCache.obj
 C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\Tile.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\Tile.obj
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\TouchInput.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\TouchInput.obj
+C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\WallGrid.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\WallGrid.obj
 C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\Zone.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\Zone.obj
 C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\ZoneManager.cpp;C:\Users\theob\Documents\GitHub\EVA\EVA\EVA\x64\Release\ZoneManager.obj
