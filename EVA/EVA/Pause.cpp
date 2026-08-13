@@ -1,9 +1,9 @@
 #include "Pause.h"
 
 Pause::Pause(sf::Font& font)
-    : m_titleText(font, "PAUSE", 48),
-    m_resumeText(font, "Reprendre", 28),
-    m_quitText(font, "Quitter", 28)
+    : m_titleText(font, "PAUSE", 50),
+    m_resumeText(font, "Reprendre", 34),
+    m_quitText(font, "Quitter", 34)
 {
     // Overlay semi-transparent sur toute la vue menu (résolution 1920x1080, cf CameraMenu)
     m_overlay.setSize(sf::Vector2f(1920.f, 1080.f));

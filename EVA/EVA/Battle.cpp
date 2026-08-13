@@ -8,15 +8,15 @@
 
 namespace {
     const std::array<std::string, 3> kSoldatSpritesheetsOrange = {
-        "character-spritesheetTO.png",
-        "character-spritesheetTO2.png",
-        "character-spritesheetTO3.png"
+        "assets/pictures/character-spritesheetTO.png",
+        "assets/pictures/character-spritesheetTO2.png",
+        "assets/pictures/character-spritesheetTO3.png"
     };
 
     const std::array<std::string, 3> kSoldatSpritesheetsBleu = {
-        "character-spritesheetTB.png",
-        "character-spritesheetTB2.png",
-        "character-spritesheetTB3.png"
+        "assets/pictures/character-spritesheetTB.png",
+        "assets/pictures/character-spritesheetTB2.png",
+        "assets/pictures/character-spritesheetTB3.png"
     };
 
     std::string GetRandomSpritesheet(Team team) {
@@ -31,6 +31,27 @@ namespace {
             return kSoldatSpritesheetsBleu[dist(rng)];
         }
     }
+}
+
+sf::Texture* SoldatProjectile::s_texture = nullptr;
+
+SoldatProjectile::SoldatProjectile() {
+    if (!s_texture) {
+        s_texture = new sf::Texture("assets/pictures/Ball.png");
+    }
+
+    sprite = new sf::Sprite(*s_texture);
+    sf::Vector2u texSize = s_texture->getSize();
+    if (texSize.x > 0 && texSize.y > 0) {
+        sprite->setOrigin(sf::Vector2f(texSize.x / 2.f, texSize.y / 2.f));
+        // Taille cible équivalente à l'ancien rectangle 6x6, ajuste si besoin
+        sprite->setScale(sf::Vector2f(10.f / texSize.x, 16.f / texSize.y));
+    }
+}
+
+SoldatProjectile::~SoldatProjectile() {
+    delete sprite;
+    sprite = nullptr;
 }
 
 Soldat::Soldat(float x, float y, Team team, Patterne p)
@@ -152,8 +173,19 @@ void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks, c
 
     sf::Vector2f effectiveTarget = (m_isPursuingPlayer && playerAlive) ? playerPos : cible;
 
-    // --- Détection de coincement : s'applique quelle que soit la branche IA qui a fixé la cible ---
-    if (m_escapePhase == EscapePhase::None) {
+    // Zones concernées par le système anti-coincement
+    const bool eligibleTop = pos.y < 300.f;
+    const bool eligibleBottom = pos.y > 720.f;
+    const bool eligibleForEscape = eligibleTop || eligibleBottom;
+
+    if (!eligibleForEscape && m_escapePhase != EscapePhase::None) {
+        // Le soldat est sorti des deux zones concernées pendant une manœuvre : on l'annule proprement
+        m_escapePhase = EscapePhase::None;
+        m_stuckStrikes = 0;
+    }
+
+    // --- Détection de coincement ---
+    if (eligibleForEscape && m_escapePhase == EscapePhase::None) {
         m_stuckCheckTimer += dt;
         if (m_stuckCheckTimer >= kStuckCheckInterval) {
             sf::Vector2f moved = pos - m_stuckCheckPos;
@@ -166,8 +198,15 @@ void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks, c
             if (stillTryingToMove && movedSq < kStuckMoveThreshold * kStuckMoveThreshold) {
                 m_stuckStrikes++;
                 if (m_stuckStrikes >= kStuckStrikesToEscape) {
-                    // Déclenche l'itinéraire de secours : côté selon l'équipe, puis vers le haut
-                    m_escapePhase = EscapePhase::MovingSide;
+                    // Choix de la manœuvre selon la zone où le soldat est coincé
+                    if (eligibleBottom) {
+                        // AJOUT : coincé en bas -> descend tout droit jusqu'au mur du bas
+                        m_escapePhase = EscapePhase::MovingDown;
+                    }
+                    else {
+                        // Coincé en haut -> comportement existant : côté puis vers le haut
+                        m_escapePhase = EscapePhase::MovingSide;
+                    }
                     m_escapePhaseStartPos = pos;
                     m_escapeSafetyTimer = kEscapeMaxPhaseDuration;
                     m_stuckStrikes = 0;
@@ -181,12 +220,21 @@ void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks, c
             m_stuckCheckTimer = 0.f;
         }
     }
+    else if (!eligibleForEscape) {
+        m_stuckCheckTimer = 0.f;
+        m_stuckCheckPos = pos;
+    }
 
     if (m_escapePhase != EscapePhase::None && blocks) {
-        // Direction fixe selon la phase et l'équipe : Orange va à gauche, Bleu va à droite, puis les deux montent
-        sf::Vector2f dir = (m_escapePhase == EscapePhase::MovingSide)
-            ? ((team == Team::Orange) ? sf::Vector2f(-1.f, 0.f) : sf::Vector2f(1.f, 0.f))
-            : sf::Vector2f(0.f, -1.f);
+        sf::Vector2f dir;
+        if (m_escapePhase == EscapePhase::MovingDown) {
+            dir = sf::Vector2f(0.f, 1.f); // AJOUT : direction fixe vers le bas
+        }
+        else {
+            dir = (m_escapePhase == EscapePhase::MovingSide)
+                ? ((team == Team::Orange) ? sf::Vector2f(-1.f, 0.f) : sf::Vector2f(1.f, 0.f))
+                : sf::Vector2f(0.f, -1.f);
+        }
 
         sf::Vector2f probePoint = pos + dir * kEscapeStepDist;
         bool blockedAhead = WouldCollide(probePoint, *blocks, grid);
@@ -195,29 +243,28 @@ void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks, c
 
         if (blockedAhead) {
             if (m_escapePhase == EscapePhase::MovingSide) {
-                // Mur latéral atteint : on passe à la montée vers la zone de capture
                 m_escapePhase = EscapePhase::MovingUp;
                 m_escapePhaseStartPos = pos;
                 m_escapeSafetyTimer = kEscapeMaxPhaseDuration;
             }
             else {
-                // Mur du haut atteint : manœuvre terminée, on rend la main à l'IA normale
+                // MovingUp OU MovingDown : mur atteint -> manœuvre terminée
                 m_escapePhase = EscapePhase::None;
             }
         }
         else if (m_escapePhase == EscapePhase::MovingUp) {
             float traveledUp = m_escapePhaseStartPos.y - pos.y;
             if (traveledUp >= kEscapeMaxUpDistance) {
-                m_escapePhase = EscapePhase::None; // assez monté, on laisse l'IA reprendre la main
+                m_escapePhase = EscapePhase::None;
             }
         }
+        // Pas de limite de distance pour MovingDown : on avance jusqu'au mur, quoi qu'il arrive (hors sécurité anti-boucle)
 
         if (m_escapeSafetyTimer <= 0.f) {
-            m_escapePhase = EscapePhase::None; // sécurité anti-boucle infinie si jamais rien ne bloque
+            m_escapePhase = EscapePhase::None;
         }
 
         if (m_escapePhase != EscapePhase::None) {
-            // Mouvement direct, SANS repasser par ComputeSteering : c'est cet algorithme qui les coinçait
             sf::Vector2f directTarget = pos + dir * (kEscapeStepDist * 2.f);
             pos = Deplacement::getPointArrive(pos, directTarget, m_speed * dt, minX, minY, maxX, maxY);
         }
@@ -234,7 +281,28 @@ void Soldat::Update(float dt, sf::Vector2f cible, std::vector<Block*>* blocks, c
     }
 
     sf::Vector2f delta = pos - oldPos;
+    float deltaLenSq = delta.x * delta.x + delta.y * delta.y;
+    const float kMovementThreshold = 0.05f; // seuil pour ignorer le bruit de calcul flottant
+
+    bool isMoving = deltaLenSq > kMovementThreshold * kMovementThreshold;
     Direction newDirection = lastDirection;
+
+    if (isMoving) {
+        if (std::abs(delta.x) > std::abs(delta.y)) {
+            newDirection = (delta.x > 0.f) ? Direction::RIGHT : Direction::LEFT;
+        }
+        else if (std::abs(delta.y) > 0.01f) {
+            newDirection = (delta.y > 0.f) ? Direction::DOWN : Direction::UP;
+        }
+    }
+
+    bool stateChanged = (newDirection != lastDirection) || (isMoving != m_wasMoving);
+
+    if (stateChanged) {
+        lastDirection = newDirection;
+        m_wasMoving = isMoving;
+        PlayDirectionalAnimation(isMoving);
+    }
 
     if (std::abs(delta.x) > std::abs(delta.y)) {
         newDirection = (delta.x > 0.f) ? Direction::RIGHT : Direction::LEFT;
@@ -312,6 +380,10 @@ bool Soldat::TryAttack(Soldat* target, float dt, float attackRange, std::vector<
     projectiles.push_back(p);
 
     m_attackCooldown = m_attackInterval;
+
+    m_wasMoving = false;
+    PlayDirectionalAnimation(false);
+
     return true;
 }
 
@@ -379,7 +451,7 @@ sf::Vector2f Soldat::ComputeSteering(sf::Vector2f target, const std::vector<Bloc
         if (!WouldCollide(pos + dirRight * probeDist, blocks, grid)) {
             return pos + dirRight * dist;
         }
-
+          
         sf::Vector2f dirLeft(
             dir.x * cosA + dir.y * sinA,
             -dir.x * sinA + dir.y * cosA
@@ -394,12 +466,20 @@ sf::Vector2f Soldat::ComputeSteering(sf::Vector2f target, const std::vector<Bloc
 
 void SoldatProjectile::Update(float dt) {
     pos += velocity * dt;
-    m_shape.setPosition(pos);
-    m_shape.setFillColor(team == Team::Orange ? sf::Color(255, 140, 0) : sf::Color(60, 120, 255));
+
+    if (sprite) {
+        sprite->setPosition(pos);
+        // Même convention que Shoot : le bout orange de l'image est en haut, +90° pour aligner avec la vélocité
+        float angleDeg = std::atan2(velocity.y, velocity.x) * 180.f / 3.14159265f + 90.f;
+        sprite->setRotation(sf::degrees(angleDeg));
+    }
 }
 
 void SoldatProjectile::Render(sf::RenderTarget* target) {
-    target->draw(m_shape);
+    if (!alive) return;
+    if (sprite) {
+        target->draw(*sprite);
+    }
 }
 
 void Soldat::TakeDamage(float dmg) {
@@ -561,4 +641,23 @@ void SoldatSpawnerO::Update(float dt, std::vector<Soldat*>& soldat, float spawnX
 
 bool Soldat::HasValidWaypoint() const {
     return m_hasWaypoint;
+}
+
+void Soldat::PlayDirectionalAnimation(bool moving) {
+    if (moving) {
+        switch (lastDirection) {
+        case Direction::UP:    animator.Play("up");    break;
+        case Direction::DOWN:  animator.Play("down");  break;
+        case Direction::LEFT:  animator.Play("left");  break;
+        case Direction::RIGHT: animator.Play("right"); break;
+        }
+    }
+    else {
+        switch (lastDirection) {
+        case Direction::UP:    animator.Play("upIdle");    break;
+        case Direction::DOWN:  animator.Play("downIdle");  break;
+        case Direction::LEFT:  animator.Play("leftIdle");  break;
+        case Direction::RIGHT: animator.Play("rightIdle"); break;
+        }
+    }
 }

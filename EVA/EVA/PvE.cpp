@@ -177,13 +177,13 @@ void PvE::cleanupEnnemis(std::vector<Ennemi*>& ennemis) {
 }
 
 //=============================================================SOLDAT===============================================
-
 void PvE::handleCollisionsJoueurShootS(std::vector<Shoot*>& shoot, std::vector<Soldat*>& soldat, int& score) {
     for (Shoot* s : shoot) {
         if (!s || !s->alive || s->type != ShootType::Player) continue;
 
         for (Soldat* t : soldat) {
             if (!t || !t->alive) continue;
+            if (t->GetTeam() == Team::Bleu) continue; // allié : le tir du joueur l'ignore
 
             if (s->rect.getGlobalBounds().findIntersection(t->rect.getGlobalBounds())) {
                 t->alive = false;

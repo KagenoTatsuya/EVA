@@ -113,9 +113,9 @@ public:
     Game(sf::Vector2u windowSize);
     ~Game();
     // Switch vers le mode platformer (appelé quand le joueur passe la porte)
-    void SwitchToSurvival(std::vector<Level*>& levels);
-    void SwitchToBattle(std::vector<Level*>& levels);
-    void SwitchToTPS(Camera* camera);
+    void SwitchToSurvival(Camera* camera, std::vector<Level*>& levels);
+    void SwitchToBattle(Camera* camera, std::vector<Level*>& levels);
+    void SwitchToTPS(Camera* camera, std::vector<Level*>& levels);
     std::string ComputeBattleWinner();
     void Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float now,
         std::vector<sf::Event>& events, std::vector<Level*>& levels,

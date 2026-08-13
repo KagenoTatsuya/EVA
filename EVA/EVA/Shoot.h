@@ -4,6 +4,7 @@
 
 class Entity;
 class Joueur;
+class Block;
 
 // Origin of the shot
 enum class ShootType {
@@ -12,9 +13,12 @@ enum class ShootType {
 
 //Initialization Tir (Shoot)
 class Shoot {
+private:
+    static sf::Texture* s_texture;
 public:
 
     sf::RectangleShape rect;   // position and size
+    sf::Sprite* sprite = nullptr;
     float vx, vy;     // speed
     bool alive, isEnnemi, isSoldat;     // state
     ShootType type;     // player or enemy
@@ -23,12 +27,13 @@ public:
     // Manufacturer
     Shoot() = default;
     Shoot(float x, float y, float vx, float vy, ShootType t);
+    ~Shoot();
 
     static void handleInput(float dt, Joueur& player, std::vector<Shoot*>& shoot, float& shootCooldown, bool& specialActive, float& specialTimer, float& specialCooldown);
     static void ShootVersSouris(std::vector<Shoot*>& shoot, const Entity& player, sf::RenderWindow& window, sf::View& view, float speed = 300.f);
 
     // Update
-    void Update(float dt, float now);
+    void Update(float dt, float now, const std::vector<Block*>& blocks);
     void Render(sf::RenderTarget& target);
 
     // Utility functions

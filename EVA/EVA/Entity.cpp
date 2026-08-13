@@ -30,7 +30,7 @@ Joueur::Joueur(float x, float y)
     rect.setPosition(sf::Vector2(x, y));
     rect.setFillColor(sf::Color::Blue);
 
-    if (!animator.LoadTexture("character-spritesheet.png")) {
+    if (!animator.LoadTexture("assets/pictures/character-spritesheet.png")) {
         std::cout << "Erreur chargement spritesheet\n";
     }
 
@@ -196,7 +196,7 @@ void Joueur::Update(float dt, sf::Vector2u windowSize, std::vector<Block*>& bloc
     // Réappliquer la position corrigée sur rect
     rect.setPosition(sf::Vector2f(posx - 15.f, posy - 13.f));
 
-    std::cout << posx << "_" << posy << std::endl;        // Coordonée joueur 
+    //std::cout << posx << "_" << posy << std::endl;        // Coordonée joueur 
 
     // Mise à jour animation
     animator.Update(dt);

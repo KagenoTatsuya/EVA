@@ -13,9 +13,13 @@ class Level {
 	std::vector<Block*> blocks;
 	std::string prevLevel;
 	std::string nextLevel;
+	float mapWidth = 0.f;
+	float mapHeight = 0.f;
 
 public:
 	bool isLoad;
+	float GetMapWidth() const { return mapWidth; }
+	float GetMapHeight() const { return mapHeight; }
 
 	Level();
 	Level(std::string path1);

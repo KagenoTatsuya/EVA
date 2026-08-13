@@ -49,9 +49,11 @@ private:
     SoldatRole m_role = SoldatRole::Unassigned;
     float m_health = 100.f;
     float m_attackDamage = 20.f;
-    float m_attackInterval = 1.f;
+    float m_attackInterval = 0.1f;
     float m_attackCooldown = 0.f;
     float m_speed = 80.f;
+
+    bool m_wasMoving = true; // pour détecter la transition mouvement -> arrêt
 
     int m_aiTickOffset = rand() % 4; // décalage aléatoire à la construction
     sf::Vector2f m_moveTarget{ 0.f, 0.f }; // dernière destination décidée par l'IA, réutilisée entre deux ticks
@@ -87,7 +89,7 @@ private:
     static constexpr float kStuckMoveThreshold = 25.f;   // déplacement minimum attendu entre deux checks
     static constexpr int   kStuckStrikesToEscape = 2;    // nb de checks consécutifs immobiles avant déclenchement (~1s)
 
-    enum class EscapePhase { None, MovingSide, MovingUp };
+    enum class EscapePhase { None, MovingSide, MovingUp, MovingDown};
     EscapePhase m_escapePhase = EscapePhase::None;
     sf::Vector2f m_escapePhaseStartPos{ 0.f, 0.f };
     float m_escapeSafetyTimer = 0.f;
@@ -156,6 +158,8 @@ public:
 
     ~Soldat();
 
+    void PlayDirectionalAnimation(bool moving);
+
     bool IsPursuingPlayer() const { return m_isPursuingPlayer; }
 
     Soldat(float x, float y, Team team, Patterne p);
@@ -207,9 +211,13 @@ public:
     Soldat* targetHint = nullptr; // optionnel, pour dégâts garantis à l'arrivée
     bool alive = true;
 
+    SoldatProjectile();
+    ~SoldatProjectile();
+
     void Update(float dt);
     void Render(sf::RenderTarget* target);
 
 private:
-    sf::RectangleShape m_shape{ sf::Vector2f(6.f, 6.f) };
+    static sf::Texture* s_texture; // texture partagée par tous les projectiles de soldats
+    sf::Sprite* sprite = nullptr;
 };

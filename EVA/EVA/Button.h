@@ -89,7 +89,7 @@ class Zombie : public Button {
 public:
 	Zombie();
 	virtual ~Zombie() {};
-	inline float GetPosX() override { return posx; };
+	inline float GetPosX() override { return posx; };      
 	inline float GetRightX() override { return posx + width; };
 	inline float GetPosY() override { return posy; };
 	inline float GetBottomY() override { return posy + height; };

@@ -27,7 +27,7 @@ Game::Game(sf::Vector2u windowSize)
 {
     if (!m_font.openFromFile("assets/fonts/Pixellettersfull-BnJ5.ttf")) {}
 
-    m_hintText = new sf::Text(m_font, "", 18);
+    m_hintText = new sf::Text(m_font, "", 24);
     m_hintText->setFillColor(sf::Color::White);
     m_hintText->setPosition(sf::Vector2f(20.f, 20.f));
 
@@ -55,7 +55,7 @@ Game::Game(sf::Vector2u windowSize)
         m_font
     ));
 
-    PNJ* pnj = new PNJ(632.f, 358.f, "character-spritesheet2.png");
+    PNJ* pnj = new PNJ(632.f, 358.f, "assets/pictures/character-spritesheet2.png");
     pnj->SetWaypoints({
         sf::Vector2f(632.f, 358.f),
         sf::Vector2f(866.f, 358.f),
@@ -63,7 +63,7 @@ Game::Game(sf::Vector2u windowSize)
         });
     m_pnjs.push_back(pnj);
 
-    PNJ* pnj1 = new PNJ(425.f, 194.f, "character-spritesheet3.png");
+    PNJ* pnj1 = new PNJ(425.f, 194.f, "assets/pictures/character-spritesheet3.png");
     pnj1->SetWaypoints({
         sf::Vector2f(425.f, 194.f),
         sf::Vector2f(296.f, 298.f),
@@ -71,7 +71,7 @@ Game::Game(sf::Vector2u windowSize)
         });
     m_pnjs.push_back(pnj1);
 
-    PNJ* pnj2 = new PNJ(1055.f, 321.f, "character-spritesheet4.png");
+    PNJ* pnj2 = new PNJ(1055.f, 321.f, "assets/pictures/character-spritesheet4.png");
     pnj2->SetWaypoints({
         sf::Vector2f(1055.f, 321.f),
         sf::Vector2f(820.f, 260.f),
@@ -79,7 +79,7 @@ Game::Game(sf::Vector2u windowSize)
         });
     m_pnjs.push_back(pnj2);
 
-    PNJ* pnj3 = new PNJ(571.f, 259.f, "character-spritesheet5.png");
+    PNJ* pnj3 = new PNJ(571.f, 259.f, "assets/pictures/character-spritesheet5.png");
     pnj3->SetWaypoints({
         sf::Vector2f(571.f, 259.f),
         sf::Vector2f(396.f, 402.f),
@@ -87,7 +87,7 @@ Game::Game(sf::Vector2u windowSize)
         });
     m_pnjs.push_back(pnj3);
 
-    PNJ* pnj4 = new PNJ(680.f, 558.f, "character-spritesheet13.png");
+    PNJ* pnj4 = new PNJ(680.f, 558.f, "assets/pictures/character-spritesheet13.png");
     pnj4->SetWaypoints({
         sf::Vector2f(680.f, 558.f),
         sf::Vector2f(817.f, 650.f),
@@ -96,7 +96,7 @@ Game::Game(sf::Vector2u windowSize)
         });
     m_pnjs.push_back(pnj4);
 
-    PNJ* pnj5 = new PNJ(197.f, 834.f, "character-spritesheet14.png");
+    PNJ* pnj5 = new PNJ(197.f, 834.f, "assets/pictures/character-spritesheet14.png");
     pnj5->SetWaypoints({
         sf::Vector2f(197.f, 834.f),
         sf::Vector2f(339.f, 723.f),
@@ -105,7 +105,7 @@ Game::Game(sf::Vector2u windowSize)
         });
     m_pnjs.push_back(pnj5);
 
-    PNJ* pnj6 = new PNJ(1083.f, 1149.f, "character-spritesheet15.png");
+    PNJ* pnj6 = new PNJ(1083.f, 1149.f, "assets/pictures/character-spritesheet15.png");
     pnj6->SetWaypoints({
         sf::Vector2f(1083.f, 1149.f),
         sf::Vector2f(436.f, 1149.f),
@@ -114,7 +114,7 @@ Game::Game(sf::Vector2u windowSize)
         });
     m_pnjs.push_back(pnj6);
 
-    PNJ* pnj7 = new PNJ(979.f, 761.f, "character-spritesheet16.png");
+    PNJ* pnj7 = new PNJ(979.f, 761.f, "assets/pictures/character-spritesheet16.png");
     pnj7->SetWaypoints({
         sf::Vector2f(979.f, 761.f),
         sf::Vector2f(770.f, 900.f),
@@ -136,9 +136,10 @@ Game::~Game() {
     m_soldatProjectiles.clear();
 }
 
-void Game::SwitchToSurvival(std::vector<Level*>& levels) {
+void Game::SwitchToSurvival(Camera* camera, std::vector<Level*>& levels) {
     m_gameMode = GameMode::SURVIVAL;
     currentLvl = 1;
+    camera->SetViewSize(1600.0f, 800.0f);
     m_darkness.setRadius(180.f);
 
     m_score = 0;
@@ -161,11 +162,16 @@ void Game::SwitchToSurvival(std::vector<Level*>& levels) {
     bg->setScale(sf::Vector2f(1.5f, 1.5f));
     bg->setPosition(sf::Vector2f(-350.f, -250.f));
     levels[1]->SetOffset(-350.f, -250.f);
+    camera->SetLevelBounds(-350.f, -250.f,
+        -350.f + levels[1]->GetMapWidth(),
+        -250.f + levels[1]->GetMapHeight());
+    camera->SetAxisLockX(false);
 }
 
-void Game::SwitchToBattle(std::vector<Level*>& levels) {
+void Game::SwitchToBattle(Camera* camera, std::vector<Level*>& levels) {
     m_gameMode = GameMode::BATTLE;
     currentLvl = 2;
+    camera->SetViewSize(1600.0f, 800.0f);
 
     m_score = 0;
     m_vies = 3;
@@ -184,9 +190,12 @@ void Game::SwitchToBattle(std::vector<Level*>& levels) {
     bg->setScale(sf::Vector2f(1.5f, 1.5f));
     bg->setPosition(sf::Vector2f(-350.f, -250.f));
     levels[2]->SetOffset(-355.f, -270.f);
+    camera->SetLevelBounds(-355.f, -270.f,
+        -355.f + levels[2]->GetMapWidth(),
+        -270.f + levels[2]->GetMapHeight());
 
-    m_zoneManager.ExtractZonesFromFile("Level3.txt", { {'K', "Zone B"}, {'J', "Zone C"} }, 24.f, { -355.f, -270.f });
-    m_zoneManager.ExtractWaypointsFromFile("Level3.txt", 24.f, { -355.f, -270.f });
+    m_zoneManager.ExtractZonesFromFile("assets/Level3.txt", { {'K', "Zone B"}, {'J', "Zone C"} }, 24.f, { -355.f, -270.f });
+    m_zoneManager.ExtractWaypointsFromFile("assets/Level3.txt", 24.f, { -355.f, -270.f });
     m_zoneManager.ResetZones();
 
     m_battleWalls.clear();
@@ -196,6 +205,7 @@ void Game::SwitchToBattle(std::vector<Level*>& levels) {
         }
     }
     m_wallGrid.Build(m_battleWalls, 64.f);
+    camera->SetAxisLockX(true);
 }
 
 void Game::RenderSpawnArrow(sf::RenderWindow& window, Camera* camera, Entity* player) {
@@ -271,14 +281,17 @@ void Game::UpdateHitDarkness(float dt, sf::Vector2f playerPos) {
     }
 }
 
-void Game::SwitchToTPS(Camera* camera) {
+void Game::SwitchToTPS(Camera* camera, std::vector<Level*>& levels) {
     m_gameMode = GameMode::TPS;
     currentLvl = 0;
-    camera->SetZoom(1.0f); // zoom normal
+    camera->SetViewSize(1400.0f, 800.0f);
+    camera->SetLevelBounds(0.f, 0.f, levels[0]->GetMapWidth(), levels[0]->GetMapHeight());
+
     delete bg; delete texture;
     texture = new sf::Texture("assets/pictures/EVA_maps.png");
     bg = new sf::Sprite(*texture);
     bg->setScale(sf::Vector2f(1.5f, 1.f));
+    camera->SetAxisLockX(false);
 }
 
 void Game::Render(std::vector<Level*>& levels,
@@ -626,7 +639,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
 
             for (Shoot* s : shoot) {
                 if (s != nullptr) {
-                    s->Update(dt, now);
+                    s->Update(dt, now, levels[currentLvl]->GetBlocks());
                 }
             }
             shoot.erase(
@@ -693,7 +706,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
         else if (Input::IsButtonTouched(events, arene)) areneClicked = true;
 
         if (zombieClicked) {
-            SwitchToSurvival(levels);
+            SwitchToSurvival(camera, levels);
             player->rect.setPosition(sf::Vector2f(802.f, 926.f));
             camera->SetZoom(1.25f);
             camera->Update(802.f, 926.f, 0.f);
@@ -701,7 +714,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
             state = SURVIVALS;
         }
         else if (areneClicked) {
-            SwitchToBattle(levels);
+            SwitchToBattle(camera, levels);
             player->rect.setPosition(sf::Vector2f(1784.f, 475.f));
             camera->SetZoom(1.44f);
             camera->Update(1057.f, 768.f, 0.f);
@@ -744,7 +757,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
 
         for (Shoot* s : shoot) {
             if (s != nullptr) {
-                s->Update(dt, now);
+                s->Update(dt, now, levels[currentLvl]->GetBlocks());
             }
         }
         shoot.erase(
@@ -919,7 +932,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
         m_zoneManager.Update(dt, m_soldat, (m_darknessPhase == DarknessPhase::None) ? player : nullptr);
         PvE::cleanupSoldat(m_soldat);
 
-        // AJOUT : collision physique avec un soldat Orange -> effet sombre (pas de perte de vie)
+        // Collision physique avec un soldat Orange -> effet sombre (pas de perte de vie)
         {
             sf::FloatRect playerBounds = player->rect.getGlobalBounds();
             for (Soldat* t : m_soldat) {
@@ -933,7 +946,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
 
         for (Shoot* s : shoot) {
             if (s != nullptr) {
-                s->Update(dt, now);
+                s->Update(dt, now, levels[currentLvl]->GetBlocks());
             }
         }
         shoot.erase(
@@ -1000,7 +1013,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
 
             switch (m_gameMode) {
             case GameMode::SURVIVAL:
-                SwitchToSurvival(levels);
+                SwitchToSurvival(camera, levels);
                 player->rect.setPosition(sf::Vector2f(802.f, 926.f));
                 camera->SetZoom(1.25f);
                 camera->Update(802.f, 926.f, 0.f);
@@ -1008,7 +1021,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
                 break;
 
             case GameMode::BATTLE:
-                SwitchToBattle(levels);
+                SwitchToBattle(camera, levels);
                 player->rect.setPosition(sf::Vector2f(1784.f, 475.f));
                 camera->SetZoom(1.44f);
                 camera->Update(1057.f, 768.f, 0.f);
@@ -1017,7 +1030,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
 
             case GameMode::TPS:
             default:
-                SwitchToTPS(camera);
+                SwitchToTPS(camera, levels);
                 player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
                 camera->Update(690.f, 1178.f, 0.f);
                 state = RUNNING;
@@ -1028,7 +1041,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
             sound.StopMusic();
             isEnd = false;
             m_vies = 3;
-            SwitchToTPS(camera);
+            SwitchToTPS(camera, levels);
             player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
             camera->Update(690.f, 1178.f, 0.f);
             isRunning = false;
@@ -1079,7 +1092,7 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
             sound.StopMusic();
             isEnd = false;
             m_vies = 3;
-            SwitchToTPS(camera);
+            SwitchToTPS(camera, levels);
             player->rect.setPosition(sf::Vector2f(690.f, 1178.f));
             camera->Update(690.f, 1178.f, 0.f);
             isRunning = false;
@@ -1097,6 +1110,10 @@ void Game::Update(bool& isRunning, bool& isEnd, bool& isPause, float dt, float n
             for (auto* npc : m_npcs) {
                 npc->SetPlayerFace(facePath);
             }
+
+            camera->SetViewSize(1400.0f, 800.0f); 
+            camera->SetLevelBounds(0.f, 0.f, levels[0]->GetMapWidth(), levels[0]->GetMapHeight());
+            camera->SetAxisLockX(false);
 
             state = RUNNING;
         }

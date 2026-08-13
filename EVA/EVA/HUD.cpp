@@ -76,10 +76,13 @@ void HUD::renderZoneGauge(sf::RenderTarget& target, const Zone& zone,
     target.draw(separator);
 
     // Label du nom de la zone au-dessus de la jauge
-    sf::Text label(font, zone.displayName, 16);
+    sf::Text label(font, zone.displayName, 26);
     label.setFillColor(sf::Color::White);
+    label.setOutlineColor(sf::Color::White);
+    label.setOutlineThickness(0.5f);
     sf::FloatRect bounds = label.getLocalBounds();
-    label.setPosition({ position.x + size.x / 2.f - bounds.size.x / 2.f, position.y - 22.f });
+    float labelMargin = 10.f;
+    label.setPosition({position.x + size.x / 2.f - bounds.size.x / 2.f - bounds.position.x, position.y - bounds.size.y - bounds.position.y - labelMargin});
     target.draw(label);
 }
 
@@ -99,7 +102,26 @@ void HUD::renderTimer(sf::RenderTarget& target, float timeRemaining) {
 
     sf::FloatRect bounds = timerText.getLocalBounds();
     float targetWidth = static_cast<float>(target.getSize().x);
-    timerText.setPosition(sf::Vector2f(targetWidth / 2.f - bounds.size.x / 2.f, 20.f));
 
+    const float paddingX = 16.f;
+    const float paddingY = 8.f;
+    const float topMargin = 20.f;
+
+    sf::Vector2f textPos(targetWidth / 2.f - bounds.size.x / 2.f, topMargin);
+
+    // Fond gris derrière le texte, dimensionné sur les bounds réels du texte
+    sf::RectangleShape background;
+    background.setSize(sf::Vector2f(bounds.size.x + paddingX * 2.f, bounds.size.y + paddingY * 2.f));
+    background.setFillColor(sf::Color(40, 40, 40, 200));
+    background.setOutlineThickness(2.f);
+    background.setOutlineColor(sf::Color::White);
+    background.setPosition(sf::Vector2f(
+        targetWidth / 2.f - background.getSize().x / 2.f,
+        topMargin + paddingY
+    ));
+
+    timerText.setPosition(textPos);
+
+    target.draw(background);
     target.draw(timerText);
 }

@@ -3,60 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Button.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Button.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Battle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Battle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Animator.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Animator.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\BehaviorTree.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\BehaviorTree.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\TouchInput.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\TouchInput.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Entity.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Entity.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\TouchInput.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\TouchInput.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\SoldatAI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\SoldatAI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EVA.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\EVA.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Input.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Input.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Pause.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Pause.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Input.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Input.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Battle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Battle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -67,12 +23,40 @@
       "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Battle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Shoot.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Shoot.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\PvE.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\PvE.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EndMenu.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\EndMenu.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\StartMenu.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\StartMenu.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\ProjectilePool.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\ProjectilePool.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\ProjectilePool.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\ProjectilePool.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Shoot.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\Shoot.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EndMenu.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\EndMenu.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\StartMenu.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F582537B-83FA-476D-8565-5316F6724CBE}|EVA\\EVA.vcxproj|solutionrelative:EVA\\StartMenu.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -82,71 +66,19 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 13,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Button.cpp",
-              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Button.cpp",
-              "RelativeDocumentMoniker": "EVA\\Button.cpp",
-              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Button.cpp",
-              "RelativeToolTip": "EVA\\Button.cpp",
-              "ViewState": "AgIAAFIAAAAAAAAAAAAAAGsAAAAMAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "Pause.cpp",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Pause.cpp",
+              "RelativeDocumentMoniker": "EVA\\Pause.cpp",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Pause.cpp",
+              "RelativeToolTip": "EVA\\Pause.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-07-30T18:15:20.098Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Animator.h",
-              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Animator.h",
-              "RelativeDocumentMoniker": "EVA\\Animator.h",
-              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Animator.h",
-              "RelativeToolTip": "EVA\\Animator.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAACAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-07-30T17:05:59.003Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "BehaviorTree.h",
-              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\BehaviorTree.h",
-              "RelativeDocumentMoniker": "EVA\\BehaviorTree.h",
-              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\BehaviorTree.h",
-              "RelativeToolTip": "EVA\\BehaviorTree.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-07-30T15:50:25.256Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "SoldatAI.cpp",
-              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.cpp",
-              "RelativeDocumentMoniker": "EVA\\SoldatAI.cpp",
-              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.cpp",
-              "RelativeToolTip": "EVA\\SoldatAI.cpp",
-              "ViewState": "AgIAAKIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-07-30T15:50:12.172Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "SoldatAI.h",
-              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.h",
-              "RelativeDocumentMoniker": "EVA\\SoldatAI.h",
-              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\SoldatAI.h",
-              "RelativeToolTip": "EVA\\SoldatAI.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-07-30T15:50:06.261Z",
+              "WhenOpened": "2026-08-11T14:22:59.87Z",
               "EditorCaption": ""
             },
             {
@@ -157,157 +89,151 @@
               "RelativeDocumentMoniker": "EVA\\Battle.cpp",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Battle.cpp",
               "RelativeToolTip": "EVA\\Battle.cpp",
-              "ViewState": "AgIAAAwBAAAAAAAAAAAIwF0BAABDAAAAAAAAAA==",
+              "ViewState": "AgIAAA0BAAAAAAAAAAAawCsBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-07-29T12:47:45.19Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-07T16:01:52.847Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 4,
               "Title": "Battle.h",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Battle.h",
               "RelativeDocumentMoniker": "EVA\\Battle.h",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Battle.h",
               "RelativeToolTip": "EVA\\Battle.h",
-              "ViewState": "AgIAAEYAAAAAAAAAAAAIwF8AAAA3AAAAAAAAAA==",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAawGAAAABEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-07-29T12:46:42.099Z"
+              "WhenOpened": "2026-08-07T16:01:45.837Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "TouchInput.cpp",
-              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\TouchInput.cpp",
-              "RelativeDocumentMoniker": "EVA\\TouchInput.cpp",
-              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\TouchInput.cpp",
-              "RelativeToolTip": "EVA\\TouchInput.cpp",
-              "ViewState": "AgIAABoAAAAAAAAAAAAIwFAAAAA1AAAAAAAAAA==",
+              "DocumentIndex": 10,
+              "Title": "ProjectilePool.h",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\ProjectilePool.h",
+              "RelativeDocumentMoniker": "EVA\\ProjectilePool.h",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\ProjectilePool.h",
+              "RelativeToolTip": "EVA\\ProjectilePool.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-08-07T16:01:08.71Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ProjectilePool.cpp",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\ProjectilePool.cpp",
+              "RelativeDocumentMoniker": "EVA\\ProjectilePool.cpp",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\ProjectilePool.cpp",
+              "RelativeToolTip": "EVA\\ProjectilePool.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-07-22T17:41:06.522Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-07T16:00:53.244Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "TouchInput.h",
-              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\TouchInput.h",
-              "RelativeDocumentMoniker": "EVA\\TouchInput.h",
-              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\TouchInput.h",
-              "RelativeToolTip": "EVA\\TouchInput.h",
-              "ViewState": "AgIAABIAAAAAAAAAAAAAADcAAAACAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-07-22T17:40:59.139Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "Shoot.h",
-              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Shoot.h",
-              "RelativeDocumentMoniker": "EVA\\Shoot.h",
-              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Shoot.h",
-              "RelativeToolTip": "EVA\\Shoot.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAACAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-07-22T17:25:29.357Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 11,
               "Title": "Shoot.cpp",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Shoot.cpp",
               "RelativeDocumentMoniker": "EVA\\Shoot.cpp",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Shoot.cpp",
               "RelativeToolTip": "EVA\\Shoot.cpp",
-              "ViewState": "AgIAAFYAAAAAAAAAAAAIwH0AAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAHIAAAAAAAAAAAAqwIgAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-07-22T17:25:17.246Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Entity.cpp",
-              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.cpp",
-              "RelativeDocumentMoniker": "EVA\\Entity.cpp",
-              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.cpp",
-              "RelativeToolTip": "EVA\\Entity.cpp",
-              "ViewState": "AgIAAEkBAAAAAAAAAAAIwA4CAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-07-22T17:25:05.906Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-07T15:58:23.31Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "Entity.h",
-              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.h",
-              "RelativeDocumentMoniker": "EVA\\Entity.h",
-              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Entity.h",
-              "RelativeToolTip": "EVA\\Entity.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEAAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-07-22T17:23:21.483Z",
-              "EditorCaption": ""
+              "Title": "PvE.cpp",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\PvE.cpp",
+              "RelativeDocumentMoniker": "EVA\\PvE.cpp",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\PvE.cpp",
+              "RelativeToolTip": "EVA\\PvE.cpp",
+              "ViewState": "AgIAAAYBAAAAAAAAAAAqwBEBAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-08-07T15:57:34.082Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Input.cpp",
-              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Input.cpp",
-              "RelativeDocumentMoniker": "EVA\\Input.cpp",
-              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Input.cpp",
-              "RelativeToolTip": "EVA\\Input.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAABAAAAAAAAAA==",
+              "DocumentIndex": 8,
+              "Title": "StartMenu.cpp",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\StartMenu.cpp",
+              "RelativeDocumentMoniker": "EVA\\StartMenu.cpp",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\StartMenu.cpp",
+              "RelativeToolTip": "EVA\\StartMenu.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-07-22T17:11:01.808Z"
+              "WhenOpened": "2026-08-04T15:09:14.411Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 13,
-              "Title": "Input.h",
-              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Input.h",
-              "RelativeDocumentMoniker": "EVA\\Input.h",
-              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Input.h",
-              "RelativeToolTip": "EVA\\Input.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAYAAAAAAAAAA==",
+              "Title": "StartMenu.h",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\StartMenu.h",
+              "RelativeDocumentMoniker": "EVA\\StartMenu.h",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\StartMenu.h",
+              "RelativeToolTip": "EVA\\StartMenu.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-07-22T17:10:50.583Z"
+              "WhenOpened": "2026-08-04T15:08:38.77Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 7,
+              "Title": "EndMenu.cpp",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EndMenu.cpp",
+              "RelativeDocumentMoniker": "EVA\\EndMenu.cpp",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EndMenu.cpp",
+              "RelativeToolTip": "EVA\\EndMenu.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-08-01T11:51:09.929Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "EndMenu.h",
+              "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EndMenu.h",
+              "RelativeDocumentMoniker": "EVA\\EndMenu.h",
+              "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EndMenu.h",
+              "RelativeToolTip": "EVA\\EndMenu.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-08-04T15:08:15.848Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "Game.cpp",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.cpp",
               "RelativeDocumentMoniker": "EVA\\Game.cpp",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.cpp",
               "RelativeToolTip": "EVA\\Game.cpp",
-              "ViewState": "AgIAABgEAAAAAAAAAAAAADUEAAAfAAAAAAAAAA==",
+              "ViewState": "AgIAAIIDAAAAAAAAAAAawJEDAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-05-28T16:28:12.301Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-28T16:28:12.301Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 3,
               "Title": "Game.h",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.h",
               "RelativeDocumentMoniker": "EVA\\Game.h",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\Game.h",
               "RelativeToolTip": "EVA\\Game.h",
-              "ViewState": "AgIAAFkAAAAAAAAAAAAIwGIAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAGkAAAAAAAAAAAAAAGkAAABGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-07-01T16:16:33.576Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 0,
               "Title": "EVA.cpp",
               "DocumentMoniker": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EVA.cpp",
               "RelativeDocumentMoniker": "EVA\\EVA.cpp",
               "ToolTip": "C:\\Users\\theob\\Documents\\GitHub\\EVA\\EVA\\EVA\\EVA.cpp",
               "RelativeToolTip": "EVA\\EVA.cpp",
-              "ViewState": "AgIAAJkAAAAAAAAAAAAAAI4AAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAABCAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-05-28T15:55:18.201Z",
               "EditorCaption": ""

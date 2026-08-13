@@ -5,8 +5,8 @@
 
 namespace {
     const std::array<std::string, 2> kEnnemiSpritesheets = {
-        "character-spritesheetZ.png",
-        "character-spritesheetS.png"
+        "assets/pictures/character-spritesheetZ.png",
+        "assets/pictures/character-spritesheetS.png"
     };
 
     std::string GetRandomSpritesheet() {

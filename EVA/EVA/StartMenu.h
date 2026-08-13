@@ -8,6 +8,9 @@ class StartMenu {
 private:
 	sf::Texture* image;
 	sf::Sprite* sprite;
+	sf::Font* font;
+	sf::Text* text;
+	sf::Text* texte;
 	float screenW, screenH;
 
 public:

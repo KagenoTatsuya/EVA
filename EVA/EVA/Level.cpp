@@ -13,6 +13,7 @@ Level::Level(std::string path1) : nextLevel(""), prevLevel("") {
     }
     else {
         int lineNumber = -1;
+        int maxLineLength = 0;
         std::string line;
         while (std::getline(level, line)) {
             if (line == "Next Level") {
@@ -24,6 +25,7 @@ Level::Level(std::string path1) : nextLevel(""), prevLevel("") {
                 continue;
             }
             lineNumber++;
+            maxLineLength = std::max(maxLineLength, (int)line.size());
             for (int i = 0; i < line.size(); i++) {
                 std::string character(1, line[i]);
                 if (character == "X") {
@@ -41,6 +43,8 @@ Level::Level(std::string path1) : nextLevel(""), prevLevel("") {
                 // '_' et 'W' ignorés pour l'instant
             }
         }
+        mapWidth = maxLineLength * 24.f;
+        mapHeight = (lineNumber + 1) * 24.f;
         // Mémorise la position d'origine (grille du .txt) de chaque block,
         // AVANT tout appel à SetOffset -> sert de référence absolue et
         // évite que les offsets s'accumulent à chaque changement de mode

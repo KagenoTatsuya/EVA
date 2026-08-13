@@ -23,7 +23,7 @@ int main() {
     sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
 
     // Création de la fenêtre en plein écran
-    sf::RenderWindow window(desktopMode, " EVA ", sf::Style::None);
+    sf::RenderWindow window(desktopMode, " EVA BORDEAUX LAC ARCADE", sf::Style::None);
 
     // Juste après la création de la fenêtre
     if (!sf::Shader::isAvailable()) {
@@ -38,9 +38,9 @@ int main() {
     Game game(window.getSize());
     Input input;
     std::vector<Level*> levels;
-    levels.push_back(new Level("Level1.txt"));   // index 0 — TPS
-    levels.push_back(new Level("Level2.txt"));   // index 1 — Survival
-    levels.push_back(new Level("Level3.txt"));   // index 2 — Battle
+    levels.push_back(new Level("assets/Level1.txt"));   // index 0 — TPS
+    levels.push_back(new Level("assets/Level2.txt"));   // index 1 — Survival
+    levels.push_back(new Level("assets/Level3.txt"));   // index 2 — Battle
 
     StartMenu* startmenu = new StartMenu();
     EndMenu* endmenu = new EndMenu();
@@ -143,9 +143,6 @@ int main() {
             }
             events.push_back(*event);
         }
-        // Update du joueur
-        //player->Update(dt, window.getSize());
-
         // Efface l'écran avec une couleur
         window.clear(sf::Color::Black);
 
@@ -156,8 +153,6 @@ int main() {
         // Draw the sprite
         game.Render(levels, window, parallax, camera, cameramenu, startmenu, endmenu,
             start, exit, letscontinue, zombie, arene, player, choose, shoot);
-
-        //player->Render(&window);
 
         // Update the window
         window.display();

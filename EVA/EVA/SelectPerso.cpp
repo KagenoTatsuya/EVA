@@ -51,14 +51,14 @@ SelectPerso::SelectPerso() {
 
     struct PersoDef { std::string normal, hover, spritesheet; };
     std::array<PersoDef, kCount> defs = { {
-        { "assets/pictures/BoyFace.png", "assets/pictures/BoyBody1.png", "character-spritesheet.png" },
-        { "assets/pictures/BoyFace2.png", "assets/pictures/BoyBody2.png", "character-spritesheet6.png" },
-        { "assets/pictures/BoyFace3.png", "assets/pictures/BoyBody3.png", "character-spritesheet7.png" },
-        { "assets/pictures/BoyFace4.png", "assets/pictures/BoyBody4.png", "character-spritesheet11.png" },
-        { "assets/pictures/GirlFace1.png", "assets/pictures/GirlBody1.png", "character-spritesheet10.png" },
-        { "assets/pictures/GirlFace2.png", "assets/pictures/GirlBody2.png", "character-spritesheet8.png" },
-        { "assets/pictures/GirlFace3.png", "assets/pictures/GirlBody3.png", "character-spritesheet9.png" },
-        { "assets/pictures/GirlFace4.png", "assets/pictures/GirlBody4.png", "character-spritesheet12.png" },
+        { "assets/pictures/BoyFace.png", "assets/pictures/BoyBody1.png", "assets/pictures/character-spritesheet.png" },
+        { "assets/pictures/BoyFace2.png", "assets/pictures/BoyBody2.png", "assets/pictures/character-spritesheet6.png" },
+        { "assets/pictures/BoyFace3.png", "assets/pictures/BoyBody3.png", "assets/pictures/character-spritesheet7.png" },
+        { "assets/pictures/BoyFace4.png", "assets/pictures/BoyBody4.png", "assets/pictures/character-spritesheet11.png" },
+        { "assets/pictures/GirlFace1.png", "assets/pictures/GirlBody1.png", "assets/pictures/character-spritesheet10.png" },
+        { "assets/pictures/GirlFace2.png", "assets/pictures/GirlBody2.png", "assets/pictures/character-spritesheet8.png" },
+        { "assets/pictures/GirlFace3.png", "assets/pictures/GirlBody3.png", "assets/pictures/character-spritesheet9.png" },
+        { "assets/pictures/GirlFace4.png", "assets/pictures/GirlBody4.png", "assets/pictures/character-spritesheet12.png" },
     } };
     for (int i = 0; i < kCount; ++i) {
         float x = startX + (i % 4) * gapX;
@@ -110,7 +110,7 @@ void SelectPerso::Update(sf::RenderWindow& window, sf::View& menuView, std::vect
 }
 
 std::string SelectPerso::GetSelectedSpriteSheet() const {
-    if (m_selectedIndex < 0) return "character-spritesheet.png"; // fallback par défaut
+    if (m_selectedIndex < 0) return "assets/pictures/character-spritesheet.png"; // fallback par défaut
     return m_buttons[m_selectedIndex]->GetSpriteSheet();
 }
 

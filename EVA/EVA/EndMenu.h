@@ -8,6 +8,7 @@ class EndMenu {
 public:
 
 	EndMenu();
+	EndMenu(float screenW, float screenH);
 
 	void Render(sf::RenderWindow& window);
 
@@ -16,6 +17,11 @@ public:
 private:
 	sf::Texture* image;
 	sf::Sprite* sprite;
+	sf::Font* font;
+	sf::Text* text;
+	sf::Text* texte;
+
+	float screenW, screenH;
 };
 
 #endif
